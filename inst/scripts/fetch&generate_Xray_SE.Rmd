@@ -85,7 +85,7 @@ fetch_geo_datasets <- function(
 
 ```{r}
 fetch_geo_datasets(
-  excel_path = "inst/extdata/Curated_datasets.xlsx",
+  excel_path = "~/DoReMiTra/inst/extdata/Curated_datasets.xlsx",
   Rad = "X-ray"
 )
 ```

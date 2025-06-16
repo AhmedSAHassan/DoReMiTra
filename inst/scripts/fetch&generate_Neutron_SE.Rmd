@@ -1,9 +1,4 @@
 ---
-title: "Untitled"
-output: html_document
-date: "2025-06-16"
----
----
 title: "fetch$generate_GammaRay_SE"
 output: html_document
 date: "2025-06-16"
@@ -89,7 +84,7 @@ fetch_geo_datasets <- function(
 
 ```{r}
 fetch_geo_datasets(
-  excel_path = "inst/extdata/Curated_datasets.xlsx",
+  excel_path = "~/DoReMiTra/inst/extdata/Curated_datasets.xlsx",
   Rad = "Neutron"
 )
 ```
