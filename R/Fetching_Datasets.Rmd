@@ -1,0 +1,76 @@
+---
+title: "Fetching_Datasets"
+output: html_document
+date: "2025-05-27"
+---
+
+```{r}
+library(readxl)
+library(GEOquery)
+
+fetch_geo_datasets <- function(
+  excel_path,
+  sheet = 1,
+  treatment_col = "Treatment",
+  accession_col = "Accession_no",
+  envir = .GlobalEnv
+) {
+  library(GEOquery)
+  library(SummarizedExperiment)
+  library(readxl)
+
+  df <- read_excel(excel_path, sheet = sheet)
+  failed <- c()
+  
+  for (i in seq_len(nrow(df))) {
+    accession <- trimws(df[[accession_col]][i])
+    treatment <- gsub("[^A-Za-z0-9_]", "_", trimws(df[[treatment_col]][i]))
+    
+    if (is.na(accession) || accession == "") {
+      warning(sprintf("Skipping row %d with empty accession.", i))
+      next
+    }
+    
+    message(sprintf("📦 Fetching %s (%s)...", accession, treatment))
+    
+    tryCatch({
+      gse <- getGEO(accession, GSEMatrix = TRUE)
+      
+      # Unwrap if list of length 1
+      if (is.list(gse) && length(gse) == 1 && inherits(gse[[1]], "ExpressionSet")) {
+        gse <- gse[[1]]
+      }
+
+      if (inherits(gse, "ExpressionSet")) {
+        # 🔄 Convert to (Ranged)SummarizedExperiment
+        se <- makeSummarizedExperimentFromExpressionSet(gse)
+
+        # 🆔 Ensure gene names are retained
+        rownames(se) <- rownames(exprs(gse))
+        
+        # 📛 Assign object to environment
+        obj_name <- paste0(treatment, "_", accession)
+        assign(obj_name, se, envir = envir)
+      } else {
+        warning(sprintf("⚠️ %s did not return a valid ExpressionSet.", accession))
+        failed <<- c(failed, accession)
+      }
+    }, error = function(e) {
+      warning(sprintf("❌ Failed to fetch %s: %s", accession, e$message))
+      failed <<- c(failed, accession)
+    })
+  }
+  
+  if (length(failed) > 0) {
+    message("⚠️ These accession numbers failed to fetch:")
+    print(unique(failed))
+  }
+}
+
+```
+
+```{r}
+
+fetch_geo_datasets("inst/extdata/Curated_datasets.xlsx")
+
+```
