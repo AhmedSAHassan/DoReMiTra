@@ -1,7 +1,13 @@
 ---
 title: "Fetching_Xray_Data"
-output: html_document
-date: "2025-06-16"
+author: "Ahmed Hassan"
+date: "`r Sys.Date()`"
+output:
+  html_document:
+    toc: true
+    toc_float: true
+editor_options: 
+  chunk_output_type: console
 ---
 
 # Loading required packages
@@ -214,77 +220,6 @@ assemble_SE_from_RDS <- function(input_dir = "inst/extdata/X-ray", prefix = "X_r
 
 ```{r}
 Xray_se_objects <- assemble_SE_from_RDS(input_dir = "inst/extdata/X-ray", prefix = "X_ray_GSE")
-```
-
-# Saving RDS object for each generated SE
-
-```{r}
-save_SE_list_as_RDS <- function(se_list, output_dir = ".", prefix = "SE_object") {
-  if (!dir.exists(output_dir)) {
-    dir.create(output_dir, recursive = TRUE)
-  }
-
-  for (i in seq_along(se_list)) {
-    se <- se_list[[i]]
-
-    if (!inherits(se, "SummarizedExperiment")) {
-      warning(sprintf("Element %d is not a SummarizedExperiment. Skipping.", i))
-      next
-    }
-
-    # Use names if available, else generic name with prefix and index
-    obj_name <- if (!is.null(names(se_list)) && names(se_list)[i] != "") {
-      names(se_list)[i]
-    } else {
-      paste0(prefix, i)
-    }
-
-    file_path <- file.path(output_dir, paste0(obj_name, ".RDS"))
-    saveRDS(se, file_path)
-
-    message(sprintf("✅ Saved %s as a single RDS file.", obj_name))
-  }
-}
-```
-
-```{r}
-save_SE_list_as_RDS(Neutron_se_objects, output_dir = "inst/extdata/SE_objects", prefix = "Neutron_GSE")
-```
-
-
-# Saving RDS object for each generated SE
-
-```{r}
-save_SE_list_as_RDS <- function(se_list, output_dir = ".", prefix = "SE_object") {
-  if (!dir.exists(output_dir)) {
-    dir.create(output_dir, recursive = TRUE)
-  }
-
-  for (i in seq_along(se_list)) {
-    se <- se_list[[i]]
-
-    if (!inherits(se, "SummarizedExperiment")) {
-      warning(sprintf("Element %d is not a SummarizedExperiment. Skipping.", i))
-      next
-    }
-
-    # Use names if available, else generic name with prefix and index
-    obj_name <- if (!is.null(names(se_list)) && names(se_list)[i] != "") {
-      names(se_list)[i]
-    } else {
-      paste0(prefix, i)
-    }
-
-    file_path <- file.path(output_dir, paste0(obj_name, ".RDS"))
-    saveRDS(se, file_path)
-
-    message(sprintf("✅ Saved %s as a single RDS file.", obj_name))
-  }
-}
-```
-
-```{r}
-save_SE_list_as_RDS(Neutron_se_objects, output_dir = "inst/extdata/SE_objects", prefix = "Neutron_GSE")
 ```
 
 # Saving RDS object for each generated SE
