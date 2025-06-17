@@ -1,4 +1,4 @@
 # DoReMiTra
-<img src="man/figures/logo.png" align="right" width="120" />
+<img src="man/figures/Logo.png" align="right" width="120" />
 
 
