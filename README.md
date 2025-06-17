@@ -31,5 +31,5 @@ The package includes preprocessed and annotated datasets from public repositorie
 
 ✅ Disease status (healthy vs disease models)
 
-✅ Experimental setting (e.g., Vivo, Vitro)
+✅ Experimental setting (Vivo, Vitro)
 
