@@ -1,0 +1,601 @@
+---
+title: "fetch$generate_GammaRay_SE"
+author: "Ahmed Hassan"
+date: "`r Sys.Date()`"
+output:
+  html_document:
+    toc: true
+    toc_float: true
+editor_options: 
+  chunk_output_type: console
+---
+
+# Loading required packages
+
+```{r}
+library(readxl)
+library(GEOquery)
+library(SummarizedExperiment)
+library(dplyr)
+library(S4Vectors)
+```
+
+# Defining helper functions
+
+```{r}
+process_geo_dataset <- function(
+  accession_id,
+  excel_path,
+  sheet = 1,
+  accession_col = "Accession_no",
+  author_col = "Author",
+  year_col = "Year",
+  setting_col = "Exp_Setting",
+  intermediate_dir = "processed_parts",
+  final_output_dir = "assembled_SE",
+  possible_gene_cols = c("GENE_SYMBOL", "Gene.Symbol", "ILMN_Gene", "GeneSymbol"),
+  envir = .GlobalEnv
+) {
+  dir.create(intermediate_dir, showWarnings = FALSE, recursive = TRUE)
+  dir.create(final_output_dir, showWarnings = FALSE, recursive = TRUE)
+
+  # Read metadata from Excel
+  df <- readxl::read_excel(excel_path, sheet = sheet)
+  idx <- which(trimws(df[[accession_col]]) == trimws(accession_id))
+  if (length(idx) == 0) stop(sprintf("❌ Accession %s not found in Excel.", accession_id))
+
+  # Extract and sanitize naming info
+  author_val  <- as.character(df[[author_col]][idx[1]])
+  year_val    <- as.character(df[[year_col]][idx[1]])
+  setting_val <- as.character(df[[setting_col]][idx[1]])
+
+  author_val  <- ifelse(is.na(author_val)  || trimws(author_val)  == "", "unknown", author_val)
+  year_val    <- ifelse(is.na(year_val)    || trimws(year_val)    == "", "0000", year_val)
+  setting_val <- ifelse(is.na(setting_val) || trimws(setting_val) == "", "unspecified", setting_val)
+
+  author   <- gsub("[^A-Za-z0-9]", "_", trimws(author_val))
+  year     <- gsub("[^0-9]", "", year_val)
+  setting  <- gsub("[^A-Za-z0-9]", "_", trimws(setting_val))
+  accession_clean <- gsub("[^A-Za-z0-9]", "", accession_id)
+  base_prefix <- paste(author, year, setting, accession_clean, sep = "_")
+  base_prefix <- gsub("_+", "_", base_prefix)
+
+  # Fetch GEO dataset(s)
+  gse_list <- tryCatch({
+    GEOquery::getGEO(accession_id, GSEMatrix = TRUE)
+  }, error = function(e) stop(sprintf("❌ GEO fetch failed: %s", e$message)))
+
+  # Ensure gse_list is always a list of ExpressionSets
+if (inherits(gse_list, "ExpressionSet")) {
+  gse_list <- list(gse_list)
+}
+
+  # Process each ExpressionSet (platform) separately
+  for (i in seq_along(gse_list)) {
+    gse <- gse_list[[i]]
+    platform <- annotation(gse)
+
+    obj_name <- paste(base_prefix, platform, sep = "_")
+    obj_name <- gsub("_+", "_", obj_name)
+
+    message(sprintf("🔧 Processing %s", obj_name))
+
+    se <- SummarizedExperiment::makeSummarizedExperimentFromExpressionSet(gse)
+    rownames(se) <- rownames(Biobase::exprs(gse))
+    assign(obj_name, se, envir = envir)
+
+    # Extract components
+    counts <- SummarizedExperiment::assay(se)
+    rd <- SummarizedExperiment::rowData(se)
+    cd <- SummarizedExperiment::colData(se)
+
+    # Detect gene symbol column
+    gene_symbol_col <- NULL
+    for (col in possible_gene_cols) {
+      if (col %in% colnames(rd)) {
+        gene_symbol_col <- col
+        break
+      }
+    }
+
+    if (!is.null(gene_symbol_col)) {
+      gene_symbols <- as.character(rd[[gene_symbol_col]])
+      valid <- !is.na(gene_symbols) & gene_symbols != ""
+      counts <- counts[valid, , drop = FALSE]
+      gene_symbols <- gene_symbols[valid]
+      rd <- rd[valid, , drop = FALSE]
+
+      # Average expression per gene
+      counts_sum <- rowsum(counts, group = gene_symbols)
+      counts_n <- table(gene_symbols)
+      counts_avg <- sweep(counts_sum, 1, counts_n, FUN = "/")
+      rownames(counts_avg) <- rownames(counts_sum)
+
+      # Simplify rowData
+      rd_df <- as.data.frame(rd)
+      rd_df$GENE_SYMBOL_AGG <- gene_symbols
+      rd_agg_df <- dplyr::group_by(rd_df, GENE_SYMBOL_AGG) |>
+        dplyr::slice(1) |>
+        dplyr::ungroup()
+      rd_agg_df$GENE_SYMBOL_AGG <- NULL
+      rd <- S4Vectors::DataFrame(rd_agg_df)
+
+      counts <- counts_avg
+    } else {
+      warning(sprintf("⚠️ No gene symbol column found for %s. Using probe-level IDs.", obj_name))
+    }
+
+    # Save parts
+    file_base <- file.path(intermediate_dir, obj_name)
+    saveRDS(counts, paste0(file_base, "_counts.RDS"))
+    saveRDS(rd,     paste0(file_base, "_rowData.RDS"))
+    saveRDS(cd,     paste0(file_base, "_colData.RDS"))
+
+    # Assemble and save full SE
+    if (!all(colnames(counts) == rownames(cd))) stop("❌ colnames(counts) ≠ rownames(colData)")
+    if (!all(rownames(counts) == rownames(rd))) stop("❌ rownames(counts) ≠ rownames(rowData)")
+
+    final_se <- SummarizedExperiment::SummarizedExperiment(
+      assays = list(counts = counts),
+      rowData = rd,
+      colData = cd
+    )
+
+    final_path <- file.path(final_output_dir, paste0(obj_name, ".RDS"))
+    saveRDS(final_se, final_path)
+    message(sprintf("✅ Saved: %s", final_path))
+  }
+}
+
+```
+
+# Fetching and generating the individual datasets
+
+blag blah some intro text
+
+## F&G se for gamma rays studies
+### F&G GSE124612
+```{r}
+process_geo_dataset(
+  accession_id = "GSE124612",
+  excel_path = "inst/extdata/Curated_datasets.xlsx",
+  intermediate_dir = "./DoReMiTra/components/",
+  final_output_dir = "./DoReMiTra/assembled"
+)
+```
+### F&G GSE104121
+```{r}
+
+process_geo_dataset(
+  accession_id = "GSE104121",
+  excel_path = "inst/extdata/Curated_datasets.xlsx",
+  intermediate_dir = "./DoReMiTra/components/",
+  final_output_dir = "./DoReMiTra/assembled"
+)
+
+```
+### F&G GSE102971
+```{r}
+
+process_geo_dataset(
+  accession_id = "GSE102971",
+  excel_path = "inst/extdata/Curated_datasets.xlsx",
+  intermediate_dir = "./DoReMiTra/components/",
+  final_output_dir = "./DoReMiTra/assembled"
+)
+
+```
+### F&G GSE97000
+```{r}
+
+process_geo_dataset(
+  accession_id = "GSE97000",
+  excel_path = "inst/extdata/Curated_datasets.xlsx",
+  intermediate_dir = "./DoReMiTra/components/",
+  final_output_dir = "./DoReMiTra/assembled"
+)
+
+```
+### F&G GSE44201
+```{r}
+
+process_geo_dataset(
+  accession_id = "GSE44201",
+  excel_path = "inst/extdata/Curated_datasets.xlsx",
+  intermediate_dir = "./DoReMiTra/components/",
+  final_output_dir = "./DoReMiTra/assembled"
+)
+
+```
+### F&G GSE43151
+```{r}
+
+process_geo_dataset(
+  accession_id = "GSE43151",
+  excel_path = "inst/extdata/Curated_datasets.xlsx",
+  intermediate_dir = "./DoReMiTra/components/",
+  final_output_dir = "./DoReMiTra/assembled"
+)
+
+```
+### F&G GSE20173
+```{r}
+
+process_geo_dataset(
+  accession_id = "GSE20173",
+  excel_path = "inst/extdata/Curated_datasets.xlsx",
+  intermediate_dir = "./DoReMiTra/components/",
+  final_output_dir = "./DoReMiTra/assembled"
+)
+
+```
+### F&G GSE23515
+```{r}
+
+process_geo_dataset(
+  accession_id = "GSE23515",
+  excel_path = "inst/extdata/Curated_datasets.xlsx",
+  intermediate_dir = "./DoReMiTra/components/",
+  final_output_dir = "./DoReMiTra/assembled"
+)
+
+```
+### F&G GSE6978
+```{r}
+
+process_geo_dataset(
+  accession_id = "GSE6978",
+  excel_path = "inst/extdata/Curated_datasets.xlsx",
+  intermediate_dir = "./DoReMiTra/components/",
+  final_output_dir = "./DoReMiTra/assembled"
+)
+
+```
+### F&G GSE63952
+```{r}
+
+process_geo_dataset(
+  accession_id = "GSE63952",
+  excel_path = "inst/extdata/Curated_datasets.xlsx",
+  intermediate_dir = "./DoReMiTra/components/",
+  final_output_dir = "./DoReMiTra/assembled"
+)
+
+```
+### F&G GSE8917
+```{r}
+
+process_geo_dataset(
+  accession_id = "GSE8917",
+  excel_path = "inst/extdata/Curated_datasets.xlsx",
+  intermediate_dir = "./DoReMiTra/components/",
+  final_output_dir = "./DoReMiTra/assembled"
+)
+
+```
+### F&G GSE36355
+```{r}
+
+process_geo_dataset(
+  accession_id = "GSE36355",
+  excel_path = "inst/extdata/Curated_datasets.xlsx",
+  intermediate_dir = "./DoReMiTra/components/",
+  final_output_dir = "./DoReMiTra/assembled"
+)
+
+```
+### F&G GSE44245
+```{r}
+
+process_geo_dataset(
+  accession_id = "GSE44245",
+  excel_path = "inst/extdata/Curated_datasets.xlsx",
+  intermediate_dir = "./DoReMiTra/components/",
+  final_output_dir = "./DoReMiTra/assembled"
+)
+
+```
+### F&G GSE64375
+```{r}
+
+process_geo_dataset(
+  accession_id = "GSE64375",
+  excel_path = "inst/extdata/Curated_datasets.xlsx",
+  intermediate_dir = "./DoReMiTra/components/",
+  final_output_dir = "./DoReMiTra/assembled"
+)
+
+```
+### F&G GSE55953
+```{r}
+
+process_geo_dataset(
+  accession_id = "GSE55953",
+  excel_path = "inst/extdata/Curated_datasets.xlsx",
+  intermediate_dir = "./DoReMiTra/components/",
+  final_output_dir = "./DoReMiTra/assembled"
+)
+
+```
+
+## F&G se for neutron studies
+### F&G GSE113509
+this dataset has 2 radiation types, we will split into 2 different se objects. here we will exract the neutron data only
+```{r}
+process_geo_dataset(
+  accession_id = "GSE113509",
+  excel_path = "inst/extdata/Curated_datasets.xlsx",
+  intermediate_dir = "./DoReMiTra/components/",
+  final_output_dir = "./DoReMiTra/assembled"
+)
+
+colData(Broustas_2018_vivo_GSE113509)$RadiationType <- dplyr::case_when(
+  grepl("Mixed-field", colData(Broustas_2018_vivo_GSE113509)$`treatment.ch1`, ignore.case = TRUE) ~ "Mixed",
+  grepl("Neutron", colData(Broustas_2018_vivo_GSE113509)$`treatment.ch1`, ignore.case = TRUE) ~ "Neutron",
+  grepl("X-ray", colData(Broustas_2018_vivo_GSE113509)$`treatment.ch1`, ignore.case = TRUE) ~ "X-ray",
+  grepl("none", colData(Broustas_2018_vivo_GSE113509)$`treatment.ch1`, ignore.case = TRUE) ~ "Control",
+  TRUE ~ "Unknown"
+)
+
+# Confirm it worked
+table(colData(Broustas_2018_vivo_GSE113509)$RadiationType)
+
+# Subset
+Broustas_2018_vivo_GSE113509_neutron <- Broustas_2018_vivo_GSE113509[, colData(Broustas_2018_vivo_GSE113509)$RadiationType %in% c("Neutron", "Control")]
+
+# Save
+saveRDS(Broustas_2018_vivo_GSE113509_neutron, "./DoReMiTra/assembled/Broustas_2018_vivo_GSE113509_neutron.RDS")
+
+```
+### F&G GSE85323
+this dataset has 2 radiation types, we will split into 2 different se objects. here we will exract the neutron data only
+```{r}
+process_geo_dataset(
+  accession_id = "GSE85323",
+  excel_path = "inst/extdata/Curated_datasets.xlsx",
+  intermediate_dir = "./DoReMiTra/components/",
+  final_output_dir = "./DoReMiTra/assembled"
+)
+
+# Extract radiation type labels from protocol.ch1
+colData(Broustas_2017_vivo_GSE85323)$RadiationType <- sub("_.*", "", colData(Broustas_2017_vivo_GSE85323)$`protocol.ch1`)
+
+Broustas_2017_vivo_GSE85323_Neutron<- Broustas_2017_vivo_GSE85323[, Broustas_2017_vivo_GSE85323$RadiationType %in% c("Neutron", "Control")]
+
+saveRDS(Broustas_2017_vivo_GSE85323_Neutron,    "DoReMiTra/assembled/Broustas_2017_vivo_GSE85323_Neutron.RDS")
+
+```
+### F&G GSE90909
+this dataset has 2 radiation types, we will split into 2 different se objects. here we will exract the neutron data only
+
+```{r}
+process_geo_dataset(
+  accession_id = "GSE90909",
+  excel_path = "inst/extdata/Curated_datasets.xlsx",
+  intermediate_dir = "./DoReMiTra/components/",
+  final_output_dir = "./DoReMiTra/assembled"
+)
+
+colData(Broustas_2017_vitro_GSE90909)$RadiationType <- dplyr::case_when(
+  grepl("X-ray", colData(Broustas_2017_vitro_GSE90909)$source_name_ch1, ignore.case = TRUE) ~ "X-ray",
+  grepl("Neutron", colData(Broustas_2017_vitro_GSE90909)$source_name_ch1, ignore.case = TRUE) ~ "Neutron",
+  grepl("Control", colData(Broustas_2017_vitro_GSE90909)$source_name_ch1, ignore.case = TRUE) ~ "Control",
+  TRUE ~ "Unknown"
+)
+
+# Check assignment worked
+
+table(colData(Broustas_2017_vitro_GSE90909)$RadiationType)
+
+# Subset neutron data
+Broustas_2017_vitro_GSE90909_neutron <- Broustas_2017_vitro_GSE90909[, colData(Broustas_2017_vitro_GSE90909)$RadiationType %in% c("Neutron", "Control")]
+
+# Save
+saveRDS(Broustas_2017_vitro_GSE90909_neutron, "./DoReMiTra/assembled/Broustas_2017_vitro_GSE90909_neutron.RDS")
+
+```
+
+## F&G se for X-ray studies
+### F&G GSE23393
+```{r}
+process_geo_dataset(
+  accession_id = "GSE23393",
+  excel_path = "inst/extdata/Curated_datasets.xlsx",
+  intermediate_dir = "./DoReMiTra/components/",
+  final_output_dir = "./DoReMiTra/assembled"
+)
+```
+### F&G GSE90909
+this dataset has 2 radiation types, we will split into 2 different se objects. here we will exract the xray data only
+```{r}
+process_geo_dataset(
+  accession_id = "GSE90909",
+  excel_path = "inst/extdata/Curated_datasets.xlsx",
+  intermediate_dir = "./DoReMiTra/components/",
+  final_output_dir = "./DoReMiTra/assembled"
+)
+
+# Subset neutron data
+Broustas_2017_vitro_GSE90909_xray <- Broustas_2017_vitro_GSE90909[, colData(Broustas_2017_vitro_GSE90909)$RadiationType %in% c("X-ray", "Control")]
+
+# Save
+saveRDS(Broustas_2017_vitro_GSE90909_xray, "./DoReMiTra/assembled/Broustas_2017_vitro_GSE90909_xray.RDS")
+
+```
+### F&G GSE65292
+```{r}
+process_geo_dataset(
+  accession_id = "GSE65292",
+  excel_path = "inst/extdata/Curated_datasets.xlsx",
+  intermediate_dir = "./DoReMiTra/components/",
+  final_output_dir = "./DoReMiTra/assembled"
+)
+```
+### F&G GSE15341
+```{r}
+process_geo_dataset(
+  accession_id = "GSE15341",
+  excel_path = "inst/extdata/Curated_datasets.xlsx",
+  intermediate_dir = "./DoReMiTra/components/",
+  final_output_dir = "./DoReMiTra/assembled"
+)
+```
+### F&G GSE20162
+```{r}
+process_geo_dataset(
+  accession_id = "GSE20162",
+  excel_path = "inst/extdata/Curated_datasets.xlsx",
+  intermediate_dir = "./DoReMiTra/components/",
+  final_output_dir = "./DoReMiTra/assembled"
+)
+```
+### F&G GSE196400
+```{r}
+process_geo_dataset(
+  accession_id = "GSE196400",
+  excel_path = "inst/extdata/Curated_datasets.xlsx",
+  intermediate_dir = "./DoReMiTra/components/",
+  final_output_dir = "./DoReMiTra/assembled"
+)
+```
+### F&G GSE184361
+```{r}
+process_geo_dataset(
+  accession_id = "GSE184361",
+  excel_path = "inst/extdata/Curated_datasets.xlsx",
+  intermediate_dir = "./DoReMiTra/components/",
+  final_output_dir = "./DoReMiTra/assembled"
+)
+```
+### F&G GSE132559
+```{r}
+process_geo_dataset(
+  accession_id = "GSE132559",
+  excel_path = "inst/extdata/Curated_datasets.xlsx",
+  intermediate_dir = "./DoReMiTra/components/",
+  final_output_dir = "./DoReMiTra/assembled"
+)
+```
+### F&G GSE137192
+```{r}
+process_geo_dataset(
+  accession_id = "GSE137192",
+  excel_path = "inst/extdata/Curated_datasets.xlsx",
+  intermediate_dir = "./DoReMiTra/components/",
+  final_output_dir = "./DoReMiTra/assembled"
+)
+```
+### F&G GSE114142
+```{r}
+process_geo_dataset(
+  accession_id = "GSE114142",
+  excel_path = "inst/extdata/Curated_datasets.xlsx",
+  intermediate_dir = "./DoReMiTra/components/",
+  final_output_dir = "./DoReMiTra/assembled"
+)
+```
+### F&G GSE113509
+this dataset has 2 radiation types, we will split into 2 different se objects. here we will exract the xray data only
+```{r}
+process_geo_dataset(
+  accession_id = "GSE113509",
+  excel_path = "inst/extdata/Curated_datasets.xlsx",
+  intermediate_dir = "./DoReMiTra/components/",
+  final_output_dir = "./DoReMiTra/assembled"
+)
+
+# Subset
+Broustas_2018_vivo_GSE113509_xray <- Broustas_2018_vivo_GSE113509[, colData(Broustas_2018_vivo_GSE113509)$RadiationType %in% c("X-ray", "Control")]
+
+# Save
+saveRDS(Broustas_2018_vivo_GSE113509_xray, "./DoReMiTra/assembled/Broustas_2018_vivo_GSE113509_xray.RDS")
+```
+### F&G GSE101402
+```{r}
+process_geo_dataset(
+  accession_id = "GSE101402",
+  excel_path = "inst/extdata/Curated_datasets.xlsx",
+  intermediate_dir = "./DoReMiTra/components/",
+  final_output_dir = "./DoReMiTra/assembled"
+)
+```
+### F&G GSE99176
+```{r}
+process_geo_dataset(
+  accession_id = "GSE99176",
+  excel_path = "inst/extdata/Curated_datasets.xlsx",
+  intermediate_dir = "./DoReMiTra/components/",
+  final_output_dir = "./DoReMiTra/assembled"
+)
+```
+### F&G GSE85323
+this dataset has 2 radiation types, we will split into 2 different se objects. here we will exract the xray data only
+```{r}
+process_geo_dataset(
+  accession_id = "GSE85323",
+  excel_path = "inst/extdata/Curated_datasets.xlsx",
+  intermediate_dir = "./DoReMiTra/components/",
+  final_output_dir = "./DoReMiTra/assembled"
+)
+
+# Extracting only neutron data
+# Extract radiation type labels from protocol.ch1
+colData(Broustas_2017_vivo_GSE85323)$RadiationType <- sub("_.*", "", colData(Broustas_2017_vivo_GSE85323)$`protocol.ch1`)
+
+Broustas_2017_vivo_GSE85323_xray<- Broustas_2017_vivo_GSE85323[, Broustas_2017_vivo_GSE85323$RadiationType %in% c("X-ray", "Control")]
+
+saveRDS(Broustas_2017_vivo_GSE85323_xray, "./DoReMiTra/assembled/Broustas_2017_vivo_GSE85323_xray.RDS")
+
+```
+### F&G GSE62623
+```{r}
+process_geo_dataset(
+  accession_id = "GSE62623",
+  excel_path = "inst/extdata/Curated_datasets.xlsx",
+  intermediate_dir = "./DoReMiTra/components/",
+  final_output_dir = "./DoReMiTra/assembled"
+)
+```
+### F&G GSE84898
+```{r}
+process_geo_dataset(
+  accession_id = "GSE84898",
+  excel_path = "inst/extdata/Curated_datasets.xlsx",
+  intermediate_dir = "./DoReMiTra/components/",
+  final_output_dir = "./DoReMiTra/assembled"
+)
+```
+### F&G GSE133451
+```{r}
+process_geo_dataset(
+  accession_id = "GSE133451",
+  excel_path = "inst/extdata/Curated_datasets.xlsx",
+  intermediate_dir = "./DoReMiTra/components/",
+  final_output_dir = "./DoReMiTra/assembled"
+)
+```
+
+## F&G se for study 1
+
+Here we will create the SE for this study
+
+```{r}
+fetch_geo_datasets(,,,)
+extract_and_save_SE_parts <- function(prefix = "Gamma_GSE", output_dir = ".")
+extract_and_save_SE_parts(prefix = "Gamma_GSE", output_dir = "inst/extdata/Gamma_ray")
+
+# here we "fix the name of the column.."
+assemble_SE_from_RDS()
+save_SE_list_as_RDS()
+
+print out the SE object that you just did
+
+se_hassan_incubation_2025
+```
+
+# Session info {-}
+
+```{r}
+sessionInfo()
+```
+
