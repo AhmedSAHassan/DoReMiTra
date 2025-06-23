@@ -1,0 +1,10 @@
+.Rproj.user
+.Rhistory
+.Rdata
+.httr-oauth
+.DS_Store
+.quarto
+fetch&generate_Neutron_SE.RDS
+fetch&generate_Gamma_SE.RDS
+fetch&generate_Xray_SE.RDS
+
