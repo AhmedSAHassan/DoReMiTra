@@ -1,5 +1,6 @@
 # DoReMiTra
-<img src="man/figures/logo.png" align="right" width="120" />
+
+<img src="man/figures/logo.png" align="right" width="120"/>
 
 **DoReMiTra:** A curated data package for radiation DOse REsponse Measured In TRAnscriptomics
 
@@ -7,18 +8,18 @@ It is an R data package providing access to curated transcriptomic datasets rela
 
 All datasets are provided as **SummarizedExperiment** objects, allowing seamless integration with the **Bioconductor ecosystem**.
 
----
+------------------------------------------------------------------------
 
 ## 📦 Installation
 
-You can install the development version of `doremitra` from GitHub using:
+You can install the development version of `DoReMiTra` from GitHub using:
 
-```r
+``` r
 # Install devtools if not already installed
 install.packages("devtools")
 
-# Install doremitra from GitHub
-devtools::install_github("AhmedSAHassan/doremitra")
+# Install DoReMiTra from GitHub
+devtools::install_github("AhmedSAHassan/DoReMiTra")
 ```
 
 ## 📘 Overview
@@ -32,4 +33,3 @@ The package includes preprocessed and annotated datasets from public repositorie
 ✅ Disease status (healthy vs disease models)
 
 ✅ Experimental setting (vivo, vitro)
-
