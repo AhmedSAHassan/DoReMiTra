@@ -19,13 +19,14 @@ library(SummarizedExperiment)
 library(dplyr)
 library(S4Vectors)
 library(stringr)
+library(BIUMmisc)
 ```
 
 # Defining helper functions
 
-```{r}
-# Fetching and generating summarized experiment objects for each dataset with rownames as gene symbols
+## Fetching and generating summarized experiment objects for each dataset with rownames as gene symbols
 
+```{r}
 process_geo_dataset <- function(
     accession_id,
     excel_path,
@@ -138,10 +139,11 @@ process_geo_dataset <- function(
 
   return(se_list)
 }
+```
 
+## Exporting RDS files for each curated summarized experiment
 
-# Exporting RDS files for each curated summarized experiment
-
+```{r}
 save_se_components <- function(se_list, output_dir = ".") {
   dir.create(output_dir, showWarnings = FALSE, recursive = TRUE)
 
@@ -154,6 +156,57 @@ save_se_components <- function(se_list, output_dir = ".") {
     message(sprintf("💾 Saved: %s", basename(output_file)))
   }
 }
+
+```
+
+## Convert ensemble id to gene symbol, remove NA, choose the highest variable gene symbol in case of genes with multipe ensembel id, and add the resulting gene symbols as rownames
+
+```{r}
+
+collapse_by_symbol_variance <- function(se_object, symbol_col = "SYMBOL") {
+  # Extract expression matrix and symbol
+  counts <- assay(se_object)
+  symbols <- as.character(rowData(se_object)[[symbol_col]])
+
+  # Filter out missing symbols
+  valid <- !is.na(symbols) & symbols != ""
+  counts <- counts[valid, , drop = FALSE]
+  symbols <- symbols[valid]
+  row_data <- rowData(se_object)[valid, , drop = FALSE]
+
+  # Compute row variances
+  row_vars <- matrixStats::rowVars(as.matrix(counts))
+
+  # Build a data.frame to track symbols and variance
+  gene_df <- data.frame(
+    idx = seq_along(symbols),
+    symbol = symbols,
+    variance = row_vars,
+    stringsAsFactors = FALSE
+  )
+
+  # Select one row per symbol (highest variance)
+  best_rows <- gene_df %>%
+    group_by(symbol) %>%
+    slice_max(variance, n = 1, with_ties = FALSE) %>%
+    pull(idx)
+
+  # Subset final components
+  final_counts <- counts[best_rows, , drop = FALSE]
+  final_rowData <- row_data[best_rows, , drop = FALSE]
+  rownames(final_counts) <- symbols[best_rows]
+  rownames(final_rowData) <- symbols[best_rows]
+
+  # Build the final SE
+  final_se <- SummarizedExperiment(
+    assays = list(counts = final_counts),
+    rowData = final_rowData,
+    colData = colData(se_object)
+  )
+
+  return(final_se)
+}
+
 ```
 
 # Fetching and generating the individual datasets
@@ -1580,6 +1633,26 @@ all_se_list$SE_Broustas_2021_vivo_GSE133451_GPL11202$Organism <- all_se_list$SE_
 all_se_list$SE_Broustas_2021_vivo_GSE133451_GPL11202$Sample_id <- colnames(all_se_list$SE_Broustas_2021_vivo_GSE133451_GPL11202)
 
 print(all_se_list$SE_Broustas_2021_vivo_GSE133451_GPL11202)
+```
+
+# loading salah 2025 dataset
+
+```{r}
+
+SE_Salah_2025_vitro<- readRDS("DoReMiTra/SE/SE_Salah_2025_vitro.RDS")
+
+# convert gencode id to ensemble id
+
+SE_Salah_2025_vitro <- dds_gencode_to_ensembl(SE_Salah_2025_vitro)
+
+# For gene symbols with more than 1 ensemble id, we pick the one with higher variability. also we removed the ensemble id with no matching gene symbols
+
+SE_Salah_2025_vitro <- collapse_by_symbol_variance(SE_Salah_2025_vitro, symbol_col = "SYMBOL")
+
+print(SE_Salah_2025_vitro)
+
+saveRDS(SE_Salah_2025_vitro, "DoReMiTra/SE/SE_Salah_2025_vitro.RDS")
+
 ```
 
 # Saving summarized experiment RDS objects
