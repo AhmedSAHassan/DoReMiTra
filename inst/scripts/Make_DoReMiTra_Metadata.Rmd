@@ -55,7 +55,7 @@ generate_experimenthub_metadata <- function(
       Title = title,
       Description = description,
       RDataPath = file.path(rdata_path_base, paste0(se_name, ".RDS")),
-      BiocVersion = "3.19",  # adjust depending on target Bioconductor release
+      BiocVersion = "3.21",  # adjust depending on target Bioconductor release
       SourceType = "GEO",
       SourceUrl = paste0("https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=", accession),
       SourceVersion = as.character(source_version),
