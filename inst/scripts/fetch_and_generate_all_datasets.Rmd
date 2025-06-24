@@ -310,6 +310,19 @@ all_se_list$SE_Aryankalayil_2018_vivo_GSE104121_GPL10787$Dose <- str_replace_all
 
 all_se_list$SE_Aryankalayil_2018_vivo_GSE104121_GPL10787$Radiation_type <- str_extract(all_se_list$SE_Aryankalayil_2018_vivo_GSE104121_GPL10787$treatment.ch1, "(gamma|x-ray|neutron|mixed)[\\s-]rays?")
 
+
+# organism
+
+all_se_list$SE_Aryankalayil_2018_vivo_GSE104121_GPL10787$Organism <- all_se_list$SE_Aryankalayil_2018_vivo_GSE104121_GPL10787$organism_ch1
+
+# age
+
+all_se_list$SE_Aryankalayil_2018_vivo_GSE104121_GPL10787$Age <- all_se_list$SE_Aryankalayil_2018_vivo_GSE104121_GPL10787$age.ch1
+
+# sample id
+all_se_list$SE_Aryankalayil_2018_vivo_GSE104121_GPL10787$Sample_id <- colnames(all_se_list$SE_Aryankalayil_2018_vivo_GSE104121_GPL10787)
+
+
 # working on platform GPL21163
 
 # Sex
@@ -375,9 +388,6 @@ all_se_list$SE_Park_2017_vitro_GSE102971_GPL10332$Sex <- all_se_list$SE_Park_201
 # organism
 
 all_se_list$SE_Park_2017_vitro_GSE102971_GPL10332$Organism <- all_se_list$SE_Park_2017_vitro_GSE102971_GPL10332$organism_ch1
-
-# age
-all_se_list$SE_Park_2017_vitro_GSE102971_GPL10332$Age <- NA
 
 # sample id
 all_se_list$SE_Park_2017_vitro_GSE102971_GPL10332$Sample_id <- colnames(all_se_list$SE_Park_2017_vitro_GSE102971_GPL10332)
@@ -468,6 +478,35 @@ all_se_list$SE_Paul_2013_vitro_GSE44201_GPL6480$Sample_id <- colnames(all_se_lis
 
 
 print(all_se_list$SE_Paul_2013_vitro_GSE44201_GPL6480)
+
+
+# working on platform GPL6848
+
+colData(all_se_list$SE_Paul_2013_vitro_GSE44201_GPL6848) |>
+  as.data.frame() |>
+  View()
+
+# Dose
+all_se_list$SE_Paul_2013_vitro_GSE44201_GPL6848$Dose <- all_se_list$SE_Paul_2013_vitro_GSE44201_GPL6848$treatment.ch1
+# radiation type
+all_se_list$SE_Paul_2013_vitro_GSE44201_GPL6848$Radiation_type <- rep("gamma ray", 50)
+
+# time
+all_se_list$SE_Paul_2013_vitro_GSE44201_GPL6848$Time_point <- all_se_list$SE_Paul_2013_vitro_GSE44201_GPL6848$time.ch1
+# sex
+all_se_list$SE_Paul_2013_vitro_GSE44201_GPL6848$Sex <- all_se_list$SE_Paul_2013_vitro_GSE44201_GPL6848$gender.ch1
+# age
+all_se_list$SE_Paul_2013_vitro_GSE44201_GPL6848$Age <- all_se_list$SE_Paul_2013_vitro_GSE44201_GPL6848$age.ch1
+# organism
+all_se_list$SE_Paul_2013_vitro_GSE44201_GPL6848$Organism <- all_se_list$SE_Paul_2013_vitro_GSE44201_GPL6848$organism_ch1
+
+# sample id
+all_se_list$SE_Paul_2013_vitro_GSE44201_GPL6848$Sample_id <- colnames(all_se_list$SE_Paul_2013_vitro_GSE44201_GPL6848)
+
+
+
+print(all_se_list$SE_Paul_2013_vitro_GSE44201_GPL6480)
+
 ```
 
 ### F&G GSE43151
@@ -499,8 +538,7 @@ all_se_list$SE_NOSEL_2013_vitro_GSE43151_GPL13497$Time_point <- str_extract(all_
 
 # sex
 all_se_list$SE_NOSEL_2013_vitro_GSE43151_GPL13497$Sex <- all_se_list$SE_NOSEL_2013_vitro_GSE43151_GPL13497$gender.ch1
-# age
-all_se_list$SE_NOSEL_2013_vitro_GSE43151_GPL13497$Age <- NA
+
 # organism
 all_se_list$SE_NOSEL_2013_vitro_GSE43151_GPL13497$Organism <- all_se_list$SE_NOSEL_2013_vitro_GSE43151_GPL13497$organism_ch1
 
@@ -528,6 +566,7 @@ colData(all_se_list$SE_Girardi_2012_vitro_GSE20173_GPL6480) |>
   as.data.frame() |>
   View()
 
+# there is no informatio about the sex here
 
 treatments <- all_se_list$SE_Girardi_2012_vitro_GSE20173_GPL6480$treatment.ch1
 
@@ -604,7 +643,9 @@ all_se_list$SE_Amundson_2011_vitro_GSE23515_GPL6480$Smoking_status <- all_se_lis
 
 print(all_se_list$SE_Amundson_2011_vitro_GSE23515_GPL6480)
 ```
+
 ### F&G GSE6978
+
 ```{r}
 all_se_list <- process_geo_dataset(
   accession_id = "GSE6978",
@@ -628,10 +669,6 @@ all_se_list$SE_GRUEL_2008_vitro_GSE6978_GPL4803$Time_point <- str_extract(all_se
 # sex
 all_se_list$SE_GRUEL_2008_vitro_GSE6978_GPL4803$Sex <- rep("male", 114)
 
-# age
-
-all_se_list$SE_GRUEL_2008_vitro_GSE6978_GPL4803$Age <- NA
-
 # organism
 all_se_list$SE_GRUEL_2008_vitro_GSE6978_GPL4803$Organism <- all_se_list$SE_GRUEL_2008_vitro_GSE6978_GPL4803$organism_ch1
 
@@ -643,6 +680,7 @@ all_se_list$SE_GRUEL_2008_vitro_GSE6978_GPL4803$Cell_type <- str_extract(all_se_
 
 
 print(all_se_list$SE_GRUEL_2008_vitro_GSE6978_GPL4803)
+
 ```
 
 ### F&G GSE63952
@@ -657,6 +695,8 @@ all_se_list <- process_geo_dataset(
 colData(all_se_list$SE_Rouchka_2019_vitro_GSE63952_GPL15207) |>
   as.data.frame() |>
   View()
+
+# there is no information about sex
 
 # dose ... there is a space between the dose and the unit
 
@@ -738,6 +778,8 @@ colData(all_se_list$SE_MANIKANDAN_2014_vitro_GSE36355_GPL6883) |>
   as.data.frame() |>
   View()
 
+# there is no info about sex
+
 # dose
 all_se_list$SE_MANIKANDAN_2014_vitro_GSE36355_GPL6883$Dose <- rep(c("0Gy", "1Gy"), 8)
 
@@ -776,6 +818,8 @@ colData(all_se_list$SE_Lee_2013_vitro_GSE44245_GPL570) |>
   as.data.frame() |>
   View()
 
+# there is no info about sex here
+
 # dose
 
 all_se_list$SE_Lee_2013_vitro_GSE44245_GPL570$Dose <- c(rep("0Gy", 3), rep("5Gy", 3))
@@ -813,6 +857,8 @@ all_se_list <- process_geo_dataset(
 colData(all_se_list$SE_Rouchka_2015_vitro_GSE64375_GPL6244) |>
   as.data.frame() |>
   View()
+
+# there is no info about sex here
 
 # dose
 all_se_list$SE_Rouchka_2015_vitro_GSE64375_GPL6244$Dose <- all_se_list$SE_Rouchka_2015_vitro_GSE64375_GPL6244$radiation.dose.ch1
@@ -985,6 +1031,8 @@ all_se_list <- process_geo_dataset(
 colData(all_se_list$SE_Broustas_2017_vitro_GSE90909_GPL13497) |>
   as.data.frame() |>
   View()
+
+# there is no info about sex here
 
 # dose
 
