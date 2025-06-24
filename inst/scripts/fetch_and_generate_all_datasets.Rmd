@@ -20,6 +20,7 @@ library(dplyr)
 library(S4Vectors)
 library(stringr)
 library(BIUMmisc)
+library(matrixStats)
 ```
 
 # Defining helper functions
@@ -1648,6 +1649,15 @@ SE_Salah_2025_vitro <- dds_gencode_to_ensembl(SE_Salah_2025_vitro)
 # For gene symbols with more than 1 ensemble id, we pick the one with higher variability. also we removed the ensemble id with no matching gene symbols
 
 SE_Salah_2025_vitro <- collapse_by_symbol_variance(SE_Salah_2025_vitro, symbol_col = "SYMBOL")
+
+# adding radiation type
+
+SE_Salah_2025_vitro$Radiation_type <- rep("X-ray", 30)
+
+# adding organism
+
+SE_Salah_2025_vitro$Organism <- rep("Homo Sapiens", 30)
+
 
 print(SE_Salah_2025_vitro)
 
