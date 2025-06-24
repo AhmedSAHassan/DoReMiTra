@@ -54,13 +54,14 @@ generate_experimenthub_metadata <- function(
       Description = description,
       RDataPath = file.path(rdata_path_base, paste0(se_name, ".RDS")),
       BiocVersion = "3.21",  # adjust depending on target Bioconductor release
-      SourceType = "GEO",
+      SourceType = "GSEMatrix",
       SourceUrl = paste0("https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=", accession),
       SourceVersion = as.character(source_version),
       Species = species,
       DataProvider = "GEO",
-      #TaxonomyId = NA,
-      #Coordinate_1_based = TRUE,
+      TaxonomyId = NA,
+      Coordinate_1_based = TRUE,
+      Genome = NA,
       Maintainer = "Ahmed Hassan <ahhassan@uni-mainz.de>",
       RDataClass = "SummarizedExperiment",
       DispatchClass = "RDS",
@@ -80,14 +81,49 @@ generate_experimenthub_metadata <- function(
 ```
 
 ```{r}
-DoReMiTra_metadata <- generate_experimenthub_metadata(
+
+metadata <- generate_experimenthub_metadata(
     se_list = all_se_list,
     rdata_path_base = "DoReMiTra/SE"
 )
 
-DoReMiTra_metadata$Description[35]<- "Processed expression data from GitHub repository AhmedSAHassan/Phybion_ShortReads_Analysis related to X-ray exposure."
+metadata$Description[35]<- "Processed expression data from GitHub repository AhmedSAHassan/Phybion_ShortReads_Analysis related to X-ray exposure."
 
-readr::write_csv(DoReMiTra_metadata, "inst/extdata/DoReMiTra_Metadata.csv")
+metadata$SourceType[35]<- "RDS"
+
+#readr::write_csv(DoReMiTra_metadata, "inst/extdata/DoReMiTra_Metadata.csv")
+
+
+```
+
+```{r}
+
+# since SE_Park_2017_vitro_GSE102971_GPL10332 dataset has 2 species, we will split it into 2 rows in the metadata file
+
+new_row <- data.frame(
+  Title = "SE_Park_2017_vitro_GSE102971_GPL10332 expression dataset",
+  Description = "Processed expression data from GEO series GSE102971 related to gamma ray exposure.",
+  RDataPath = "DoReMiTra/SE/SE_Park_2017_vitro_GSE102971_GPL10332.RDS",
+  BiocVersion = "3.21",
+  SourceType = "GSEMatrix",
+  SourceUrl = "https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE102971	",
+  SourceVersion = "",
+  Species = "Macaca mulatta",
+  DataProvider = "GEO",
+  TaxonomyId = NA,
+  Coordinate_1_based = TRUE,
+  Genome = NA,
+  Maintainer = "Ahmed Hassan <ahhassan@uni-mainz.de>",
+  RDataClass = "SummarizedExperiment",
+  DispatchClass = "RDS",
+  stringsAsFactors = FALSE
+)
+
+metadata <- rbind(DoReMiTra_metadata, new_row)
+
+metadata$Species[4]<- "Homo sapiens"
+
+write.csv(metadata, "inst/extdata/metadata.csv", row.names = FALSE)
 
 
 ```
