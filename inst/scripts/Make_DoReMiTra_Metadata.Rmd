@@ -16,7 +16,6 @@ editor_options:
 #'
 #' @param se_list A named list of SummarizedExperiment objects
 #' @param rdata_path_base Path relative to inst/extdata where .RDS files will be saved
-#' @param output_path Path to save the resulting metadata.csv file
 #' @param source_version Optional, version label for datasets (default = current date)
 #' @return A data.frame of metadata written to disk
 #' @export
@@ -25,7 +24,6 @@ editor_options:
 generate_experimenthub_metadata <- function(
   se_list,
   rdata_path_base = "DoReMiTra/SE",  # path inside the package
-  output_path = "inst/extdata/metadata.csv",
   source_version =""
 ) {
   metadata_entries <- lapply(names(se_list), function(se_name) {
@@ -72,8 +70,8 @@ generate_experimenthub_metadata <- function(
 
   # Combine and write to file
   DoReMiTra_metadata_df <- do.call(rbind, metadata_entries)
-  readr::write_csv(DoReMiTra_metadata_df, output_path)
-  message("✅ ExperimentHub metadata written to: ", output_path)
+  #readr::write_csv(DoReMiTra_metadata_df, output_path)
+  #message("✅ ExperimentHub metadata written to: ", output_path)
 
   return(DoReMiTra_metadata_df)
 }
@@ -84,8 +82,13 @@ generate_experimenthub_metadata <- function(
 ```{r}
 DoReMiTra_metadata <- generate_experimenthub_metadata(
     se_list = all_se_list,
-    rdata_path_base = "DoReMiTra/SE",
-    output_path = "inst/extdata/DoReMiTra_metadata.csv"
+    rdata_path_base = "DoReMiTra/SE"
 )
+
+DoReMiTra_metadata$Description[35]<- "Processed expression data from GitHub repository AhmedSAHassan/Phybion_ShortReads_Analysis related to X-ray exposure."
+
+readr::write_csv(DoReMiTra_metadata, "inst/extdata/DoReMiTra_Metadata.csv")
+
+
 ```
 
