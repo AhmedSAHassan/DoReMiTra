@@ -15,8 +15,8 @@ editor_options:
 #' Generate metadata.csv for ExperimentHub submission
 #'
 #' @param se_list A named list of SummarizedExperiment objects
-#' @param rdata_path_base Path relative to inst/extdata or inst/ directory where .RDS files will be saved
-#' @param output_path Path to save the resulting metadata.csv file (e.g. "inst/extdata/metadata.csv")
+#' @param rdata_path_base Path relative to inst/extdata where .RDS files will be saved
+#' @param output_path Path to save the resulting metadata.csv file
 #' @param source_version Optional, version label for datasets (default = current date)
 #' @return A data.frame of metadata written to disk
 #' @export
@@ -26,7 +26,7 @@ generate_experimenthub_metadata <- function(
   se_list,
   rdata_path_base = "DoReMiTra/SE",  # path inside the package
   output_path = "inst/extdata/metadata.csv",
-  source_version = Sys.Date()
+  source_version =""
 ) {
   metadata_entries <- lapply(names(se_list), function(se_name) {
     se <- se_list[[se_name]]
@@ -61,6 +61,8 @@ generate_experimenthub_metadata <- function(
       SourceVersion = as.character(source_version),
       Species = species,
       DataProvider = "GEO",
+      #TaxonomyId = NA,
+      #Coordinate_1_based = TRUE,
       Maintainer = "Ahmed Hassan <ahhassan@uni-mainz.de>",
       RDataClass = "SummarizedExperiment",
       DispatchClass = "RDS",
@@ -71,7 +73,7 @@ generate_experimenthub_metadata <- function(
   # Combine and write to file
   DoReMiTra_metadata_df <- do.call(rbind, metadata_entries)
   readr::write_csv(DoReMiTra_metadata_df, output_path)
-  message("✅ Bioconductor ExperimentHub metadata written to: ", output_path)
+  message("✅ ExperimentHub metadata written to: ", output_path)
 
   return(DoReMiTra_metadata_df)
 }
