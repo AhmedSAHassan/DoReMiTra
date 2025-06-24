@@ -393,7 +393,6 @@ all_se_list$SE_Park_2017_vitro_GSE102971_GPL10332$Organism <- all_se_list$SE_Par
 all_se_list$SE_Park_2017_vitro_GSE102971_GPL10332$Sample_id <- colnames(all_se_list$SE_Park_2017_vitro_GSE102971_GPL10332)
 
 
-
 print(all_se_list$SE_Park_2017_vitro_GSE102971_GPL10332)
 ```
 
@@ -1684,20 +1683,22 @@ all_se_list$SE_Broustas_2021_vivo_GSE133451_GPL11202$Sample_id <- colnames(all_s
 print(all_se_list$SE_Broustas_2021_vivo_GSE133451_GPL11202)
 ```
 
-# loading Salah_2025 dataset
+# Loading Salah_2025 dataset
+
 This dataset is publicly available on GitHub -> "https://github.com/AhmedSAHassan/Phybion_ShortReads_Analysis"
 
-```{r}
-# you can fetch this dataset using the following terminal command
-
+You can fetch this dataset using the following terminal command
 "curl -L -o gse_PhyBioN_Pseudonymized.RDS https://github.com/AhmedSAHassan/Phybion_ShortReads_Analysis/raw/main/PhyBioN_SR_Analysis/gse_PhyBioN_Pseudonymized.RDS"
 
-# Or using R code
-download.file(
-  url = "https://github.com/AhmedSAHassan/Phybion_ShortReads_Analysis/raw/main/PhyBioN_SR_Analysis/gse_PhyBioN_Pseudonymized.RDS",
-  destfile = "gse_PhyBioN_Pseudonymized.RDS",
-  mode = "wb"
-)
+Or using R code
+
+ download.file(
+   url = "https://github.com/AhmedSAHassan/Phybion_ShortReads_Analysis/raw/main/PhyBioN_SR_Analysis/gse_PhyBioN_Pseudonymized.RDS",
+   destfile = "gse_PhyBioN_Pseudonymized.RDS",
+   mode = "wb"
+ )
+
+```{r}
 
 # Loading the dataset locally
 
@@ -1717,7 +1718,7 @@ SE_Salah_2025_vitro$Radiation_type <- rep("X-ray", 30)
 
 # adding organism
 
-SE_Salah_2025_vitro$Organism <- rep("Homo Sapiens", 30)
+SE_Salah_2025_vitro$Organism <- rep("Homo sapiens", 30)
 
 # adding it to the se list
 
