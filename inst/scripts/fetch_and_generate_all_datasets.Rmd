@@ -32,7 +32,7 @@ library(matrixStats)
 process_geo_dataset <- function(
     accession_id,
     excel_path,
-    # se_list = list(), # 🆕 the accumulating list of SE objects
+    se_list = list(), # 🆕 the accumulating list of SE objects
     sheet = 1,
     accession_col = "Accession_no",
     author_col = "Author",
@@ -137,11 +137,11 @@ process_geo_dataset <- function(
 
     ## TODOAHMED: this is what I want to avoid... and basically "spit out" the se thing ONLY ;)
     # Add to the accumulating list
-    # se_list[[obj_name]] <- final_se
+    se_list[[obj_name]] <- final_se
   }
 
   ## TODOAHMED - what I mean is: "hey, you even call it `final`", so for me this is what you return
-  return(final_se)
+  return(se_list)
 }
 ```
 
