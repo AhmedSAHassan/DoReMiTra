@@ -1,6 +1,6 @@
 Package: DoReMiTra
 Title: Orchestrating Blood Radiation Transcriptomic Data
-Version: 0.0.0.9000
+Version: 0.99.0
 Authors@R: c(person("Ahmed", "Salah", role = c("aut", "cre"),
                     email = "ahhassan@uni-mainz.de", 
                     comment = c(ORCID = "0000-0001-7003-4466")),
@@ -18,7 +18,9 @@ Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.2
 Suggests: 
-    testthat (>= 3.0.0)
+    testthat (>= 3.0.0),
+    knitr,
+    rmarkdown
 Config/testthat/edition: 3
 Imports: 
     ExperimentHub
