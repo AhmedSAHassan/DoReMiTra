@@ -222,6 +222,7 @@ collapse_by_symbol_variance <- function(se_object, symbol_col = "SYMBOL") {
 
   # Build the final SE
   final_se <- SummarizedExperiment(
+    ## TODOAHMED: consider calling this possibly something else, these are not truly counts..
     assays = list(counts = final_counts),
     rowData = final_rowData,
     colData = colData(se_object)
