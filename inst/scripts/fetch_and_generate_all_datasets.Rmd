@@ -20,7 +20,6 @@ library(dplyr)
 library(S4Vectors)
 library(stringr)
 ## TODOAHMED; is BIUMmisc really needed here? keep in mind it is not on CRAN so ppl would not find it
-library(BIUMmisc)
 library(matrixStats)
 ```
 
