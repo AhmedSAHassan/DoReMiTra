@@ -265,7 +265,7 @@ TODOAHMED: I am changing this one as an example to have it as blueprint for the 
 ```{r}
 all_se_list <- process_geo_dataset(
   accession_id = "GSE124612",
-  excel_path = "inst/extdata/Curated_datasets.xlsx", 
+  excel_path = system.file("extdata", "Curated_datasets.xlsx", package = "DoReMiTra"), 
   se_list = all_se_list
 )
 
@@ -328,7 +328,7 @@ print(all_se_list$SE_Amundson_2019_vivo_GSE124612_GPL11202)
 ```{r}
 all_se_list <- process_geo_dataset(
   accession_id = "GSE104121",
-  excel_path = "inst/extdata/Curated_datasets.xlsx", all_se_list
+  excel_path = system.file("extdata", "Curated_datasets.xlsx", package = "DoReMiTra"), all_se_list
 )
 
 colData(all_se_list$SE_Aryankalayil_2018_vivo_GSE104121_GPL10787) |>
@@ -427,7 +427,7 @@ print(all_se_list$SE_Aryankalayil_2018_vivo_GSE104121_GPL21163)
 ```{r}
 all_se_list <- process_geo_dataset(
   accession_id = "GSE102971",
-  excel_path = "inst/extdata/Curated_datasets.xlsx", all_se_list
+  excel_path = system.file("extdata", "Curated_datasets.xlsx", package = "DoReMiTra"), all_se_list
 )
 
 colData(all_se_list$SE_Park_2017_vitro_GSE102971_GPL10332) |>
@@ -472,7 +472,7 @@ print(all_se_list$SE_Park_2017_vitro_GSE102971_GPL10332)
 ```{r}
 all_se_list <- process_geo_dataset(
   accession_id = "GSE97000",
-  excel_path = "inst/extdata/Curated_datasets.xlsx",
+  excel_path = system.file("extdata", "Curated_datasets.xlsx", package = "DoReMiTra"),
   all_se_list
 )
 
@@ -527,7 +527,7 @@ print(all_se_list$SE_Vasilyev_2017_vitro_GSE97000_GPL17077)
 ```{r}
 all_se_list <- process_geo_dataset(
   accession_id = "GSE44201",
-  excel_path = "inst/extdata/Curated_datasets.xlsx",
+  excel_path = system.file("extdata", "Curated_datasets.xlsx", package = "DoReMiTra"),
   all_se_list
 )
 
@@ -607,7 +607,7 @@ print(all_se_list$SE_Paul_2013_vitro_GSE44201_GPL6848)
 ```{r}
 all_se_list <- process_geo_dataset(
   accession_id = "GSE43151",
-  excel_path = "inst/extdata/Curated_datasets.xlsx",
+  excel_path = system.file("extdata", "Curated_datasets.xlsx", package = "DoReMiTra"),
   all_se_list
 )
 
@@ -656,7 +656,7 @@ print(all_se_list$SE_NOSEL_2013_vitro_GSE43151_GPL13497)
 ```{r}
 all_se_list <- process_geo_dataset(
   accession_id = "GSE20173",
-  excel_path = "inst/extdata/Curated_datasets.xlsx",
+  excel_path = system.file("extdata", "Curated_datasets.xlsx", package = "DoReMiTra"),
   all_se_list
 )
 
@@ -716,7 +716,7 @@ print(all_se_list$SE_Girardi_2012_vitro_GSE20173_GPL6480)
 ```{r}
 all_se_list <- process_geo_dataset(
   accession_id = "GSE23515",
-  excel_path = "inst/extdata/Curated_datasets.xlsx",
+  excel_path = system.file("extdata", "Curated_datasets.xlsx", package = "DoReMiTra"),
   all_se_list
 )
 
@@ -767,7 +767,7 @@ print(all_se_list$SE_Amundson_2011_vitro_GSE23515_GPL6480)
 ```{r}
 all_se_list <- process_geo_dataset(
   accession_id = "GSE6978",
-  excel_path = "inst/extdata/Curated_datasets.xlsx",
+  excel_path = system.file("extdata", "Curated_datasets.xlsx", package = "DoReMiTra"),
   all_se_list
 )
 
@@ -812,7 +812,7 @@ print(all_se_list$SE_GRUEL_2008_vitro_GSE6978_GPL4803)
 ```{r}
 all_se_list <- process_geo_dataset(
   accession_id = "GSE63952",
-  excel_path = "inst/extdata/Curated_datasets.xlsx",
+  excel_path = system.file("extdata", "Curated_datasets.xlsx", package = "DoReMiTra"),
   all_se_list
 )
 
@@ -863,7 +863,7 @@ print(all_se_list$SE_Rouchka_2019_vitro_GSE63952_GPL15207)
 ```{r}
 all_se_list <- process_geo_dataset(
   accession_id = "GSE8917",
-  excel_path = "inst/extdata/Curated_datasets.xlsx",
+  excel_path = system.file("extdata", "Curated_datasets.xlsx", package = "DoReMiTra"),
   all_se_list
 )
 
@@ -911,7 +911,7 @@ print(all_se_list$SE_Amundson_2008_vitro_GSE8917_GPL1708)
 ```{r}
 all_se_list <- process_geo_dataset(
   accession_id = "GSE36355",
-  excel_path = "inst/extdata/Curated_datasets.xlsx",
+  excel_path = system.file("extdata", "Curated_datasets.xlsx", package = "DoReMiTra"),
   all_se_list
 )
 
@@ -959,7 +959,7 @@ print(all_se_list$SE_MANIKANDAN_2014_vitro_GSE36355_GPL6883)
 ```{r}
 all_se_list <- process_geo_dataset(
   accession_id = "GSE44245",
-  excel_path = "inst/extdata/Curated_datasets.xlsx",
+  excel_path = system.file("extdata", "Curated_datasets.xlsx", package = "DoReMiTra"),
   all_se_list
 )
 
@@ -1006,7 +1006,7 @@ print(all_se_list$SE_Lee_2013_vitro_GSE44245_GPL570)
 ```{r}
 all_se_list <- process_geo_dataset(
   accession_id = "GSE64375",
-  excel_path = "inst/extdata/Curated_datasets.xlsx",
+  excel_path = system.file("extdata", "Curated_datasets.xlsx", package = "DoReMiTra"),
   all_se_list
 )
 
@@ -1052,7 +1052,7 @@ print(all_se_list$SE_Rouchka_2015_vitro_GSE64375_GPL6244)
 ```{r}
 all_se_list <- process_geo_dataset(
   accession_id = "GSE55953",
-  excel_path = "inst/extdata/Curated_datasets.xlsx",
+  excel_path = system.file("extdata", "Curated_datasets.xlsx", package = "DoReMiTra"),
   all_se_list
 )
 
@@ -1098,7 +1098,7 @@ print(all_se_list$SE_Ankermit_2015_vitro_GSE55953_GPL14550)
 ```{r}
 all_se_list <- process_geo_dataset(
   accession_id = "GSE113509",
-  excel_path = "inst/extdata/Curated_datasets.xlsx",
+  excel_path = system.file("extdata", "Curated_datasets.xlsx", package = "DoReMiTra"),
   all_se_list
 )
 
@@ -1157,7 +1157,7 @@ print(all_se_list$SE_Broustas_2018_vivo_GSE113509_GPL11202)
 ```{r}
 all_se_list <- process_geo_dataset(
   accession_id = "GSE85323",
-  excel_path = "inst/extdata/Curated_datasets.xlsx",
+  excel_path = system.file("extdata", "Curated_datasets.xlsx", package = "DoReMiTra"),
   all_se_list
 )
 
@@ -1215,7 +1215,7 @@ print(all_se_list$SE_Broustas_2017_vivo_GSE85323_GPL10333)
 ```{r}
 all_se_list <- process_geo_dataset(
   accession_id = "GSE90909",
-  excel_path = "inst/extdata/Curated_datasets.xlsx",
+  excel_path = system.file("extdata", "Curated_datasets.xlsx", package = "DoReMiTra"),
   all_se_list
 )
 
@@ -1272,7 +1272,7 @@ print(all_se_list$SE_Broustas_2017_vitro_GSE90909_GPL13497)
 ```{r}
 all_se_list <- process_geo_dataset(
   accession_id = "GSE23393",
-  excel_path = "inst/extdata/Curated_datasets.xlsx",
+  excel_path = system.file("extdata", "Curated_datasets.xlsx", package = "DoReMiTra"),
   all_se_list
 )
 
@@ -1327,7 +1327,7 @@ print(all_se_list$SE_Paul_2010_vivo_GSE23393_GPL6480)
 ```{r}
 all_se_list <- process_geo_dataset(
   accession_id = "GSE65292",
-  excel_path = "inst/extdata/Curated_datasets.xlsx",
+  excel_path = system.file("extdata", "Curated_datasets.xlsx", package = "DoReMiTra"),
   all_se_list
 )
 
@@ -1377,7 +1377,7 @@ print(all_se_list$SE_Ghandhi_2015_vitro_GSE65292_GPL13497)
 ```{r}
 all_se_list <- process_geo_dataset(
   accession_id = "GSE15341",
-  excel_path = "inst/extdata/Curated_datasets.xlsx",
+  excel_path = system.file("extdata", "Curated_datasets.xlsx", package = "DoReMiTra"),
   all_se_list
 )
 
@@ -1399,7 +1399,7 @@ all_se_list$SE_Flores_2009_vitro_GSE15341_GPL8332$Dose <- if_else(
 ```{r}
 all_se_list <- process_geo_dataset(
   accession_id = "GSE20162",
-  excel_path = "inst/extdata/Curated_datasets.xlsx",
+  excel_path = system.file("extdata", "Curated_datasets.xlsx", package = "DoReMiTra"),
   all_se_list
 )
 
@@ -1466,7 +1466,7 @@ print(all_se_list$SE_Amundson_2011_vivo_GSE20162_GPL6480)
 ```{r}
 all_se_list <- process_geo_dataset(
   accession_id = "GSE196400",
-  excel_path = "inst/extdata/Curated_datasets.xlsx",
+  excel_path = system.file("extdata", "Curated_datasets.xlsx", package = "DoReMiTra"),
   all_se_list
 )
 
@@ -1520,7 +1520,7 @@ print(all_se_list$SE_Broustas_2023_vivo_GSE196400_GPL11202)
 ```{r}
 all_se_list <- process_geo_dataset(
   accession_id = "GSE184361",
-  excel_path = "inst/extdata/Curated_datasets.xlsx",
+  excel_path = system.file("extdata", "Curated_datasets.xlsx", package = "DoReMiTra"),
   all_se_list
 )
 
@@ -1576,7 +1576,7 @@ print(all_se_list$SE_Broustas_2022_vivo_GSE184361_GPL11202)
 ```{r}
 all_se_list <- process_geo_dataset(
   accession_id = "GSE132559",
-  excel_path = "inst/extdata/Curated_datasets.xlsx",
+  excel_path = system.file("extdata", "Curated_datasets.xlsx", package = "DoReMiTra"),
   all_se_list
 )
 
@@ -1634,7 +1634,7 @@ print(all_se_list$SE_Broustas_2021_vivo_GSE132559_GPL11202)
 ```{r}
 all_se_list <- process_geo_dataset(
   accession_id = "GSE137192",
-  excel_path = "inst/extdata/Curated_datasets.xlsx",
+  excel_path = system.file("extdata", "Curated_datasets.xlsx", package = "DoReMiTra"),
   all_se_list
 )
 
@@ -1684,7 +1684,7 @@ print(all_se_list$SE_Yamaguchi_2020_vivo_GSE137192_GPL1261)
 ```{r}
 all_se_list <- process_geo_dataset(
   accession_id = "GSE114142",
-  excel_path = "inst/extdata/Curated_datasets.xlsx",
+  excel_path = system.file("extdata", "Curated_datasets.xlsx", package = "DoReMiTra"),
   all_se_list
 )
 
@@ -1737,7 +1737,7 @@ print(all_se_list$SE_Mukherjee_2019_vivo_GSE114142_GPL11202)
 ```{r}
 all_se_list <- process_geo_dataset(
   accession_id = "GSE101402",
-  excel_path = "inst/extdata/Curated_datasets.xlsx",
+  excel_path = system.file("extdata", "Curated_datasets.xlsx", package = "DoReMiTra"),
   all_se_list
 )
 
@@ -1788,7 +1788,7 @@ print(all_se_list$SE_Amundson_2018_vivo_GSE101402_GPL11202)
 ```{r}
 all_se_list <- process_geo_dataset(
   accession_id = "GSE99176",
-  excel_path = "inst/extdata/Curated_datasets.xlsx",
+  excel_path = system.file("extdata", "Curated_datasets.xlsx", package = "DoReMiTra"),
   all_se_list
 )
 
@@ -1840,7 +1840,7 @@ print(all_se_list$SE_Amundson_2018_vivo_GSE99176_GPL11202)
 ```{r}
 all_se_list <- process_geo_dataset(
   accession_id = "GSE62623",
-  excel_path = "inst/extdata/Curated_datasets.xlsx",
+  excel_path = system.file("extdata", "Curated_datasets.xlsx", package = "DoReMiTra"),
   all_se_list
 )
 
@@ -1898,7 +1898,7 @@ print(all_se_list$SE_Paul_2015_vivo_GSE62623_GPL10333)
 ```{r}
 all_se_list <- process_geo_dataset(
   accession_id = "GSE84898",
-  excel_path = "inst/extdata/Curated_datasets.xlsx",
+  excel_path = system.file("extdata", "Curated_datasets.xlsx", package = "DoReMiTra"),
   all_se_list
 )
 
@@ -1948,7 +1948,7 @@ print(all_se_list$SE_Ghandhi_2018_vivo_GSE84898_GPL13497)
 ```{r}
 all_se_list <- process_geo_dataset(
   accession_id = "GSE133451",
-  excel_path = "inst/extdata/Curated_datasets.xlsx",
+  excel_path = system.file("extdata", "Curated_datasets.xlsx", package = "DoReMiTra"),
   all_se_list
 )
 
