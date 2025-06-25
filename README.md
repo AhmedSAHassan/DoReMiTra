@@ -10,7 +10,7 @@ All datasets are provided as **SummarizedExperiment** objects, allowing seamless
 
 ------------------------------------------------------------------------
 
-## 📦 Installation
+## Installation
 
 You can install the development version of `DoReMiTra` from GitHub using:
 
@@ -22,7 +22,7 @@ install.packages("devtools")
 devtools::install_github("AhmedSAHassan/DoReMiTra")
 ```
 
-## 📘 Overview
+## Overview
 
 The package includes preprocessed and annotated datasets from public repositories (primarily GEO), with harmonized metadata and consistent formatting. Datasets can be filtered by:
 
