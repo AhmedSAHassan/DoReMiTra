@@ -2020,9 +2020,9 @@ Or using R code
    mode = "wb"
  )
  
-TODOAHMED - carefull, here you load the GSE and then you expect that the SE is somewhere already?  
+TODOAHMED - careful, here you load the GSE and then you expect that the SE is somewhere already?  
 
-```{r}
+```{r eval=FALSE}
 
 # Loading the dataset locally
 
