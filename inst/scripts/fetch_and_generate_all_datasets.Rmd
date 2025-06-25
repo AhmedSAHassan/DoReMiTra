@@ -263,27 +263,28 @@ TODOAHMED: if we have ALL this info (or most of it) encoded like this, it become
 TODOAHMED: I am changing this one as an example to have it as blueprint for the "things we need to change in the next ones"... please use a side-by-side diff to see the small-but-significant change (and do not hate me for this)
 
 ```{r}
-SE_Amundson_2019_vivo_GSE124612_GPL11202 <- process_geo_dataset(
+all_se_list <- process_geo_dataset(
   accession_id = "GSE124612",
-  excel_path = "inst/extdata/Curated_datasets.xlsx"
+  excel_path = "inst/extdata/Curated_datasets.xlsx", 
+  se_list = all_se_list
 )
 
 ## TODOAHMED: this one is probably relevant only while you run it "live" but not needed in rendering (?)
 ## OTherwise: consider using the DT::datatable? View does not behave too nicely in knitting...
 ## Or possibly: do not run this in here, it could balloon up maybe?
-colData(SE_Amundson_2019_vivo_GSE124612_GPL11202) |>
+colData(all_se_list$SE_Amundson_2019_vivo_GSE124612_GPL11202) |>
   as.data.frame() |>
-  DT::datatable()
+  head()
 
 ## correcting coldata
 
 # Dose
-SE_Amundson_2019_vivo_GSE124612_GPL11202$Dose <- ifelse(
-  grepl("control", SE_Amundson_2019_vivo_GSE124612_GPL11202$treatment.ch1, ignore.case = TRUE),
+all_se_list$SE_Amundson_2019_vivo_GSE124612_GPL11202$Dose <- ifelse(
+  grepl("control", all_se_list$SE_Amundson_2019_vivo_GSE124612_GPL11202$treatment.ch1, ignore.case = TRUE),
   "Control",
   str_replace_all(
     str_extract(
-      SE_Amundson_2019_vivo_GSE124612_GPL11202$treatment.ch1,
+      all_se_list$SE_Amundson_2019_vivo_GSE124612_GPL11202$treatment.ch1,
       "\\d+(\\.\\d+)?\\s*Gy"
     ),
     "\\s+",
@@ -292,34 +293,33 @@ SE_Amundson_2019_vivo_GSE124612_GPL11202$Dose <- ifelse(
 )
 
 # Radiation type
-SE_Amundson_2019_vivo_GSE124612_GPL11202$Radiation_type <- rep("gamma ray", 248)
+all_se_list$SE_Amundson_2019_vivo_GSE124612_GPL11202$Radiation_type <- rep("gamma ray", 248)
 
 # Sex
-SE_Amundson_2019_vivo_GSE124612_GPL11202$Sex <- str_to_title(SE_Amundson_2019_vivo_GSE124612_GPL11202$Sex.ch1)
+all_se_list$SE_Amundson_2019_vivo_GSE124612_GPL11202$Sex <- str_to_title(all_se_list$SE_Amundson_2019_vivo_GSE124612_GPL11202$Sex.ch1)
 
 # Time
-SE_Amundson_2019_vivo_GSE124612_GPL11202$Time_point <- str_replace_all(
-  str_extract(SE_Amundson_2019_vivo_GSE124612_GPL11202$treatment.ch1, "Day[_\\s]*\\d+"),
+all_se_list$SE_Amundson_2019_vivo_GSE124612_GPL11202$Time_point <- str_replace_all(
+  str_extract(all_se_list$SE_Amundson_2019_vivo_GSE124612_GPL11202$treatment.ch1, "Day[_\\s]*\\d+"),
   "[_\\s]+", ""
 )
 
 # organism
-SE_Amundson_2019_vivo_GSE124612_GPL11202$Organism <- SE_Amundson_2019_vivo_GSE124612_GPL11202$organism_ch1
+all_se_list$SE_Amundson_2019_vivo_GSE124612_GPL11202$Organism <- all_se_list$SE_Amundson_2019_vivo_GSE124612_GPL11202$organism_ch1
 
 # age
-SE_Amundson_2019_vivo_GSE124612_GPL11202$Age <- SE_Amundson_2019_vivo_GSE124612_GPL11202$age.ch1
+all_se_list$SE_Amundson_2019_vivo_GSE124612_GPL11202$Age <- all_se_list$SE_Amundson_2019_vivo_GSE124612_GPL11202$age.ch1
 
 # sample id
-SE_Amundson_2019_vivo_GSE124612_GPL11202$Sample_id <- colnames(SE_Amundson_2019_vivo_GSE124612_GPL11202)
+all_se_list$SE_Amundson_2019_vivo_GSE124612_GPL11202$Sample_id <- colnames(all_se_list$SE_Amundson_2019_vivo_GSE124612_GPL11202)
 
 # taxonomy id
-SE_Amundson_2019_vivo_GSE124612_GPL11202$TaxonomyId <- SE_Amundson_2019_vivo_GSE124612_GPL11202$taxid_ch1 
+all_se_list$SE_Amundson_2019_vivo_GSE124612_GPL11202$TaxonomyId <- all_se_list$SE_Amundson_2019_vivo_GSE124612_GPL11202$taxid_ch1 
 
 # experimental setting
-SE_Amundson_2019_vivo_GSE124612_GPL11202$Exp_setting <- rep("vivo", 248)
+all_se_list$SE_Amundson_2019_vivo_GSE124612_GPL11202$Exp_setting <- rep("vivo", 248)
 
 ## TODOAHMED: to me, HERE is where we assign this to the list object
-all_se_list[["SE_Amundson_2019_vivo_GSE124612_GPL11202"]] <- SE_Amundson_2019_vivo_GSE124612_GPL11202
 print(all_se_list$SE_Amundson_2019_vivo_GSE124612_GPL11202)
 ```
 
