@@ -23,45 +23,49 @@ editor_options:
 #' 
 generate_experimenthub_metadata <- function(
   se_list,
-  rdata_path_base = "DoReMiTra/SE",  # path inside the package
-  source_version =""
+  rdata_path_base = "DoReMiTra/SE",
+  source_version = ""
 ) {
   metadata_entries <- lapply(names(se_list), function(se_name) {
     se <- se_list[[se_name]]
 
-    # Infer accession
     accession <- stringr::str_extract(se_name, "GSE\\d+")
 
-    # Infer species (can be multiple)
     organisms <- unique(as.character(SummarizedExperiment::colData(se)$Organism))
     species <- paste(sort(organisms), collapse = "; ")
 
-    # Infer radiation type
-    if ("Radiation_type" %in% colnames(SummarizedExperiment::colData(se))) {
-      rad_types <- unique(SummarizedExperiment::colData(se)$Radiation_type)
-      radiation <- paste(sort(rad_types), collapse = "; ")
+    # TaxonomyId extraction
+    taxonomy_id <- if ("TaxonomyId" %in% colnames(SummarizedExperiment::colData(se))) {
+      ids <- unique(SummarizedExperiment::colData(se)$TaxonomyId)
+      ids <- na.omit(ids)
+      paste(sort(unique(as.character(ids))), collapse = "; ")
     } else {
-      radiation <- NA
+      NA
     }
 
-    # Title and Description
+    radiation <- if ("Radiation_type" %in% colnames(SummarizedExperiment::colData(se))) {
+      rad_types <- unique(SummarizedExperiment::colData(se)$Radiation_type)
+      paste(sort(rad_types), collapse = "; ")
+    } else {
+      NA
+    }
+
     title <- glue::glue("{se_name} expression dataset")
     description <- glue::glue("Processed expression data from GEO series {accession} related to {radiation} exposure.")
 
-    # Metadata row
     data.frame(
       Title = title,
       Description = description,
       RDataPath = file.path(rdata_path_base, paste0(se_name, ".RDS")),
-      BiocVersion = "3.21",  # adjust depending on target Bioconductor release
+      BiocVersion = "3.21",
       SourceType = "GSEMatrix",
       SourceUrl = paste0("https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=", accession),
       SourceVersion = as.character(source_version),
       Species = species,
-      DataProvider = "GEO",
-      TaxonomyId = NA,
-      Coordinate_1_based = TRUE,
+      TaxonomyId = taxonomy_id,
       Genome = NA,
+      Coordinate_1_based = TRUE,
+      DataProvider = "GEO",
       Maintainer = "Ahmed Hassan <ahhassan@uni-mainz.de>",
       RDataClass = "SummarizedExperiment",
       DispatchClass = "RDS",
@@ -69,14 +73,9 @@ generate_experimenthub_metadata <- function(
     )
   })
 
-  # Combine and write to file
   DoReMiTra_metadata_df <- do.call(rbind, metadata_entries)
-  #readr::write_csv(DoReMiTra_metadata_df, output_path)
-  #message("✅ ExperimentHub metadata written to: ", output_path)
-
   return(DoReMiTra_metadata_df)
 }
-
 
 ```
 
@@ -119,9 +118,11 @@ new_row <- data.frame(
   stringsAsFactors = FALSE
 )
 
-metadata <- rbind(DoReMiTra_metadata, new_row)
+metadata <- rbind(metadata, new_row)
 
 metadata$Species[4]<- "Homo sapiens"
+metadata$TaxonomyId[4]<- "9606"
+metadata$TaxonomyId[36] <- "9544"
 
 write.csv(metadata, "inst/extdata/metadata.csv", row.names = FALSE)
 
