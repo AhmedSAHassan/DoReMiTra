@@ -333,7 +333,7 @@ all_se_list <- process_geo_dataset(
 
 colData(all_se_list$SE_Aryankalayil_2018_vivo_GSE104121_GPL10787) |>
   as.data.frame() |>
-  View()
+  head()
 
 
 # working on platform GPL10787
@@ -432,7 +432,7 @@ all_se_list <- process_geo_dataset(
 
 colData(all_se_list$SE_Park_2017_vitro_GSE102971_GPL10332) |>
   as.data.frame() |>
-  View()
+  head()
 
 # Dose
 all_se_list$SE_Park_2017_vitro_GSE102971_GPL10332$Dose <- all_se_list$SE_Park_2017_vitro_GSE102971_GPL10332$dose.ch1
@@ -478,7 +478,7 @@ all_se_list <- process_geo_dataset(
 
 colData(all_se_list$SE_Vasilyev_2017_vitro_GSE97000_GPL17077) |>
   as.data.frame() |>
-  View()
+  head()
 
 # dose
 
@@ -535,7 +535,7 @@ all_se_list <- process_geo_dataset(
 
 colData(all_se_list$SE_Paul_2013_vitro_GSE44201_GPL6480) |>
   as.data.frame() |>
-  View()
+  head()
 
 # Dose
 all_se_list$SE_Paul_2013_vitro_GSE44201_GPL6480$Dose <- all_se_list$SE_Paul_2013_vitro_GSE44201_GPL6480$treatment.ch1
@@ -570,7 +570,7 @@ print(all_se_list$SE_Paul_2013_vitro_GSE44201_GPL6480)
 
 colData(all_se_list$SE_Paul_2013_vitro_GSE44201_GPL6848) |>
   as.data.frame() |>
-  View()
+  head()
 
 # Dose
 all_se_list$SE_Paul_2013_vitro_GSE44201_GPL6848$Dose <- all_se_list$SE_Paul_2013_vitro_GSE44201_GPL6848$treatment.ch1
@@ -613,7 +613,7 @@ all_se_list <- process_geo_dataset(
 
 colData(all_se_list$SE_NOSEL_2013_vitro_GSE43151_GPL13497) |>
   as.data.frame() |>
-  View()
+  head()
 
 # Dose
 all_se_list$SE_NOSEL_2013_vitro_GSE43151_GPL13497$Dose <- ifelse(
@@ -666,7 +666,7 @@ all_se_list <- process_geo_dataset(
 
 colData(all_se_list$SE_Girardi_2012_vitro_GSE20173_GPL6480) |>
   as.data.frame() |>
-  View()
+  head()
 
 # there is no informatio about the sex here
 
@@ -722,7 +722,7 @@ all_se_list <- process_geo_dataset(
 
 colData(all_se_list$SE_Amundson_2011_vitro_GSE23515_GPL6480) |>
   as.data.frame() |>
-  View()
+  head()
 
 
 # Dose
@@ -773,7 +773,7 @@ all_se_list <- process_geo_dataset(
 
 colData(all_se_list$SE_GRUEL_2008_vitro_GSE6978_GPL4803) |>
   as.data.frame() |>
-  View()
+  head()
 
 # Dose
 all_se_list$SE_GRUEL_2008_vitro_GSE6978_GPL4803$Dose <- str_extract(all_se_list$SE_GRUEL_2008_vitro_GSE6978_GPL4803$title, "\\d+(\\.\\d+)?Gy")
@@ -818,7 +818,7 @@ all_se_list <- process_geo_dataset(
 
 colData(all_se_list$SE_Rouchka_2019_vitro_GSE63952_GPL15207) |>
   as.data.frame() |>
-  View()
+  head()
 
 # there is no information about sex
 
@@ -869,7 +869,7 @@ all_se_list <- process_geo_dataset(
 
 colData(all_se_list$SE_Amundson_2008_vitro_GSE8917_GPL1708) |>
   as.data.frame() |>
-  View()
+  head()
 
 # dose
 
@@ -917,7 +917,7 @@ all_se_list <- process_geo_dataset(
 
 colData(all_se_list$SE_MANIKANDAN_2014_vitro_GSE36355_GPL6883) |>
   as.data.frame() |>
-  View()
+  head()
 
 # there is no info about sex
 
@@ -965,7 +965,7 @@ all_se_list <- process_geo_dataset(
 
 colData(all_se_list$SE_Lee_2013_vitro_GSE44245_GPL570) |>
   as.data.frame() |>
-  View()
+  head()
 
 # there is no info about sex here
 
@@ -1014,7 +1014,7 @@ all_se_list <- process_geo_dataset(
 
 colData(all_se_list$SE_Rouchka_2015_vitro_GSE64375_GPL6244) |>
   as.data.frame() |>
-  View()
+  head()
 
 # there is no info about sex here
 
@@ -1058,7 +1058,7 @@ all_se_list <- process_geo_dataset(
 
 colData(all_se_list$SE_Ankermit_2015_vitro_GSE55953_GPL14550) |>
   as.data.frame() |>
-  View()
+  head()
 
 # dose
 all_se_list$SE_Ankermit_2015_vitro_GSE55953_GPL14550$Dose <- rep(c("0Gy", "60Gy", "0Gy", "60Gy", "0Gy", "60Gy", "0Gy"), each = 4)
@@ -1105,7 +1105,7 @@ all_se_list <- process_geo_dataset(
 
 colData(all_se_list$SE_Broustas_2018_vivo_GSE113509_GPL11202) |>
   as.data.frame() |>
-  View()
+  head()
 
 # remove samples with mixed field irradiation
 
@@ -1164,7 +1164,7 @@ all_se_list <- process_geo_dataset(
 
 colData(all_se_list$SE_Broustas_2017_vivo_GSE85323_GPL10333) |>
   as.data.frame() |>
-  View()
+  head()
 
 # dose
 
@@ -1221,7 +1221,7 @@ all_se_list <- process_geo_dataset(
 
 colData(all_se_list$SE_Broustas_2017_vitro_GSE90909_GPL13497) |>
   as.data.frame() |>
-  View()
+  head()
 
 # there is no info about sex here
 
@@ -1279,7 +1279,7 @@ all_se_list <- process_geo_dataset(
 
 colData(all_se_list$SE_Paul_2010_vivo_GSE23393_GPL6480) |>
   as.data.frame() |>
-  View()
+  head()
 
 # dose ... there is a space between the value and the unite
 
@@ -1333,7 +1333,7 @@ all_se_list <- process_geo_dataset(
 
 colData(all_se_list$SE_Ghandhi_2015_vitro_GSE65292_GPL13497) |>
   as.data.frame() |>
-  View()
+  head()
 
 # dose
 
@@ -1385,7 +1385,7 @@ all_se_list <- process_geo_dataset(
 
 colData(all_se_list$SE_Flores_2009_vitro_GSE15341_GPL8332) |>
   as.data.frame() |>
-  View()
+  head()
 
 all_se_list$SE_Flores_2009_vitro_GSE15341_GPL8332$Dose <- if_else(
   str_detect(all_se_list$SE_Flores_2009_vitro_GSE15341_GPL8332$protocol.ch1, "non-radiated"),
@@ -1405,7 +1405,7 @@ all_se_list <- process_geo_dataset(
 
 colData(all_se_list$SE_Amundson_2011_vivo_GSE20162_GPL6480) |>
   as.data.frame() |>
-  View()
+  head()
 
 # dose
 
@@ -1472,7 +1472,7 @@ all_se_list <- process_geo_dataset(
 
 colData(all_se_list$SE_Broustas_2023_vivo_GSE196400_GPL11202) |>
   as.data.frame() |>
-  View()
+  head()
 
 # dose
 
@@ -1526,7 +1526,7 @@ all_se_list <- process_geo_dataset(
 
 colData(all_se_list$SE_Broustas_2022_vivo_GSE184361_GPL11202) |>
   as.data.frame() |>
-  View()
+  head()
 
 # dose
 all_se_list$SE_Broustas_2022_vivo_GSE184361_GPL11202$Dose <- rep(c(rep("0Gy", 5), rep("7Gy", 5)), 3)
@@ -1583,7 +1583,7 @@ all_se_list <- process_geo_dataset(
 
 colData(all_se_list$SE_Broustas_2021_vivo_GSE132559_GPL11202) |>
   as.data.frame() |>
-  View()
+  head()
 
 # dose
 
@@ -1641,7 +1641,7 @@ all_se_list <- process_geo_dataset(
 
 colData(all_se_list$SE_Yamaguchi_2020_vivo_GSE137192_GPL1261) |>
   as.data.frame() |>
-  View()
+  head()
 
 
 all_se_list$SE_Yamaguchi_2020_vivo_GSE137192_GPL1261$Dose <- if_else(
@@ -1690,7 +1690,7 @@ all_se_list <- process_geo_dataset(
 
 colData(all_se_list$SE_Mukherjee_2019_vivo_GSE114142_GPL11202) |>
   as.data.frame() |>
-  View()
+  head()
 
 # dose
 
@@ -1744,7 +1744,7 @@ all_se_list <- process_geo_dataset(
 
 colData(all_se_list$SE_Amundson_2018_vivo_GSE101402_GPL11202) |>
   as.data.frame() |>
-  View()
+  head()
 
 # dose
 
@@ -1794,7 +1794,7 @@ all_se_list <- process_geo_dataset(
 
 colData(all_se_list$SE_Amundson_2018_vivo_GSE99176_GPL11202) |>
   as.data.frame() |>
-  View()
+  head()
 
 # dose
 
@@ -1846,7 +1846,7 @@ all_se_list <- process_geo_dataset(
 
 colData(all_se_list$SE_Paul_2015_vivo_GSE62623_GPL10333) |>
   as.data.frame() |>
-  View()
+  head()
 
 # dose
 
@@ -1904,7 +1904,7 @@ all_se_list <- process_geo_dataset(
 
 colData(all_se_list$SE_Ghandhi_2018_vivo_GSE84898_GPL13497) |>
   as.data.frame() |>
-  View()
+  head()
 
 
 # dose
@@ -1954,7 +1954,7 @@ all_se_list <- process_geo_dataset(
 
 colData(all_se_list$SE_Broustas_2021_vivo_GSE133451_GPL11202) |>
   as.data.frame() |>
-  View()
+  head()
 
 
 # dose
