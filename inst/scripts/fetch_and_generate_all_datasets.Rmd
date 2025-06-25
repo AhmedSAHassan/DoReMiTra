@@ -272,6 +272,14 @@ all_se_list$SE_Amundson_2019_vivo_GSE124612_GPL11202$Age <- all_se_list$SE_Amund
 # sample id
 all_se_list$SE_Amundson_2019_vivo_GSE124612_GPL11202$Sample_id <- colnames(all_se_list$SE_Amundson_2019_vivo_GSE124612_GPL11202)
 
+# taxonomy id
+
+all_se_list$SE_Amundson_2019_vivo_GSE124612_GPL11202$TaxonomyId <- all_se_list$SE_Amundson_2019_vivo_GSE124612_GPL11202$taxid_ch1 
+
+# experimental setting
+
+all_se_list$SE_Amundson_2019_vivo_GSE124612_GPL11202$Exp_setting <- rep("vivo", 248)
+
 
 print(all_se_list$SE_Amundson_2019_vivo_GSE124612_GPL11202)
 ```
@@ -322,6 +330,14 @@ all_se_list$SE_Aryankalayil_2018_vivo_GSE104121_GPL10787$Age <- all_se_list$SE_A
 # sample id
 all_se_list$SE_Aryankalayil_2018_vivo_GSE104121_GPL10787$Sample_id <- colnames(all_se_list$SE_Aryankalayil_2018_vivo_GSE104121_GPL10787)
 
+# taxonomy id
+
+all_se_list$SE_Aryankalayil_2018_vivo_GSE104121_GPL10787$TaxonomyId <- all_se_list$SE_Aryankalayil_2018_vivo_GSE104121_GPL10787$taxid_ch1 
+
+# experimental setting
+
+all_se_list$SE_Aryankalayil_2018_vivo_GSE104121_GPL10787$Exp_setting <- rep("vivo", 24)
+
 
 # working on platform GPL21163
 
@@ -354,6 +370,14 @@ all_se_list$SE_Aryankalayil_2018_vivo_GSE104121_GPL21163$Age <- all_se_list$SE_A
 
 # sample id
 all_se_list$SE_Aryankalayil_2018_vivo_GSE104121_GPL21163$Sample_id <- colnames(all_se_list$SE_Aryankalayil_2018_vivo_GSE104121_GPL21163)
+
+# taxonomy id
+
+all_se_list$SE_Aryankalayil_2018_vivo_GSE104121_GPL21163$TaxonomyId <- all_se_list$SE_Aryankalayil_2018_vivo_GSE104121_GPL21163$taxid_ch1 
+
+# experimental setting
+
+all_se_list$SE_Aryankalayil_2018_vivo_GSE104121_GPL21163$Exp_setting <- rep("vivo", 24)
 
 
 print(all_se_list$SE_Aryankalayil_2018_vivo_GSE104121_GPL21163)
@@ -392,8 +416,16 @@ all_se_list$SE_Park_2017_vitro_GSE102971_GPL10332$Organism <- all_se_list$SE_Par
 # sample id
 all_se_list$SE_Park_2017_vitro_GSE102971_GPL10332$Sample_id <- colnames(all_se_list$SE_Park_2017_vitro_GSE102971_GPL10332)
 
+# taxonomy id
+
+all_se_list$SE_Park_2017_vitro_GSE102971_GPL10332$TaxonomyId <- all_se_list$SE_Park_2017_vitro_GSE102971_GPL10332$taxid_ch1 
+
+# experimental setting
+
+all_se_list$SE_Park_2017_vitro_GSE102971_GPL10332$Exp_setting <- rep("vitro", 167)
 
 print(all_se_list$SE_Park_2017_vitro_GSE102971_GPL10332)
+
 ```
 
 ### F&G GSE97000
@@ -438,8 +470,17 @@ all_se_list$SE_Vasilyev_2017_vitro_GSE97000_GPL17077$Organism <- all_se_list$SE_
 # sample id
 all_se_list$SE_Vasilyev_2017_vitro_GSE97000_GPL17077$Sample_id <- colnames(all_se_list$SE_Vasilyev_2017_vitro_GSE97000_GPL17077)
 
+# taxonomy id
+
+all_se_list$SE_Vasilyev_2017_vitro_GSE97000_GPL17077$TaxonomyId <- all_se_list$SE_Vasilyev_2017_vitro_GSE97000_GPL17077$taxid_ch1 
+
+# experimental setting
+
+all_se_list$SE_Vasilyev_2017_vitro_GSE97000_GPL17077$Exp_setting <- rep("vitro", 12)
+
 
 print(all_se_list$SE_Vasilyev_2017_vitro_GSE97000_GPL17077)
+
 ```
 
 ### F&G GSE44201
@@ -474,6 +515,13 @@ all_se_list$SE_Paul_2013_vitro_GSE44201_GPL6480$Organism <- all_se_list$SE_Paul_
 # sample id
 all_se_list$SE_Paul_2013_vitro_GSE44201_GPL6480$Sample_id <- colnames(all_se_list$SE_Paul_2013_vitro_GSE44201_GPL6480)
 
+# taxonomy id
+
+all_se_list$SE_Paul_2013_vitro_GSE44201_GPL6480$TaxonomyId <- all_se_list$SE_Paul_2013_vitro_GSE44201_GPL6480$taxid_ch1 
+
+# experimental setting
+
+all_se_list$SE_Paul_2013_vitro_GSE44201_GPL6480$Exp_setting <- rep("vitro", 25)
 
 
 print(all_se_list$SE_Paul_2013_vitro_GSE44201_GPL6480)
@@ -502,9 +550,16 @@ all_se_list$SE_Paul_2013_vitro_GSE44201_GPL6848$Organism <- all_se_list$SE_Paul_
 # sample id
 all_se_list$SE_Paul_2013_vitro_GSE44201_GPL6848$Sample_id <- colnames(all_se_list$SE_Paul_2013_vitro_GSE44201_GPL6848)
 
+# taxonomy id
+
+all_se_list$SE_Paul_2013_vitro_GSE44201_GPL6848$TaxonomyId <- all_se_list$SE_Paul_2013_vitro_GSE44201_GPL6848$taxid_ch1 
+
+# experimental setting
+
+all_se_list$SE_Paul_2013_vitro_GSE44201_GPL6848$Exp_setting <- rep("vitro", 50)
 
 
-print(all_se_list$SE_Paul_2013_vitro_GSE44201_GPL6480)
+print(all_se_list$SE_Paul_2013_vitro_GSE44201_GPL6848)
 
 ```
 
@@ -543,6 +598,15 @@ all_se_list$SE_NOSEL_2013_vitro_GSE43151_GPL13497$Organism <- all_se_list$SE_NOS
 
 # sample id
 all_se_list$SE_NOSEL_2013_vitro_GSE43151_GPL13497$Sample_id <- colnames(all_se_list$SE_NOSEL_2013_vitro_GSE43151_GPL13497)
+
+
+# taxonomy id
+
+all_se_list$SE_NOSEL_2013_vitro_GSE43151_GPL13497$TaxonomyId <- all_se_list$SE_NOSEL_2013_vitro_GSE43151_GPL13497$taxid_ch1 
+
+# experimental setting
+
+all_se_list$SE_NOSEL_2013_vitro_GSE43151_GPL13497$Exp_setting <- rep("vitro", 121)
 
 
 print(all_se_list$SE_NOSEL_2013_vitro_GSE43151_GPL13497)
@@ -596,6 +660,14 @@ all_se_list$SE_Girardi_2012_vitro_GSE20173_GPL6480$Organism <- all_se_list$SE_Gi
 
 all_se_list$SE_Girardi_2012_vitro_GSE20173_GPL6480$Sample_id <- colnames(all_se_list$SE_Girardi_2012_vitro_GSE20173_GPL6480)
 
+# taxonomy id
+
+all_se_list$SE_Girardi_2012_vitro_GSE20173_GPL6480$TaxonomyId <- all_se_list$SE_Girardi_2012_vitro_GSE20173_GPL6480$taxid_ch1 
+
+# experimental setting
+
+all_se_list$SE_Girardi_2012_vitro_GSE20173_GPL6480$Exp_setting <- rep("vitro", 20)
+
 
 print(all_se_list$SE_Girardi_2012_vitro_GSE20173_GPL6480)
 ```
@@ -639,6 +711,14 @@ all_se_list$SE_Amundson_2011_vitro_GSE23515_GPL6480$Sample_id <- colnames(all_se
 
 all_se_list$SE_Amundson_2011_vitro_GSE23515_GPL6480$Smoking_status <- all_se_list$SE_Amundson_2011_vitro_GSE23515_GPL6480$smoking.status.ch1
 
+# taxonomy id
+
+all_se_list$SE_Amundson_2011_vitro_GSE23515_GPL6480$TaxonomyId <- all_se_list$SE_Amundson_2011_vitro_GSE23515_GPL6480$taxid_ch1 
+
+# experimental setting
+
+all_se_list$SE_Amundson_2011_vitro_GSE23515_GPL6480$Exp_setting <- rep("vitro", 95)
+
 
 print(all_se_list$SE_Amundson_2011_vitro_GSE23515_GPL6480)
 ```
@@ -655,7 +735,6 @@ all_se_list <- process_geo_dataset(
 colData(all_se_list$SE_GRUEL_2008_vitro_GSE6978_GPL4803) |>
   as.data.frame() |>
   View()
-
 
 # Dose
 all_se_list$SE_GRUEL_2008_vitro_GSE6978_GPL4803$Dose <- str_extract(all_se_list$SE_GRUEL_2008_vitro_GSE6978_GPL4803$title, "\\d+(\\.\\d+)?Gy")
@@ -677,6 +756,13 @@ all_se_list$SE_GRUEL_2008_vitro_GSE6978_GPL4803$Sample_id <- colnames(all_se_lis
 # cell type
 all_se_list$SE_GRUEL_2008_vitro_GSE6978_GPL4803$Cell_type <- str_extract(all_se_list$SE_GRUEL_2008_vitro_GSE6978_GPL4803$title, "^[^_]+")
 
+# taxonomy id
+
+all_se_list$SE_GRUEL_2008_vitro_GSE6978_GPL4803$TaxonomyId <- all_se_list$SE_GRUEL_2008_vitro_GSE6978_GPL4803$taxid_ch1 
+
+# experimental setting
+
+all_se_list$SE_GRUEL_2008_vitro_GSE6978_GPL4803$Exp_setting <- rep("vitro", 114)
 
 print(all_se_list$SE_GRUEL_2008_vitro_GSE6978_GPL4803)
 
@@ -721,6 +807,14 @@ all_se_list$SE_Rouchka_2019_vitro_GSE63952_GPL15207$Sex <- NA
 
 all_se_list$SE_Rouchka_2019_vitro_GSE63952_GPL15207$Sample_id <- colnames(all_se_list$SE_Rouchka_2019_vitro_GSE63952_GPL15207)
 
+# taxonomy id
+
+all_se_list$SE_Rouchka_2019_vitro_GSE63952_GPL15207$TaxonomyId <- all_se_list$SE_Rouchka_2019_vitro_GSE63952_GPL15207$taxid_ch1 
+
+# experimental setting
+
+all_se_list$SE_Rouchka_2019_vitro_GSE63952_GPL15207$Exp_setting <- rep("vitro", 100)
+
 
 print(all_se_list$SE_Rouchka_2019_vitro_GSE63952_GPL15207)
 ```
@@ -760,8 +854,17 @@ all_se_list$SE_Amundson_2008_vitro_GSE8917_GPL1708$Age <- all_se_list$SE_Amundso
 # sample id
 all_se_list$SE_Amundson_2008_vitro_GSE8917_GPL1708$Sample_id <- colnames(all_se_list$SE_Amundson_2008_vitro_GSE8917_GPL1708)
 
+# taxonomy id
+
+all_se_list$SE_Amundson_2008_vitro_GSE8917_GPL1708$TaxonomyId <- all_se_list$SE_Amundson_2008_vitro_GSE8917_GPL1708$taxid_ch1 
+
+# experimental setting
+
+all_se_list$SE_Amundson_2008_vitro_GSE8917_GPL1708$Exp_setting <- rep("vitro", 50)
+
 
 print(all_se_list$SE_Amundson_2008_vitro_GSE8917_GPL1708)
+
 ```
 
 ### F&G GSE36355
@@ -799,9 +902,17 @@ all_se_list$SE_MANIKANDAN_2014_vitro_GSE36355_GPL6883$Organism <- all_se_list$SE
 
 all_se_list$SE_MANIKANDAN_2014_vitro_GSE36355_GPL6883$Sample_id <- colnames(all_se_list$SE_MANIKANDAN_2014_vitro_GSE36355_GPL6883)
 
+# taxonomy id
+
+all_se_list$SE_MANIKANDAN_2014_vitro_GSE36355_GPL6883$TaxonomyId <- all_se_list$SE_MANIKANDAN_2014_vitro_GSE36355_GPL6883$taxid_ch1 
+
+# experimental setting
+
+all_se_list$SE_MANIKANDAN_2014_vitro_GSE36355_GPL6883$Exp_setting <- rep("vitro", 16)
 
 
 print(all_se_list$SE_MANIKANDAN_2014_vitro_GSE36355_GPL6883)
+
 ```
 
 ### F&G GSE44245
@@ -838,8 +949,17 @@ all_se_list$SE_Lee_2013_vitro_GSE44245_GPL570$Organism <- all_se_list$SE_Lee_201
 
 all_se_list$SE_Lee_2013_vitro_GSE44245_GPL570$Sample_id <- colnames(all_se_list$SE_Lee_2013_vitro_GSE44245_GPL570)
 
+# taxonomy id
+
+all_se_list$SE_Lee_2013_vitro_GSE44245_GPL570$TaxonomyId <- all_se_list$SE_Lee_2013_vitro_GSE44245_GPL570$taxid_ch1 
+
+# experimental setting
+
+all_se_list$SE_Lee_2013_vitro_GSE44245_GPL570$Exp_setting <- rep("vitro", 6)
+
 
 print(all_se_list$SE_Lee_2013_vitro_GSE44245_GPL570)
+
 ```
 
 ### F&G GSE64375
@@ -875,6 +995,14 @@ all_se_list$SE_Rouchka_2015_vitro_GSE64375_GPL6244$Organism <- all_se_list$SE_Ro
 
 # sample id
 all_se_list$SE_Rouchka_2015_vitro_GSE64375_GPL6244$Sample_id <- colnames(all_se_list$SE_Rouchka_2015_vitro_GSE64375_GPL6244)
+
+# taxonomy id
+
+all_se_list$SE_Rouchka_2015_vitro_GSE64375_GPL6244$TaxonomyId <- all_se_list$SE_Rouchka_2015_vitro_GSE64375_GPL6244$taxid_ch1 
+
+# experimental setting
+
+all_se_list$SE_Rouchka_2015_vitro_GSE64375_GPL6244$Exp_setting <- rep("vitro", 16)
 
 
 print(all_se_list$SE_Rouchka_2015_vitro_GSE64375_GPL6244)
@@ -912,8 +1040,16 @@ all_se_list$SE_Ankermit_2015_vitro_GSE55953_GPL14550$Organism <- all_se_list$SE_
 # sample id
 all_se_list$SE_Ankermit_2015_vitro_GSE55953_GPL14550$Sample_id <- colnames(all_se_list$SE_Ankermit_2015_vitro_GSE55953_GPL14550)
 
+# taxonomy id
+
+all_se_list$SE_Ankermit_2015_vitro_GSE55953_GPL14550$TaxonomyId <- all_se_list$SE_Ankermit_2015_vitro_GSE55953_GPL14550$taxid_ch1 
+
+# experimental setting
+
+all_se_list$SE_Ankermit_2015_vitro_GSE55953_GPL14550$Exp_setting <- rep("vitro", 28)
 
 print(all_se_list$SE_Ankermit_2015_vitro_GSE55953_GPL14550)
+
 ```
 
 ## F&G se for neutron studies
@@ -964,9 +1100,17 @@ all_se_list$SE_Broustas_2018_vivo_GSE113509_GPL11202$Sex <- all_se_list$SE_Brous
 # sample id
 all_se_list$SE_Broustas_2018_vivo_GSE113509_GPL11202$Sample_id <- colnames(all_se_list$SE_Broustas_2018_vivo_GSE113509_GPL11202)
 
+# taxonomy id
+
+all_se_list$SE_Broustas_2018_vivo_GSE113509_GPL11202$TaxonomyId <- all_se_list$SE_Broustas_2018_vivo_GSE113509_GPL11202$taxid_ch1 
+
+# experimental setting
+
+all_se_list$SE_Broustas_2018_vivo_GSE113509_GPL11202$Exp_setting <- rep("vivo", 18)
 
 
 print(all_se_list$SE_Broustas_2018_vivo_GSE113509_GPL11202)
+
 ```
 
 ### F&G GSE85323
@@ -1014,8 +1158,17 @@ all_se_list$SE_Broustas_2017_vivo_GSE85323_GPL10333$Organism <- all_se_list$SE_B
 # sample id
 all_se_list$SE_Broustas_2017_vivo_GSE85323_GPL10333$Sample_id <- colnames(all_se_list$SE_Broustas_2017_vivo_GSE85323_GPL10333)
 
+# taxonomy id
+
+all_se_list$SE_Broustas_2017_vivo_GSE85323_GPL10333$TaxonomyId <- all_se_list$SE_Broustas_2017_vivo_GSE85323_GPL10333$taxid_ch1 
+
+# experimental setting
+
+all_se_list$SE_Broustas_2017_vivo_GSE85323_GPL10333$Exp_setting <- rep("vivo", 72)
+
 
 print(all_se_list$SE_Broustas_2017_vivo_GSE85323_GPL10333)
+
 ```
 
 ### F&G GSE90909
@@ -1061,9 +1214,17 @@ all_se_list$SE_Broustas_2017_vitro_GSE90909_GPL13497$Organism <- all_se_list$SE_
 
 all_se_list$SE_Broustas_2017_vitro_GSE90909_GPL13497$Sample_id <- colnames(all_se_list$SE_Broustas_2017_vitro_GSE90909_GPL13497)
 
+# taxonomy id
+
+all_se_list$SE_Broustas_2017_vitro_GSE90909_GPL13497$TaxonomyId <- all_se_list$SE_Broustas_2017_vitro_GSE90909_GPL13497$taxid_ch1 
+
+# experimental setting
+
+all_se_list$SE_Broustas_2017_vitro_GSE90909_GPL13497$Exp_setting <- rep("vitro", 92)
 
 
 print(all_se_list$SE_Broustas_2017_vitro_GSE90909_GPL13497)
+
 ```
 
 ## F&G se for X-ray studies
@@ -1109,8 +1270,17 @@ all_se_list$SE_Paul_2010_vivo_GSE23393_GPL6480$Organism <- all_se_list$SE_Paul_2
 # sample id
 all_se_list$SE_Paul_2010_vivo_GSE23393_GPL6480$Sample_id <- colnames(all_se_list$SE_Paul_2010_vivo_GSE23393_GPL6480)
 
+# taxonomy id
+
+all_se_list$SE_Paul_2010_vivo_GSE23393_GPL6480$TaxonomyId <- all_se_list$SE_Paul_2010_vivo_GSE23393_GPL6480$taxid_ch1 
+
+# experimental setting
+
+all_se_list$SE_Paul_2010_vivo_GSE23393_GPL6480$Exp_setting <- rep("vivo", 16)
+
 
 print(all_se_list$SE_Paul_2010_vivo_GSE23393_GPL6480)
+
 ```
 
 ### F&G GSE65292
@@ -1147,8 +1317,20 @@ all_se_list$SE_Ghandhi_2015_vitro_GSE65292_GPL13497$Dose_rate <- all_se_list$SE_
 
 all_se_list$SE_Ghandhi_2015_vitro_GSE65292_GPL13497$Organism <- all_se_list$SE_Ghandhi_2015_vitro_GSE65292_GPL13497$organism_ch1
 
+# sample id
+all_se_list$SE_Ghandhi_2015_vitro_GSE65292_GPL13497$Sample_id <- colnames(all_se_list$SE_Ghandhi_2015_vitro_GSE65292_GPL13497)
+
+# taxonomy id
+
+all_se_list$SE_Ghandhi_2015_vitro_GSE65292_GPL13497$TaxonomyId <- all_se_list$SE_Ghandhi_2015_vitro_GSE65292_GPL13497$taxid_ch1 
+
+# experimental setting
+
+all_se_list$SE_Ghandhi_2015_vitro_GSE65292_GPL13497$Exp_setting <- rep("vitro", 35)
+
 
 print(all_se_list$SE_Ghandhi_2015_vitro_GSE65292_GPL13497)
+
 ```
 
 ### F&G GSE15341
@@ -1227,8 +1409,17 @@ all_se_list$SE_Amundson_2011_vivo_GSE20162_GPL6480$Disease_status <- ifelse(
 # sample id
 all_se_list$SE_Amundson_2011_vivo_GSE20162_GPL6480$Sample_id <- colnames(all_se_list$SE_Amundson_2011_vivo_GSE20162_GPL6480)
 
+# taxonomy id
+
+all_se_list$SE_Amundson_2011_vivo_GSE20162_GPL6480$TaxonomyId <- all_se_list$SE_Amundson_2011_vivo_GSE20162_GPL6480$taxid_ch1 
+
+# experimental setting
+
+all_se_list$SE_Amundson_2011_vivo_GSE20162_GPL6480$Exp_setting <- rep("vivo", 66)
+
 
 print(all_se_list$SE_Amundson_2011_vivo_GSE20162_GPL6480)
+
 ```
 
 ### F&G GSE196400
@@ -1272,6 +1463,14 @@ all_se_list$SE_Broustas_2023_vivo_GSE196400_GPL11202$Organism <- all_se_list$SE_
 
 # sample id
 all_se_list$SE_Broustas_2023_vivo_GSE196400_GPL11202$Sample_id <- colnames(all_se_list$SE_Broustas_2023_vivo_GSE196400_GPL11202)
+
+# taxonomy id
+
+all_se_list$SE_Broustas_2023_vivo_GSE196400_GPL11202$TaxonomyId <- all_se_list$SE_Broustas_2023_vivo_GSE196400_GPL11202$taxid_ch1 
+
+# experimental setting
+
+all_se_list$SE_Broustas_2023_vivo_GSE196400_GPL11202$Exp_setting <- rep("vivo", 24)
 
 
 print(all_se_list$SE_Broustas_2023_vivo_GSE196400_GPL11202)
@@ -1320,9 +1519,17 @@ all_se_list$SE_Broustas_2022_vivo_GSE184361_GPL11202$Genotype <- recode(all_se_l
 # sample id
 all_se_list$SE_Broustas_2022_vivo_GSE184361_GPL11202$Sample_id <- colnames(all_se_list$SE_Broustas_2022_vivo_GSE184361_GPL11202)
 
+# taxonomy id
+
+all_se_list$SE_Broustas_2022_vivo_GSE184361_GPL11202$TaxonomyId <- all_se_list$SE_Broustas_2022_vivo_GSE184361_GPL11202$taxid_ch1 
+
+# experimental setting
+
+all_se_list$SE_Broustas_2022_vivo_GSE184361_GPL11202$Exp_setting <- rep("vivo", 30)
 
 
 print(all_se_list$SE_Broustas_2022_vivo_GSE184361_GPL11202)
+
 ```
 
 ### F&G GSE132559
@@ -1371,7 +1578,16 @@ all_se_list$SE_Broustas_2021_vivo_GSE132559_GPL11202$Organism <- all_se_list$SE_
 # sample id
 all_se_list$SE_Broustas_2021_vivo_GSE132559_GPL11202$Sample_id <- colnames(all_se_list$SE_Broustas_2021_vivo_GSE132559_GPL11202)
 
+# taxonomy id
+
+all_se_list$SE_Broustas_2021_vivo_GSE132559_GPL11202$TaxonomyId <- all_se_list$SE_Broustas_2021_vivo_GSE132559_GPL11202$taxid_ch1 
+
+# experimental setting
+
+all_se_list$SE_Broustas_2021_vivo_GSE132559_GPL11202$Exp_setting <- rep("vivo", 24)
+
 print(all_se_list$SE_Broustas_2021_vivo_GSE132559_GPL11202)
+
 ```
 
 ### F&G GSE137192
@@ -1411,8 +1627,17 @@ all_se_list$SE_Yamaguchi_2020_vivo_GSE137192_GPL1261$Organism <- all_se_list$SE_
 # sample id
 all_se_list$SE_Yamaguchi_2020_vivo_GSE137192_GPL1261$Sample_id <- colnames(all_se_list$SE_Yamaguchi_2020_vivo_GSE137192_GPL1261)
 
+# taxonomy id
+
+all_se_list$SE_Yamaguchi_2020_vivo_GSE137192_GPL1261$TaxonomyId <- all_se_list$SE_Yamaguchi_2020_vivo_GSE137192_GPL1261$taxid_ch1 
+
+# experimental setting
+
+all_se_list$SE_Yamaguchi_2020_vivo_GSE137192_GPL1261$Exp_setting <- rep("vivo", 17)
+
 
 print(all_se_list$SE_Yamaguchi_2020_vivo_GSE137192_GPL1261)
+
 ```
 
 ### F&G GSE114142
@@ -1455,7 +1680,17 @@ all_se_list$SE_Mukherjee_2019_vivo_GSE114142_GPL11202$Genotype <- str_extract(al
 
 all_se_list$SE_Mukherjee_2019_vivo_GSE114142_GPL11202$Sample_id <- colnames(all_se_list$SE_Mukherjee_2019_vivo_GSE114142_GPL11202)
 
+# taxonomy id
+
+all_se_list$SE_Mukherjee_2019_vivo_GSE114142_GPL11202$TaxonomyId <- all_se_list$SE_Mukherjee_2019_vivo_GSE114142_GPL11202$taxid_ch1 
+
+# experimental setting
+
+all_se_list$SE_Mukherjee_2019_vivo_GSE114142_GPL11202$Exp_setting <- rep("vivo", 20)
+
+
 print(all_se_list$SE_Mukherjee_2019_vivo_GSE114142_GPL11202)
+
 ```
 
 ### F&G GSE101402
@@ -1496,6 +1731,14 @@ all_se_list$SE_Amundson_2018_vivo_GSE101402_GPL11202$Organism <- all_se_list$SE_
 
 # sample id
 all_se_list$SE_Amundson_2018_vivo_GSE101402_GPL11202$Sample_id <- colnames(all_se_list$SE_Amundson_2018_vivo_GSE101402_GPL11202)
+
+# taxonomy id
+
+all_se_list$SE_Amundson_2018_vivo_GSE101402_GPL11202$TaxonomyId <- all_se_list$SE_Amundson_2018_vivo_GSE101402_GPL11202$taxid_ch1 
+
+# experimental setting
+
+all_se_list$SE_Amundson_2018_vivo_GSE101402_GPL11202$Exp_setting <- rep("vivo", 24)
 
 
 print(all_se_list$SE_Amundson_2018_vivo_GSE101402_GPL11202)
@@ -1540,8 +1783,17 @@ all_se_list$SE_Amundson_2018_vivo_GSE99176_GPL11202$Organism <- all_se_list$SE_A
 # sample id
 all_se_list$SE_Amundson_2018_vivo_GSE99176_GPL11202$Sample_id <- colnames(all_se_list$SE_Amundson_2018_vivo_GSE99176_GPL11202)
 
+# taxonomy id
+
+all_se_list$SE_Amundson_2018_vivo_GSE99176_GPL11202$TaxonomyId <- all_se_list$SE_Amundson_2018_vivo_GSE99176_GPL11202$taxid_ch1 
+
+# experimental setting
+
+all_se_list$SE_Amundson_2018_vivo_GSE99176_GPL11202$Exp_setting <- rep("vivo", 32)
+
 
 print(all_se_list$SE_Amundson_2018_vivo_GSE99176_GPL11202)
+
 ```
 
 ### F&G GSE62623
@@ -1589,7 +1841,17 @@ all_se_list$SE_Paul_2015_vivo_GSE62623_GPL10333$Organism <- all_se_list$SE_Paul_
 
 all_se_list$SE_Paul_2015_vivo_GSE62623_GPL10333$Sample_id <- colnames(all_se_list$SE_Paul_2015_vivo_GSE62623_GPL10333)
 
+# taxonomy id
+
+all_se_list$SE_Paul_2015_vivo_GSE62623_GPL10333$TaxonomyId <- all_se_list$SE_Paul_2015_vivo_GSE62623_GPL10333$taxid_ch1 
+
+# experimental setting
+
+all_se_list$SE_Paul_2015_vivo_GSE62623_GPL10333$Exp_setting <- rep("vivo", 48)
+
+
 print(all_se_list$SE_Paul_2015_vivo_GSE62623_GPL10333)
+
 ```
 
 ### F&G GSE84898
@@ -1629,7 +1891,17 @@ all_se_list$SE_Ghandhi_2018_vivo_GSE84898_GPL13497$Organism <- all_se_list$SE_Gh
 
 all_se_list$SE_Ghandhi_2018_vivo_GSE84898_GPL13497$Sample_id <- colnames(all_se_list$SE_Ghandhi_2018_vivo_GSE84898_GPL13497)
 
+# taxonomy id
+
+all_se_list$SE_Ghandhi_2018_vivo_GSE84898_GPL13497$TaxonomyId <- all_se_list$SE_Ghandhi_2018_vivo_GSE84898_GPL13497$taxid_ch1 
+
+# experimental setting
+
+all_se_list$SE_Ghandhi_2018_vivo_GSE84898_GPL13497$Exp_setting <- rep("vivo", 20)
+
+
 print(all_se_list$SE_Ghandhi_2018_vivo_GSE84898_GPL13497)
+
 ```
 
 ### F&G GSE133451
@@ -1680,7 +1952,17 @@ all_se_list$SE_Broustas_2021_vivo_GSE133451_GPL11202$Organism <- all_se_list$SE_
 
 all_se_list$SE_Broustas_2021_vivo_GSE133451_GPL11202$Sample_id <- colnames(all_se_list$SE_Broustas_2021_vivo_GSE133451_GPL11202)
 
+# taxonomy id
+
+all_se_list$SE_Broustas_2021_vivo_GSE133451_GPL11202$TaxonomyId <- all_se_list$SE_Broustas_2021_vivo_GSE133451_GPL11202$taxid_ch1 
+
+# experimental setting
+
+all_se_list$SE_Broustas_2021_vivo_GSE133451_GPL11202$Exp_setting <- rep("vivo", 20)
+
+
 print(all_se_list$SE_Broustas_2021_vivo_GSE133451_GPL11202)
+
 ```
 
 # Loading Salah_2025 dataset
@@ -1719,6 +2001,18 @@ SE_Salah_2025_vitro$Radiation_type <- rep("X-ray", 30)
 # adding organism
 
 SE_Salah_2025_vitro$Organism <- rep("Homo sapiens", 30)
+
+# taxonomy id
+
+SE_Salah_2025_vitro$TaxonomyId <- rep("9606", 30)
+
+# experimental setting
+
+SE_Salah_2025_vitro$Exp_setting <- rep("vitro", 30)
+
+# remove unnecessary columns in the coldata
+
+colData(SE_Salah_2025_vitro) <- colData(SE_Salah_2025_vitro)[,- c(1,2,3,4,10,11,12)]
 
 # adding it to the se list
 
