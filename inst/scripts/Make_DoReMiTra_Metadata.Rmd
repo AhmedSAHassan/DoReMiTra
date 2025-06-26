@@ -50,7 +50,7 @@ generate_experimenthub_metadata <- function(
       NA
     }
 
-    title <- glue::glue("{se_name} expression dataset")
+    title <- se_name
     description <- glue::glue("Processed expression data from GEO series {accession} related to {radiation} exposure.")
 
     data.frame(
@@ -100,7 +100,7 @@ metadata$SourceType[35]<- "RDS"
 # since SE_Park_2017_vitro_GSE102971_GPL10332 dataset has 2 species, we will split it into 2 rows in the metadata file
 
 new_row <- data.frame(
-  Title = "SE_Park_2017_vitro_GSE102971_GPL10332 expression dataset",
+  Title = "SE_Park_2017_vitro_GSE102971_GPL10332_MacacaMulatta",
   Description = "Processed expression data from GEO series GSE102971 related to gamma ray exposure.",
   RDataPath = "DoReMiTra/SE/SE_Park_2017_vitro_GSE102971_GPL10332.RDS",
   BiocVersion = "3.21",
