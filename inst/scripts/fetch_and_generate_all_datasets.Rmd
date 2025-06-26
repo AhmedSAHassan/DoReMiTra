@@ -1791,8 +1791,17 @@ download.file(
    destfile = "./DoReMiTra/SE/SE_Salah_2025_vitro.RDS",
    mode = "wb"
  )
+dest_tempfile_salah <- file.path(tempdir(), "SE_Salah_2025_vitro.RDS")
+
+if (!file.exists(dest_tempfile_salah)) {
+  download.file(
+    url = "https://github.com/AhmedSAHassan/Phybion_ShortReads_Analysis/raw/main/PhyBioN_SR_Analysis/gse_PhyBioN_Pseudonymized.RDS",
+    destfile = dest_tempfile_salah,
+    mode = "wb"
+  )
+}  
  
-SE_Salah_2025_vitro<- readRDS("DoReMiTra/SE/SE_Salah_2025_vitro.RDS") |> as("SummarizedExperiment")
+SE_Salah_2025_vitro<- readRDS(dest_tempfile_salah) |> as("SummarizedExperiment")
 
 # convert gencode id to ensemble id
 rownames(SE_Salah_2025_vitro) <- substr(rownames(SE_Salah_2025_vitro), start = 1, stop = 15)
