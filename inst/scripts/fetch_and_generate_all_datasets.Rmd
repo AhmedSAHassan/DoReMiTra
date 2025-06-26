@@ -19,7 +19,6 @@ library(SummarizedExperiment)
 library(dplyr)
 library(S4Vectors)
 library(stringr)
-## TODOAHMED; is BIUMmisc really needed here? keep in mind it is not on CRAN so ppl would not find it
 library(matrixStats)
 ```
 
@@ -129,17 +128,14 @@ process_geo_dataset <- function(
     if (!all(rownames(counts) == rownames(rd))) stop("❌ rownames(counts) ≠ rownames(rowData)")
 
     final_se <- SummarizedExperiment::SummarizedExperiment(
-      assays = list(counts = counts),
+      assays = list(ExprsValues = counts),
       rowData = rd,
       colData = cd
     )
 
-    ## TODOAHMED: this is what I want to avoid... and basically "spit out" the se thing ONLY ;)
-    # Add to the accumulating list
     se_list[[obj_name]] <- final_se
   }
 
-  ## TODOAHMED - what I mean is: "hey, you even call it `final`", so for me this is what you return
   return(se_list)
 }
 ```
@@ -147,8 +143,7 @@ process_geo_dataset <- function(
 ## Exporting RDS files for each curated summarized experiment
 
 ```{r}
-## TODOAHMED: as an idea: this function saves the SEs only, but it is called save_se_components
-## what about having an extra parameter that can control this behavior? I will put some placeholders in
+
 save_se_objects <- function(se_list, output_dir = ".",
                                save_se_obj = TRUE,
                                save_se_components = TRUE) {
@@ -164,14 +159,16 @@ save_se_objects <- function(se_list, output_dir = ".",
     }
     
     if (save_se_components) {
-      ## TODOAHMED: uncomment and fill in here:
-      output_file <- file.path(output_dir, paste0(name, ".RDS"))
-      #### output_file_assays <- yadda
-      #### output_file_rd <- yadda
-      #### output_file_cd <- yadda
-      #### saveRDS(assays(se), file = output_file_assays)
-      #### saveRDS(rowData(se), file = output_file_rd)
-      #### saveRDS(colData(se), file = output_file_cd)
+      base_name <- sub("^SE_", "", name)
+      output_file_assays <- file.path(output_dir, paste0(base_name, "_counts.RDS"))
+      output_file_rd     <- file.path(output_dir, paste0(base_name, "_rowData.RDS"))
+      output_file_cd     <- file.path(output_dir, paste0(base_name, "_colData.RDS"))
+
+      # Save individual components
+      saveRDS(SummarizedExperiment::assay(se),   file = output_file_assays)
+      saveRDS(SummarizedExperiment::rowData(se), file = output_file_rd)
+      saveRDS(SummarizedExperiment::colData(se), file = output_file_cd)
+      
       message(sprintf("💾 Saved individual components for: %s", basename(output_file)))
     }
   }
@@ -179,10 +176,9 @@ save_se_objects <- function(se_list, output_dir = ".",
 
 ```
 
+## Convert ENSEMBL id to gene symbol
 
-## Convert ENSEMBL id to gene symbol, remove NA, choose the highest variable gene symbol in case of genes with multiple ENSEMBL id, and add the resulting gene symbols as rownames
-
-<!-- TODOAHMED: consider having a shorter title and putting the details in a bit of text component? -->
+Here we convert the ensemble id to gene symbol, remove NA, choose the highest variable gene symbol in case of genes with multiple ENSEMBL id. lastly, we assign the resulting gene symbols back as rownames
 
 ```{r}
 collapse_by_symbol_variance <- function(se_object, symbol_col = "SYMBOL") {
@@ -221,7 +217,6 @@ collapse_by_symbol_variance <- function(se_object, symbol_col = "SYMBOL") {
 
   # Build the final SE
   final_se <- SummarizedExperiment(
-    ## TODOAHMED: consider calling this possibly something else, these are not truly counts..
     assays = list(counts = final_counts),
     rowData = final_rowData,
     colData = colData(se_object)
@@ -234,15 +229,13 @@ collapse_by_symbol_variance <- function(se_object, symbol_col = "SYMBOL") {
 
 # Fetching and generating the individual datasets
 
-TODOAHMED: I am adding here the instance of the list of SEs, and later on the "updates to it".
-Keep in mind I would still have the least interactions with the all_se_list itself, see the changes above...
-Add a bit of "guidance"? "We first create an empty list object, where we will store the individual SE objects for the different studies we included in this scope."
+We first create an empty list object, where we will store the individual SE objects for the different studies we included in this scope.
 
 ```{r}
 all_se_list <- list()
 ```
 
-TODOAHMED: Here is also a good spot where you should say "actually, much of the metadata is in", but in a possibly messy way as everyone used a different wording, or a different column name. We will process the samples metadata for each study, with a special care for:
+Most of the GEO datasets do not provide metadata in a consistently structured or standardized format. When metadata is available, it often suffers from inconsistent wording, varying column names, and heterogeneous annotation across samples—even within the same dataset. This makes it extremely difficult to define experimental factors (e.g., Dose, Time_point) and construct appropriate design formulas for downstream modeling with tools like DESeq2 or limma. Therefore, We will process the sample-level metadata for each study, with a special care for:
 
 * the `Dose` of the radiation
 * the `Radiation_type`
@@ -259,8 +252,6 @@ TODOAHMED: if we have ALL this info (or most of it) encoded like this, it become
 ## F&G se for gamma rays studies
 
 ### F&G GSE124612
-
-TODOAHMED: I am changing this one as an example to have it as blueprint for the "things we need to change in the next ones"... please use a side-by-side diff to see the small-but-significant change (and do not hate me for this)
 
 ```{r}
 all_se_list <- process_geo_dataset(
@@ -319,7 +310,6 @@ all_se_list$SE_Amundson_2019_vivo_GSE124612_GPL11202$TaxonomyId <- all_se_list$S
 # experimental setting
 all_se_list$SE_Amundson_2019_vivo_GSE124612_GPL11202$Exp_setting <- rep("vivo", 248)
 
-## TODOAHMED: to me, HERE is where we assign this to the list object
 print(all_se_list$SE_Amundson_2019_vivo_GSE124612_GPL11202)
 ```
 
@@ -1793,17 +1783,26 @@ Or using R code
    mode = "wb"
  )
  
-TODOAHMED - careful, here you load the GSE and then you expect that the SE is somewhere already?  
-
+ 
 ```{r eval=FALSE}
-# Loading the dataset locally
 
-SE_Salah_2025_vitro<- readRDS("DoReMiTra/SE/SE_Salah_2025_vitro.RDS")
+# fetch the dataset
+
+download.file(
+   url = "https://github.com/AhmedSAHassan/Phybion_ShortReads_Analysis/raw/main/PhyBioN_SR_Analysis/gse_PhyBioN_Pseudonymized.RDS",
+   destfile = "./DoReMiTra/SE/SE_Salah_2025_vitro.RDS",
+   mode = "wb"
+ )
+ 
+SE_Salah_2025_vitro<- readRDS("DoReMiTra/SE/SE_Salah_2025_vitro.RDS") |> as("SummarizedExperiment")
+
 
 # convert gencode id to ensemble id
-SE_Salah_2025_vitro <- dds_gencode_to_ensembl(SE_Salah_2025_vitro)
+
+rownames(SE_Salah_2025_vitro) <- substr(rownames(SE_Salah_2025_vitro), start = 1, stop = 15)
 
 # For gene symbols with more than 1 ensemble id, we pick the one with higher variability. also we removed the ensemble id with no matching gene symbols
+
 SE_Salah_2025_vitro <- collapse_by_symbol_variance(SE_Salah_2025_vitro, symbol_col = "SYMBOL")
 
 # adding radiation type
@@ -1831,8 +1830,9 @@ print(SE_Salah_2025_vitro)
 # Saving summarized experiment RDS objects
 
 ```{r eval=TRUE}
-save_se_objects(all_se_list, output_dir = "../../DoReMiTra/SE", 
-                save_se_obj = TRUE, save_se_components = FALSE)
+
+save_se_objects(all_se_list, output_dir = "./DoReMiTra/", 
+                save_se_obj = TRUE, save_se_components = TRUE)
 ```
 
 # Session info {-}
