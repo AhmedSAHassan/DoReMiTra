@@ -247,7 +247,7 @@ Most of the GEO datasets do not provide metadata in a consistently structured or
 * the `TaxonomyId` according to the xxyy nomenclature
 * the `Exp_setting`, where details are provided on the in vivo/in vitro nature of the study
 
-TODOAHMED: if we have ALL this info (or most of it) encoded like this, it becomes fairly easy to jhave a "se-summary" to have an overview on each study - could be a nice function that tells a bit about the data "in a glance"?
+TODOAHMED: if we have ALL this info (or most of it) encoded like this, it becomes fairly easy to have a "se-summary" to have an overview on each study - could be a nice function that tells a bit about the data "in a glance"?
 
 ## F&G se for gamma rays studies
 
