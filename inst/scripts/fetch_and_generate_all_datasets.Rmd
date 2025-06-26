@@ -1773,24 +1773,16 @@ print(all_se_list$SE_Broustas_2021_vivo_GSE133451_GPL11202)
 This dataset is publicly available on GitHub -> "https://github.com/AhmedSAHassan/Phybion_ShortReads_Analysis"
 
 You can fetch this dataset using the following terminal command
-"curl -L -o gse_PhyBioN_Pseudonymized.RDS https://github.com/AhmedSAHassan/Phybion_ShortReads_Analysis/raw/main/PhyBioN_SR_Analysis/gse_PhyBioN_Pseudonymized.RDS"
 
-Or using R code
+```
+curl -L -o SE_Salah_2025_vitro.RDS \
+  https://github.com/AhmedSAHassan/Phybion_ShortReads_Analysis/raw/main/PhyBioN_SR_Analysis/gse_PhyBioN_Pseudonymized.RDS
+```
 
- download.file(
-   url = "https://github.com/AhmedSAHassan/Phybion_ShortReads_Analysis/raw/main/PhyBioN_SR_Analysis/gse_PhyBioN_Pseudonymized.RDS",
-   destfile = "gse_PhyBioN_Pseudonymized.RDS",
-   mode = "wb"
- )
- 
- 
-```{r eval=FALSE}
+Or using the following R code:
+
+```{r eval=TRUE}
 # fetch the dataset
-download.file(
-   url = "https://github.com/AhmedSAHassan/Phybion_ShortReads_Analysis/raw/main/PhyBioN_SR_Analysis/gse_PhyBioN_Pseudonymized.RDS",
-   destfile = "./DoReMiTra/SE/SE_Salah_2025_vitro.RDS",
-   mode = "wb"
- )
 dest_tempfile_salah <- file.path(tempdir(), "SE_Salah_2025_vitro.RDS")
 
 if (!file.exists(dest_tempfile_salah)) {
@@ -1834,7 +1826,7 @@ print(all_se_list$SE_Salah_2025_vitro)
 
 ```{r eval=TRUE}
 save_se_objects(all_se_list, output_dir = "./DoReMiTra/", 
-                save_se_obj = TRUE, save_se_components = TRUE)
+                save_se_obj = TRUE, save_se_components = FALSE)
 ```
 
 # Session info {-}
