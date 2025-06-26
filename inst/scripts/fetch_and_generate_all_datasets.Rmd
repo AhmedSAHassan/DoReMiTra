@@ -1785,9 +1785,7 @@ Or using R code
  
  
 ```{r eval=FALSE}
-
 # fetch the dataset
-
 download.file(
    url = "https://github.com/AhmedSAHassan/Phybion_ShortReads_Analysis/raw/main/PhyBioN_SR_Analysis/gse_PhyBioN_Pseudonymized.RDS",
    destfile = "./DoReMiTra/SE/SE_Salah_2025_vitro.RDS",
@@ -1796,13 +1794,10 @@ download.file(
  
 SE_Salah_2025_vitro<- readRDS("DoReMiTra/SE/SE_Salah_2025_vitro.RDS") |> as("SummarizedExperiment")
 
-
 # convert gencode id to ensemble id
-
 rownames(SE_Salah_2025_vitro) <- substr(rownames(SE_Salah_2025_vitro), start = 1, stop = 15)
 
 # For gene symbols with more than 1 ensemble id, we pick the one with higher variability. also we removed the ensemble id with no matching gene symbols
-
 SE_Salah_2025_vitro <- collapse_by_symbol_variance(SE_Salah_2025_vitro, symbol_col = "SYMBOL")
 
 # adding radiation type
