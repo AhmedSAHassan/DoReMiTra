@@ -1818,14 +1818,12 @@ colData(SE_Salah_2025_vitro) <- colData(SE_Salah_2025_vitro)[,- c(1,2,3,4,10,11,
 # adding it to the se list
 all_se_list[["SE_Salah_2025_vitro"]] <- SE_Salah_2025_vitro
 
-print(SE_Salah_2025_vitro)
-
+print(all_se_list$SE_Salah_2025_vitro)
 ```
 
 # Saving summarized experiment RDS objects
 
 ```{r eval=TRUE}
-
 save_se_objects(all_se_list, output_dir = "./DoReMiTra/", 
                 save_se_obj = TRUE, save_se_components = TRUE)
 ```
