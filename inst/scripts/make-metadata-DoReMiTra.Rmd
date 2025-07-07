@@ -94,7 +94,7 @@ generate_experimenthub_metadata <- function(
 
 metadata <- generate_experimenthub_metadata(
     se_list = all_se_list,
-    rdata_path_base = "DoReMiTra/SE"
+    rdata_path_base = "DoReMiTra"
 )
 
 metadata$Description[36]<- "Processed expression data from GitHub repository AhmedSAHassan/Phybion_ShortReads_Analysis related to X-ray exposure."
