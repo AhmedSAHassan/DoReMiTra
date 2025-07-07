@@ -718,21 +718,21 @@ all_se_list <- process_geo_dataset(
 
 # the GeneSymbol column here contains wrong inputs so we will correct it manually
 
-Entrez<- rowData(all_se_list$SE_GRUEL_2008_ExVivo_GSE6978_GPL4803)$GENE
-
-Entrez_to_symbol <- mapIds(
-  org.Hs.eg.db,
-  keys = Entrez,
-  column = "SYMBOL",
-  keytype = "ENTREZID",
-  multiVals = "first"
-)
-
-rowData(all_se_list$SE_GRUEL_2008_ExVivo_GSE6978_GPL4803)$SYMBOL<- Entrez_to_symbol
-
-# assigning the corrected gene symbols to the rownames of the se object
-
-rownames(all_se_list$SE_GRUEL_2008_ExVivo_GSE6978_GPL4803) <- rowData(all_se_list$SE_GRUEL_2008_ExVivo_GSE6978_GPL4803)$SYMBOL
+# Entrez<- rowData(all_se_list$SE_GRUEL_2008_ExVivo_GSE6978_GPL4803)$GENE
+# 
+# Entrez_to_symbol <- mapIds(
+#   org.Hs.eg.db,
+#   keys = Entrez,
+#   column = "SYMBOL",
+#   keytype = "ENTREZID",
+#   multiVals = "first"
+# )
+# 
+# rowData(all_se_list$SE_GRUEL_2008_ExVivo_GSE6978_GPL4803)$SYMBOL<- Entrez_to_symbol
+# 
+# # assigning the corrected gene symbols to the rownames of the se object
+# 
+# rownames(all_se_list$SE_GRUEL_2008_ExVivo_GSE6978_GPL4803) <- rowData(all_se_list$SE_GRUEL_2008_ExVivo_GSE6978_GPL4803)$SYMBOL
 
 # colData(all_se_list$SE_GRUEL_2008_ExVivo_GSE6978_GPL4803) |>
 #   as.data.frame() |>
