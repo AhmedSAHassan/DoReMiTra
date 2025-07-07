@@ -97,14 +97,12 @@ metadata <- generate_experimenthub_metadata(
     rdata_path_base = "DoReMiTra/SE"
 )
 
-metadata$Description[34]<- "Processed expression data from GitHub repository AhmedSAHassan/Phybion_ShortReads_Analysis related to X-ray exposure."
+metadata$Description[36]<- "Processed expression data from GitHub repository AhmedSAHassan/Phybion_ShortReads_Analysis related to X-ray exposure."
 
-metadata$SourceType[34]<- "RDS"
-metadata$DataProvider[34]<- "GitHub"
+metadata$SourceType[36]<- "RDS"
+metadata$DataProvider[36]<- "GitHub"
 
-metadata$Radiation_type[17:19]<- "Neutron; X-ray"
-
-
+metadata$Radiation_type[19:21]<- "Neutron; X-ray"
 
 ```
 
