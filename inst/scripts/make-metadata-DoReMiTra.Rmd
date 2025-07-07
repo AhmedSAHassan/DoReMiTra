@@ -124,7 +124,7 @@ metadata$Species[4]<- "Homo sapiens"
 metadata$TaxonomyId[4]<- "9606"
 metadata$TaxonomyId[36] <- "9544"
 
-write.csv(metadata, "inst/extdata/metadata.csv", row.names = FALSE)
+write.csv(metadata, "inst/extdata/metadata-DoReMiTra.csv", row.names = FALSE)
 
 
 ```
