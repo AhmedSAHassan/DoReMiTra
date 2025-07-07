@@ -10,17 +10,10 @@ editor_options:
   chunk_output_type: console
 ---
 
-```{r}
 
-#' Generate metadata.csv for ExperimentHub submission
-#'
-#' @param se_list A named list of SummarizedExperiment objects
-#' @param rdata_path_base Path relative to inst/extdata where .RDS files will be saved
-#' @param source_version Optional, version label for datasets (default = current date)
-#' @return A data.frame of metadata written to disk
-#' @export
-#' 
-#' 
+```{r}
+# Generate metadata.csv for ExperimentHub submission
+
 generate_experimenthub_metadata <- function(
   se_list,
   rdata_path_base = "DoReMiTra/SE",
@@ -28,24 +21,37 @@ generate_experimenthub_metadata <- function(
 ) {
   metadata_entries <- lapply(names(se_list), function(se_name) {
     se <- se_list[[se_name]]
+    col_data <- SummarizedExperiment::colData(se)
 
     accession <- stringr::str_extract(se_name, "GSE\\d+")
 
-    organisms <- unique(as.character(SummarizedExperiment::colData(se)$Organism))
+    organisms <- if ("Organism" %in% colnames(col_data)) {
+      unique(as.character(col_data$Organism))
+    } else {
+      NA
+    }
     species <- paste(sort(organisms), collapse = "; ")
 
-    # TaxonomyId extraction
-    taxonomy_id <- if ("TaxonomyId" %in% colnames(SummarizedExperiment::colData(se))) {
-      ids <- unique(SummarizedExperiment::colData(se)$TaxonomyId)
+    taxonomy_id <- if ("TaxonomyId" %in% colnames(col_data)) {
+      ids <- unique(col_data$TaxonomyId)
       ids <- na.omit(ids)
       paste(sort(unique(as.character(ids))), collapse = "; ")
     } else {
       NA
     }
 
-    radiation <- if ("Radiation_type" %in% colnames(SummarizedExperiment::colData(se))) {
-      rad_types <- unique(SummarizedExperiment::colData(se)$Radiation_type)
-      paste(sort(rad_types), collapse = "; ")
+    radiation <- if ("Radiation_type" %in% colnames(col_data)) {
+      paste(unique(as.character(col_data$Radiation_type)), collapse = "; ")
+    } else {
+      NA
+    }
+
+    exp_setting <- if ("Exp_setting" %in% colnames(col_data)) {
+      paste(unique(as.character(col_data$Exp_setting)), collapse = "; ")
+    } else if (grepl("_vitro_", se_name)) {
+      "vitro"
+    } else if (grepl("_vivo_", se_name)) {
+      "vivo"
     } else {
       NA
     }
@@ -66,9 +72,13 @@ generate_experimenthub_metadata <- function(
       Genome = NA,
       Coordinate_1_based = TRUE,
       DataProvider = "GEO",
-      Maintainer = "Ahmed Hassan <ahhassan@uni-mainz.de>",
+      Maintainer = "Ahmed Salah <ahhassan@uni-mainz.de>",
       RDataClass = "SummarizedExperiment",
       DispatchClass = "RDS",
+      Radiation_type = radiation,
+      Exp_setting = exp_setting,
+      Organism = species, # or just `organisms` if you prefer raw list
+      Accession = accession,
       stringsAsFactors = FALSE
     )
   })
@@ -79,6 +89,7 @@ generate_experimenthub_metadata <- function(
 
 ```
 
+
 ```{r}
 
 metadata <- generate_experimenthub_metadata(
@@ -86,46 +97,20 @@ metadata <- generate_experimenthub_metadata(
     rdata_path_base = "DoReMiTra/SE"
 )
 
-metadata$Description[35]<- "Processed expression data from GitHub repository AhmedSAHassan/Phybion_ShortReads_Analysis related to X-ray exposure."
+metadata$Description[34]<- "Processed expression data from GitHub repository AhmedSAHassan/Phybion_ShortReads_Analysis related to X-ray exposure."
 
-metadata$SourceType[35]<- "RDS"
+metadata$SourceType[34]<- "RDS"
+metadata$DataProvider[34]<- "GitHub"
 
-#readr::write_csv(DoReMiTra_metadata, "inst/extdata/DoReMiTra_Metadata.csv")
+metadata$Radiation_type[17:19]<- "Neutron; X-ray"
+
 
 
 ```
 
 ```{r}
 
-# since SE_Park_2017_vitro_GSE102971_GPL10332 dataset has 2 species, we will split it into 2 rows in the metadata file
-
-new_row <- data.frame(
-  Title = "SE_Park_2017_vitro_GSE102971_GPL10332_MacacaMulatta",
-  Description = "Processed expression data from GEO series GSE102971 related to gamma ray exposure.",
-  RDataPath = "DoReMiTra/SE/SE_Park_2017_vitro_GSE102971_GPL10332.RDS",
-  BiocVersion = "3.21",
-  SourceType = "GSEMatrix",
-  SourceUrl = "https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE102971	",
-  SourceVersion = "",
-  Species = "Macaca mulatta",
-  DataProvider = "GEO",
-  TaxonomyId = NA,
-  Coordinate_1_based = TRUE,
-  Genome = NA,
-  Maintainer = "Ahmed Hassan <ahhassan@uni-mainz.de>",
-  RDataClass = "SummarizedExperiment",
-  DispatchClass = "RDS",
-  stringsAsFactors = FALSE
-)
-
-metadata <- rbind(metadata, new_row)
-
-metadata$Species[4]<- "Homo sapiens"
-metadata$TaxonomyId[4]<- "9606"
-metadata$TaxonomyId[36] <- "9544"
-
 write.csv(metadata, "inst/extdata/metadata-DoReMiTra.csv", row.names = FALSE)
-
 
 ```
 
