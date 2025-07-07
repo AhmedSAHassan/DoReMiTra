@@ -1,5 +1,5 @@
 ---
-title: "Make_DoReMiTra_Metadata"
+title: "make-metadata-DoReMiTra"
 author: "Ahmed Hassan"
 date: "`r Sys.Date()`"
 output:
