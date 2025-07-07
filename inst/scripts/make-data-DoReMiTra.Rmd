@@ -219,7 +219,6 @@ collapse_by_symbol_variance <- function(se_object, symbol_col = "SYMBOL") {
 
   # Build the final SE
   final_se <- SummarizedExperiment(
-    #TODOAHMED
     assays = list(counts = final_counts),
     rowData = final_rowData,
     colData = colData(se_object)
@@ -946,38 +945,38 @@ all_se_list <- process_geo_dataset(
 # extract the gene symbols here because it has a different pattern compared to the pther datasets
 
 # Extract gene symbols
-
-se <- all_se_list$SE_Rouchka_2015_ExVivo_GSE64375_GPL6244
-gene_assignment <- rowData(se)$gene_assignment
-extracted_symbols <- stringr::str_match(gene_assignment, "//\\s*([^/]+)\\s*//")[, 2]
-
-# Filter valid gene symbols
-valid <- !is.na(extracted_symbols) & extracted_symbols != ""
-extracted_symbols <- extracted_symbols[valid]
-se <- se[valid, ]
-
-# Aggregate expression
-exprs_mat <- assay(se)
-exprs_sum <- rowsum(exprs_mat, group = extracted_symbols)
-exprs_n <- table(extracted_symbols)
-exprs_avg <- sweep(exprs_sum, 1, exprs_n, FUN = "/")
-rownames(exprs_avg) <- rownames(exprs_sum)
-
-# Aggregate rowData
-rd_df <- as.data.frame(rowData(se))
-rd_df$GENE_SYMBOL_AGG <- extracted_symbols
-rd_agg_df <- dplyr::group_by(rd_df, GENE_SYMBOL_AGG) |>
-  dplyr::slice(1) |> dplyr::ungroup()
-rd_agg_df$GENE_SYMBOL_AGG <- NULL
-rd <- S4Vectors::DataFrame(rd_agg_df)
-
-# Build final SE
-cd <- colData(se)
-all_se_list$SE_Rouchka_2015_ExVivo_GSE64375_GPL6244 <- SummarizedExperiment::SummarizedExperiment(
-  assays = list(exprs = exprs_avg),
-  rowData = rd,
-  colData = cd
-)
+# 
+# se <- all_se_list$SE_Rouchka_2015_ExVivo_GSE64375_GPL6244
+# gene_assignment <- rowData(se)$gene_assignment
+# extracted_symbols <- stringr::str_match(gene_assignment, "//\\s*([^/]+)\\s*//")[, 2]
+# 
+# # Filter valid gene symbols
+# valid <- !is.na(extracted_symbols) & extracted_symbols != ""
+# extracted_symbols <- extracted_symbols[valid]
+# se <- se[valid, ]
+# 
+# # Aggregate expression
+# exprs_mat <- assay(se)
+# exprs_sum <- rowsum(exprs_mat, group = extracted_symbols)
+# exprs_n <- table(extracted_symbols)
+# exprs_avg <- sweep(exprs_sum, 1, exprs_n, FUN = "/")
+# rownames(exprs_avg) <- rownames(exprs_sum)
+# 
+# # Aggregate rowData
+# rd_df <- as.data.frame(rowData(se))
+# rd_df$GENE_SYMBOL_AGG <- extracted_symbols
+# rd_agg_df <- dplyr::group_by(rd_df, GENE_SYMBOL_AGG) |>
+#   dplyr::slice(1) |> dplyr::ungroup()
+# rd_agg_df$GENE_SYMBOL_AGG <- NULL
+# rd <- S4Vectors::DataFrame(rd_agg_df)
+# 
+# # Build final SE
+# cd <- colData(se)
+# all_se_list$SE_Rouchka_2015_ExVivo_GSE64375_GPL6244 <- SummarizedExperiment::SummarizedExperiment(
+#   assays = list(exprs = exprs_avg),
+#   rowData = rd,
+#   colData = cd
+# )
 
 
 # colData(all_se_list$SE_Rouchka_2015_ExVivo_GSE64375_GPL6244) |>
