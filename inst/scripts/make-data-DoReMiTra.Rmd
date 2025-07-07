@@ -1,6 +1,6 @@
 ---
-title: "fetch_and_generate_all_datasets"
-author: "Ahmed Hassan"
+title: "Make_data"
+author: "Ahmed Salah"
 date: "`r Sys.Date()`"
 output:
   html_document:
@@ -15,6 +15,7 @@ editor_options:
 ```{r}
 library(readxl)
 library(GEOquery)
+library("org.Hs.eg.db")
 library(SummarizedExperiment)
 library(dplyr)
 library(S4Vectors)
@@ -248,8 +249,6 @@ Most of the GEO datasets do not provide metadata in a consistently structured or
 * the `TaxonomyId` according to the xxyy nomenclature
 * the `Exp_setting`, where details are provided on the in vivo/in vitro nature of the study
 
-TODOAHMED: if we have ALL this info (or most of it) encoded like this, it becomes fairly easy to jhave a "se-summary" to have an overview on each study - could be a nice function that tells a bit about the data "in a glance"?
-
 ## F&G se for gamma rays studies
 
 ### F&G GSE124612
@@ -260,10 +259,6 @@ all_se_list <- process_geo_dataset(
   excel_path = system.file("extdata", "Curated_datasets.xlsx", package = "DoReMiTra"), 
   se_list = all_se_list
 )
-
-## TODOAHMED: this one is probably relevant only while you run it "live" but not needed in rendering (?)
-## OTherwise: consider using the DT::datatable? View does not behave too nicely in knitting...
-## Or possibly: do not run this in here, it could balloon up maybe?
 
 # colData(all_se_list$SE_Amundson_2019_vivo_GSE124612_GPL11202) |>
 #   as.data.frame() |>
@@ -310,7 +305,7 @@ all_se_list$SE_Amundson_2019_vivo_GSE124612_GPL11202$Sample_id <- colnames(all_s
 all_se_list$SE_Amundson_2019_vivo_GSE124612_GPL11202$TaxonomyId <- all_se_list$SE_Amundson_2019_vivo_GSE124612_GPL11202$taxid_ch1 
 
 # experimental setting
-all_se_list$SE_Amundson_2019_vivo_GSE124612_GPL11202$Exp_setting <- rep("vivo", 248)
+all_se_list$SE_Amundson_2019_vivo_GSE124612_GPL11202$Exp_setting <- rep("InVivo", 248)
 
 print(all_se_list$SE_Amundson_2019_vivo_GSE124612_GPL11202)
 ```
@@ -361,7 +356,7 @@ all_se_list$SE_Aryankalayil_2018_vivo_GSE104121_GPL10787$Sample_id <- colnames(a
 all_se_list$SE_Aryankalayil_2018_vivo_GSE104121_GPL10787$TaxonomyId <- all_se_list$SE_Aryankalayil_2018_vivo_GSE104121_GPL10787$taxid_ch1 
 
 # experimental setting
-all_se_list$SE_Aryankalayil_2018_vivo_GSE104121_GPL10787$Exp_setting <- rep("vivo", 24)
+all_se_list$SE_Aryankalayil_2018_vivo_GSE104121_GPL10787$Exp_setting <- rep("InVivo", 24)
 
 
 # working on platform GPL21163
@@ -395,7 +390,7 @@ all_se_list$SE_Aryankalayil_2018_vivo_GSE104121_GPL21163$Sample_id <- colnames(a
 # taxonomy id
 all_se_list$SE_Aryankalayil_2018_vivo_GSE104121_GPL21163$TaxonomyId <- all_se_list$SE_Aryankalayil_2018_vivo_GSE104121_GPL21163$taxid_ch1 
 # experimental setting
-all_se_list$SE_Aryankalayil_2018_vivo_GSE104121_GPL21163$Exp_setting <- rep("vivo", 24)
+all_se_list$SE_Aryankalayil_2018_vivo_GSE104121_GPL21163$Exp_setting <- rep("InVivo", 24)
 
 print(all_se_list$SE_Aryankalayil_2018_vivo_GSE104121_GPL21163)
 ```
@@ -434,7 +429,7 @@ all_se_list$SE_Park_2017_vitro_GSE102971_GPL10332$Sample_id <- colnames(all_se_l
 all_se_list$SE_Park_2017_vitro_GSE102971_GPL10332$TaxonomyId <- all_se_list$SE_Park_2017_vitro_GSE102971_GPL10332$taxid_ch1 
 
 # experimental setting
-all_se_list$SE_Park_2017_vitro_GSE102971_GPL10332$Exp_setting <- rep("vitro", 167)
+all_se_list$SE_Park_2017_vitro_GSE102971_GPL10332$Exp_setting <- rep("ExVivo", 167)
 
 print(all_se_list$SE_Park_2017_vitro_GSE102971_GPL10332)
 ```
@@ -482,7 +477,7 @@ all_se_list$SE_Vasilyev_2017_vitro_GSE97000_GPL17077$Sample_id <- colnames(all_s
 all_se_list$SE_Vasilyev_2017_vitro_GSE97000_GPL17077$TaxonomyId <- all_se_list$SE_Vasilyev_2017_vitro_GSE97000_GPL17077$taxid_ch1 
 
 # experimental setting
-all_se_list$SE_Vasilyev_2017_vitro_GSE97000_GPL17077$Exp_setting <- rep("vitro", 12)
+all_se_list$SE_Vasilyev_2017_vitro_GSE97000_GPL17077$Exp_setting <- rep("ExVivo", 12)
 
 print(all_se_list$SE_Vasilyev_2017_vitro_GSE97000_GPL17077)
 ```
@@ -523,7 +518,7 @@ all_se_list$SE_Paul_2013_vitro_GSE44201_GPL6480$Sample_id <- colnames(all_se_lis
 all_se_list$SE_Paul_2013_vitro_GSE44201_GPL6480$TaxonomyId <- all_se_list$SE_Paul_2013_vitro_GSE44201_GPL6480$taxid_ch1 
 
 # experimental setting
-all_se_list$SE_Paul_2013_vitro_GSE44201_GPL6480$Exp_setting <- rep("vitro", 25)
+all_se_list$SE_Paul_2013_vitro_GSE44201_GPL6480$Exp_setting <- rep("ExVivo", 25)
 
 print(all_se_list$SE_Paul_2013_vitro_GSE44201_GPL6480)
 
@@ -555,7 +550,7 @@ all_se_list$SE_Paul_2013_vitro_GSE44201_GPL6848$Sample_id <- colnames(all_se_lis
 all_se_list$SE_Paul_2013_vitro_GSE44201_GPL6848$TaxonomyId <- all_se_list$SE_Paul_2013_vitro_GSE44201_GPL6848$taxid_ch1 
 
 # experimental setting
-all_se_list$SE_Paul_2013_vitro_GSE44201_GPL6848$Exp_setting <- rep("vitro", 50)
+all_se_list$SE_Paul_2013_vitro_GSE44201_GPL6848$Exp_setting <- rep("ExVivo", 50)
 
 print(all_se_list$SE_Paul_2013_vitro_GSE44201_GPL6848)
 ```
@@ -599,7 +594,7 @@ all_se_list$SE_NOSEL_2013_vitro_GSE43151_GPL13497$Sample_id <- colnames(all_se_l
 all_se_list$SE_NOSEL_2013_vitro_GSE43151_GPL13497$TaxonomyId <- all_se_list$SE_NOSEL_2013_vitro_GSE43151_GPL13497$taxid_ch1 
 
 # experimental setting
-all_se_list$SE_NOSEL_2013_vitro_GSE43151_GPL13497$Exp_setting <- rep("vitro", 121)
+all_se_list$SE_NOSEL_2013_vitro_GSE43151_GPL13497$Exp_setting <- rep("ExVivo", 121)
 
 print(all_se_list$SE_NOSEL_2013_vitro_GSE43151_GPL13497)
 ```
@@ -651,7 +646,7 @@ all_se_list$SE_Girardi_2012_vitro_GSE20173_GPL6480$Sample_id <- colnames(all_se_
 all_se_list$SE_Girardi_2012_vitro_GSE20173_GPL6480$TaxonomyId <- all_se_list$SE_Girardi_2012_vitro_GSE20173_GPL6480$taxid_ch1 
 
 # experimental setting
-all_se_list$SE_Girardi_2012_vitro_GSE20173_GPL6480$Exp_setting <- rep("vitro", 20)
+all_se_list$SE_Girardi_2012_vitro_GSE20173_GPL6480$Exp_setting <- rep("ExVivo", 20)
 
 print(all_se_list$SE_Girardi_2012_vitro_GSE20173_GPL6480)
 ```
@@ -696,7 +691,7 @@ all_se_list$SE_Amundson_2011_vitro_GSE23515_GPL6480$Smoking_status <- all_se_lis
 all_se_list$SE_Amundson_2011_vitro_GSE23515_GPL6480$TaxonomyId <- all_se_list$SE_Amundson_2011_vitro_GSE23515_GPL6480$taxid_ch1 
 
 # experimental setting
-all_se_list$SE_Amundson_2011_vitro_GSE23515_GPL6480$Exp_setting <- rep("vitro", 95)
+all_se_list$SE_Amundson_2011_vitro_GSE23515_GPL6480$Exp_setting <- rep("ExVivo", 95)
 
 print(all_se_list$SE_Amundson_2011_vitro_GSE23515_GPL6480)
 ```
@@ -709,6 +704,24 @@ all_se_list <- process_geo_dataset(
   excel_path = system.file("extdata", "Curated_datasets.xlsx", package = "DoReMiTra"),
   all_se_list
 )
+
+# the GeneSymbol column here contains wrong inputs so we will correct it manually
+
+Entrez<- rowData(all_se_list$SE_GRUEL_2008_vitro_GSE6978_GPL4803)$GENE
+
+Entrez_to_symbol <- mapIds(
+  org.Hs.eg.db,
+  keys = Entrez,
+  column = "SYMBOL",
+  keytype = "ENTREZID",
+  multiVals = "first"
+)
+
+rowData(all_se_list$SE_GRUEL_2008_vitro_GSE6978_GPL4803)$SYMBOL<- Entrez_to_symbol
+
+# assigning the corrected gene symbols to the rownames of the se object
+
+rownames(all_se_list$SE_GRUEL_2008_vitro_GSE6978_GPL4803) <- rowData(all_se_list$SE_GRUEL_2008_vitro_GSE6978_GPL4803)$SYMBOL
 
 # colData(all_se_list$SE_GRUEL_2008_vitro_GSE6978_GPL4803) |>
 #   as.data.frame() |>
@@ -738,7 +751,7 @@ all_se_list$SE_GRUEL_2008_vitro_GSE6978_GPL4803$Cell_type <- str_extract(all_se_
 all_se_list$SE_GRUEL_2008_vitro_GSE6978_GPL4803$TaxonomyId <- all_se_list$SE_GRUEL_2008_vitro_GSE6978_GPL4803$taxid_ch1 
 
 # experimental setting
-all_se_list$SE_GRUEL_2008_vitro_GSE6978_GPL4803$Exp_setting <- rep("vitro", 114)
+all_se_list$SE_GRUEL_2008_vitro_GSE6978_GPL4803$Exp_setting <- rep("ExVivo", 114)
 
 print(all_se_list$SE_GRUEL_2008_vitro_GSE6978_GPL4803)
 ```
@@ -780,7 +793,7 @@ all_se_list$SE_Rouchka_2019_vitro_GSE63952_GPL15207$Sample_id <- colnames(all_se
 all_se_list$SE_Rouchka_2019_vitro_GSE63952_GPL15207$TaxonomyId <- all_se_list$SE_Rouchka_2019_vitro_GSE63952_GPL15207$taxid_ch1 
 
 # experimental setting
-all_se_list$SE_Rouchka_2019_vitro_GSE63952_GPL15207$Exp_setting <- rep("vitro", 100)
+all_se_list$SE_Rouchka_2019_vitro_GSE63952_GPL15207$Exp_setting <- rep("ExVivo", 100)
 
 print(all_se_list$SE_Rouchka_2019_vitro_GSE63952_GPL15207)
 ```
@@ -823,7 +836,7 @@ all_se_list$SE_Amundson_2008_vitro_GSE8917_GPL1708$Sample_id <- colnames(all_se_
 all_se_list$SE_Amundson_2008_vitro_GSE8917_GPL1708$TaxonomyId <- all_se_list$SE_Amundson_2008_vitro_GSE8917_GPL1708$taxid_ch1 
 
 # experimental setting
-all_se_list$SE_Amundson_2008_vitro_GSE8917_GPL1708$Exp_setting <- rep("vitro", 50)
+all_se_list$SE_Amundson_2008_vitro_GSE8917_GPL1708$Exp_setting <- rep("ExVivo", 50)
 
 print(all_se_list$SE_Amundson_2008_vitro_GSE8917_GPL1708)
 ```
@@ -865,7 +878,7 @@ all_se_list$SE_MANIKANDAN_2014_vitro_GSE36355_GPL6883$Sample_id <- colnames(all_
 all_se_list$SE_MANIKANDAN_2014_vitro_GSE36355_GPL6883$TaxonomyId <- all_se_list$SE_MANIKANDAN_2014_vitro_GSE36355_GPL6883$taxid_ch1 
 
 # experimental setting
-all_se_list$SE_MANIKANDAN_2014_vitro_GSE36355_GPL6883$Exp_setting <- rep("vitro", 16)
+all_se_list$SE_MANIKANDAN_2014_vitro_GSE36355_GPL6883$Exp_setting <- rep("ExVivo", 16)
 
 print(all_se_list$SE_MANIKANDAN_2014_vitro_GSE36355_GPL6883)
 ```
@@ -904,7 +917,7 @@ all_se_list$SE_Lee_2013_vitro_GSE44245_GPL570$Sample_id <- colnames(all_se_list$
 all_se_list$SE_Lee_2013_vitro_GSE44245_GPL570$TaxonomyId <- all_se_list$SE_Lee_2013_vitro_GSE44245_GPL570$taxid_ch1 
 
 # experimental setting
-all_se_list$SE_Lee_2013_vitro_GSE44245_GPL570$Exp_setting <- rep("vitro", 6)
+all_se_list$SE_Lee_2013_vitro_GSE44245_GPL570$Exp_setting <- rep("ExVivo", 6)
 
 print(all_se_list$SE_Lee_2013_vitro_GSE44245_GPL570)
 ```
@@ -918,7 +931,42 @@ all_se_list <- process_geo_dataset(
   all_se_list
 )
 
-# gene symbol in this dataset is not extractable
+# extract the gene symbols here because it has a different pattern compared to the pther datasets
+
+# Extract gene symbols
+
+se <- all_se_list$SE_Rouchka_2015_vitro_GSE64375_GPL6244
+gene_assignment <- rowData(se)$gene_assignment
+extracted_symbols <- stringr::str_match(gene_assignment, "//\\s*([^/]+)\\s*//")[, 2]
+
+# Filter valid gene symbols
+valid <- !is.na(extracted_symbols) & extracted_symbols != ""
+extracted_symbols <- extracted_symbols[valid]
+se <- se[valid, ]
+
+# Aggregate expression
+exprs_mat <- assay(se)
+exprs_sum <- rowsum(exprs_mat, group = extracted_symbols)
+exprs_n <- table(extracted_symbols)
+exprs_avg <- sweep(exprs_sum, 1, exprs_n, FUN = "/")
+rownames(exprs_avg) <- rownames(exprs_sum)
+
+# Aggregate rowData
+rd_df <- as.data.frame(rowData(se))
+rd_df$GENE_SYMBOL_AGG <- extracted_symbols
+rd_agg_df <- dplyr::group_by(rd_df, GENE_SYMBOL_AGG) |>
+  dplyr::slice(1) |> dplyr::ungroup()
+rd_agg_df$GENE_SYMBOL_AGG <- NULL
+rd <- S4Vectors::DataFrame(rd_agg_df)
+
+# Build final SE
+cd <- colData(se)
+all_se_list$SE_Rouchka_2015_vitro_GSE64375_GPL6244 <- SummarizedExperiment::SummarizedExperiment(
+  assays = list(exprs = exprs_avg),
+  rowData = rd,
+  colData = cd
+)
+
 
 # colData(all_se_list$SE_Rouchka_2015_vitro_GSE64375_GPL6244) |>
 #   as.data.frame() |>
@@ -945,7 +993,7 @@ all_se_list$SE_Rouchka_2015_vitro_GSE64375_GPL6244$Sample_id <- colnames(all_se_
 all_se_list$SE_Rouchka_2015_vitro_GSE64375_GPL6244$TaxonomyId <- all_se_list$SE_Rouchka_2015_vitro_GSE64375_GPL6244$taxid_ch1 
 
 # experimental setting
-all_se_list$SE_Rouchka_2015_vitro_GSE64375_GPL6244$Exp_setting <- rep("vitro", 16)
+all_se_list$SE_Rouchka_2015_vitro_GSE64375_GPL6244$Exp_setting <- rep("ExVivo", 16)
 
 print(all_se_list$SE_Rouchka_2015_vitro_GSE64375_GPL6244)
 ```
@@ -985,7 +1033,7 @@ all_se_list$SE_Ankermit_2015_vitro_GSE55953_GPL14550$Sample_id <- colnames(all_s
 all_se_list$SE_Ankermit_2015_vitro_GSE55953_GPL14550$TaxonomyId <- all_se_list$SE_Ankermit_2015_vitro_GSE55953_GPL14550$taxid_ch1 
 
 # experimental setting
-all_se_list$SE_Ankermit_2015_vitro_GSE55953_GPL14550$Exp_setting <- rep("vitro", 28)
+all_se_list$SE_Ankermit_2015_vitro_GSE55953_GPL14550$Exp_setting <- rep("ExVivo", 28)
 
 print(all_se_list$SE_Ankermit_2015_vitro_GSE55953_GPL14550)
 ```
@@ -1037,7 +1085,7 @@ all_se_list$SE_Broustas_2018_vivo_GSE113509_GPL11202$Sample_id <- colnames(all_s
 all_se_list$SE_Broustas_2018_vivo_GSE113509_GPL11202$TaxonomyId <- all_se_list$SE_Broustas_2018_vivo_GSE113509_GPL11202$taxid_ch1 
 
 # experimental setting
-all_se_list$SE_Broustas_2018_vivo_GSE113509_GPL11202$Exp_setting <- rep("vivo", 18)
+all_se_list$SE_Broustas_2018_vivo_GSE113509_GPL11202$Exp_setting <- rep("InVivo", 18)
 
 print(all_se_list$SE_Broustas_2018_vivo_GSE113509_GPL11202)
 ```
@@ -1086,7 +1134,7 @@ all_se_list$SE_Broustas_2017_vivo_GSE85323_GPL10333$Sample_id <- colnames(all_se
 all_se_list$SE_Broustas_2017_vivo_GSE85323_GPL10333$TaxonomyId <- all_se_list$SE_Broustas_2017_vivo_GSE85323_GPL10333$taxid_ch1 
 
 # experimental setting
-all_se_list$SE_Broustas_2017_vivo_GSE85323_GPL10333$Exp_setting <- rep("vivo", 72)
+all_se_list$SE_Broustas_2017_vivo_GSE85323_GPL10333$Exp_setting <- rep("InVivo", 72)
 
 print(all_se_list$SE_Broustas_2017_vivo_GSE85323_GPL10333)
 ```
@@ -1133,7 +1181,7 @@ all_se_list$SE_Broustas_2017_vitro_GSE90909_GPL13497$Sample_id <- colnames(all_s
 all_se_list$SE_Broustas_2017_vitro_GSE90909_GPL13497$TaxonomyId <- all_se_list$SE_Broustas_2017_vitro_GSE90909_GPL13497$taxid_ch1 
 
 # experimental setting
-all_se_list$SE_Broustas_2017_vitro_GSE90909_GPL13497$Exp_setting <- rep("vitro", 92)
+all_se_list$SE_Broustas_2017_vitro_GSE90909_GPL13497$Exp_setting <- rep("ExVivo", 92)
 
 print(all_se_list$SE_Broustas_2017_vitro_GSE90909_GPL13497)
 ```
@@ -1180,7 +1228,7 @@ all_se_list$SE_Paul_2010_vivo_GSE23393_GPL6480$Sample_id <- colnames(all_se_list
 all_se_list$SE_Paul_2010_vivo_GSE23393_GPL6480$TaxonomyId <- all_se_list$SE_Paul_2010_vivo_GSE23393_GPL6480$taxid_ch1 
 
 # experimental setting
-all_se_list$SE_Paul_2010_vivo_GSE23393_GPL6480$Exp_setting <- rep("vivo", 16)
+all_se_list$SE_Paul_2010_vivo_GSE23393_GPL6480$Exp_setting <- rep("InVivo", 16)
 
 print(all_se_list$SE_Paul_2010_vivo_GSE23393_GPL6480)
 ```
@@ -1222,7 +1270,7 @@ all_se_list$SE_Ghandhi_2015_vitro_GSE65292_GPL13497$Sample_id <- colnames(all_se
 all_se_list$SE_Ghandhi_2015_vitro_GSE65292_GPL13497$TaxonomyId <- all_se_list$SE_Ghandhi_2015_vitro_GSE65292_GPL13497$taxid_ch1 
 
 # experimental setting
-all_se_list$SE_Ghandhi_2015_vitro_GSE65292_GPL13497$Exp_setting <- rep("vitro", 35)
+all_se_list$SE_Ghandhi_2015_vitro_GSE65292_GPL13497$Exp_setting <- rep("ExVivo", 35)
 
 print(all_se_list$SE_Ghandhi_2015_vitro_GSE65292_GPL13497)
 ```
@@ -1242,11 +1290,36 @@ all_se_list <- process_geo_dataset(
 #   as.data.frame() |>
 #   head()
 
+# dose
+
 all_se_list$SE_Flores_2009_vitro_GSE15341_GPL8332$Dose <- if_else(
   str_detect(all_se_list$SE_Flores_2009_vitro_GSE15341_GPL8332$protocol.ch1, "non-radiated"),
   "0Gy",
   str_extract(all_se_list$SE_Flores_2009_vitro_GSE15341_GPL8332$protocol.ch1, "\\d+(\\.\\d+)?Gy")
 )
+
+
+# radiation
+
+all_se_list$SE_Flores_2009_vitro_GSE15341_GPL8332$Radiation_type <- rep("X-ray", 24)
+
+# sex
+all_se_list$SE_Flores_2009_vitro_GSE15341_GPL8332$Sex <- all_se_list$SE_Flores_2009_vitro_GSE15341_GPL8332$gender.ch1
+
+# organism
+all_se_list$SE_Flores_2009_vitro_GSE15341_GPL8332$Organism <- all_se_list$SE_Flores_2009_vitro_GSE15341_GPL8332$organism_ch1
+
+
+# sample id
+all_se_list$SE_Flores_2009_vitro_GSE15341_GPL8332$Sample_id <- colnames(all_se_list$SE_Flores_2009_vitro_GSE15341_GPL8332)
+
+# taxonomy id
+all_se_list$SE_Flores_2009_vitro_GSE15341_GPL8332$TaxonomyId <- all_se_list$SE_Flores_2009_vitro_GSE15341_GPL8332$taxid_ch1 
+
+# experimental setting
+all_se_list$SE_Flores_2009_vitro_GSE15341_GPL8332$Exp_setting <- rep("ExVivo", 24)
+
+print(all_se_list$SE_Flores_2009_vitro_GSE15341_GPL8332)
 ```
 
 ### F&G GSE20162
@@ -1302,7 +1375,7 @@ all_se_list$SE_Amundson_2011_vivo_GSE20162_GPL6480$Sample_id <- colnames(all_se_
 all_se_list$SE_Amundson_2011_vivo_GSE20162_GPL6480$TaxonomyId <- all_se_list$SE_Amundson_2011_vivo_GSE20162_GPL6480$taxid_ch1 
 
 # experimental setting
-all_se_list$SE_Amundson_2011_vivo_GSE20162_GPL6480$Exp_setting <- rep("vivo", 66)
+all_se_list$SE_Amundson_2011_vivo_GSE20162_GPL6480$Exp_setting <- rep("InVivo", 66)
 
 print(all_se_list$SE_Amundson_2011_vivo_GSE20162_GPL6480)
 ```
@@ -1349,7 +1422,7 @@ all_se_list$SE_Broustas_2023_vivo_GSE196400_GPL11202$Sample_id <- colnames(all_s
 all_se_list$SE_Broustas_2023_vivo_GSE196400_GPL11202$TaxonomyId <- all_se_list$SE_Broustas_2023_vivo_GSE196400_GPL11202$taxid_ch1 
 
 # experimental setting
-all_se_list$SE_Broustas_2023_vivo_GSE196400_GPL11202$Exp_setting <- rep("vivo", 24)
+all_se_list$SE_Broustas_2023_vivo_GSE196400_GPL11202$Exp_setting <- rep("InVivo", 24)
 
 print(all_se_list$SE_Broustas_2023_vivo_GSE196400_GPL11202)
 ```
@@ -1398,7 +1471,7 @@ all_se_list$SE_Broustas_2022_vivo_GSE184361_GPL11202$Sample_id <- colnames(all_s
 all_se_list$SE_Broustas_2022_vivo_GSE184361_GPL11202$TaxonomyId <- all_se_list$SE_Broustas_2022_vivo_GSE184361_GPL11202$taxid_ch1 
 
 # experimental setting
-all_se_list$SE_Broustas_2022_vivo_GSE184361_GPL11202$Exp_setting <- rep("vivo", 30)
+all_se_list$SE_Broustas_2022_vivo_GSE184361_GPL11202$Exp_setting <- rep("InVivo", 30)
 
 print(all_se_list$SE_Broustas_2022_vivo_GSE184361_GPL11202)
 ```
@@ -1449,7 +1522,7 @@ all_se_list$SE_Broustas_2021_vivo_GSE132559_GPL11202$Sample_id <- colnames(all_s
 all_se_list$SE_Broustas_2021_vivo_GSE132559_GPL11202$TaxonomyId <- all_se_list$SE_Broustas_2021_vivo_GSE132559_GPL11202$taxid_ch1 
 
 # experimental setting
-all_se_list$SE_Broustas_2021_vivo_GSE132559_GPL11202$Exp_setting <- rep("vivo", 24)
+all_se_list$SE_Broustas_2021_vivo_GSE132559_GPL11202$Exp_setting <- rep("InVivo", 24)
 
 print(all_se_list$SE_Broustas_2021_vivo_GSE132559_GPL11202)
 ```
@@ -1493,7 +1566,7 @@ all_se_list$SE_Yamaguchi_2020_vivo_GSE137192_GPL1261$Sample_id <- colnames(all_s
 all_se_list$SE_Yamaguchi_2020_vivo_GSE137192_GPL1261$TaxonomyId <- all_se_list$SE_Yamaguchi_2020_vivo_GSE137192_GPL1261$taxid_ch1 
 
 # experimental setting
-all_se_list$SE_Yamaguchi_2020_vivo_GSE137192_GPL1261$Exp_setting <- rep("vivo", 17)
+all_se_list$SE_Yamaguchi_2020_vivo_GSE137192_GPL1261$Exp_setting <- rep("InVivo", 17)
 
 print(all_se_list$SE_Yamaguchi_2020_vivo_GSE137192_GPL1261)
 ```
@@ -1536,7 +1609,7 @@ all_se_list$SE_Mukherjee_2019_vivo_GSE114142_GPL11202$Sample_id <- colnames(all_
 all_se_list$SE_Mukherjee_2019_vivo_GSE114142_GPL11202$TaxonomyId <- all_se_list$SE_Mukherjee_2019_vivo_GSE114142_GPL11202$taxid_ch1 
 
 # experimental setting
-all_se_list$SE_Mukherjee_2019_vivo_GSE114142_GPL11202$Exp_setting <- rep("vivo", 20)
+all_se_list$SE_Mukherjee_2019_vivo_GSE114142_GPL11202$Exp_setting <- rep("InVivo", 20)
 
 print(all_se_list$SE_Mukherjee_2019_vivo_GSE114142_GPL11202)
 ```
@@ -1580,7 +1653,7 @@ all_se_list$SE_Amundson_2018_vivo_GSE101402_GPL11202$Sample_id <- colnames(all_s
 all_se_list$SE_Amundson_2018_vivo_GSE101402_GPL11202$TaxonomyId <- all_se_list$SE_Amundson_2018_vivo_GSE101402_GPL11202$taxid_ch1 
 
 # experimental setting
-all_se_list$SE_Amundson_2018_vivo_GSE101402_GPL11202$Exp_setting <- rep("vivo", 24)
+all_se_list$SE_Amundson_2018_vivo_GSE101402_GPL11202$Exp_setting <- rep("InVivo", 24)
 
 print(all_se_list$SE_Amundson_2018_vivo_GSE101402_GPL11202)
 ```
@@ -1624,7 +1697,7 @@ all_se_list$SE_Amundson_2018_vivo_GSE99176_GPL11202$Sample_id <- colnames(all_se
 all_se_list$SE_Amundson_2018_vivo_GSE99176_GPL11202$TaxonomyId <- all_se_list$SE_Amundson_2018_vivo_GSE99176_GPL11202$taxid_ch1 
 
 # experimental setting
-all_se_list$SE_Amundson_2018_vivo_GSE99176_GPL11202$Exp_setting <- rep("vivo", 32)
+all_se_list$SE_Amundson_2018_vivo_GSE99176_GPL11202$Exp_setting <- rep("InVivo", 32)
 
 print(all_se_list$SE_Amundson_2018_vivo_GSE99176_GPL11202)
 ```
@@ -1675,7 +1748,7 @@ all_se_list$SE_Paul_2015_vivo_GSE62623_GPL10333$Sample_id <- colnames(all_se_lis
 all_se_list$SE_Paul_2015_vivo_GSE62623_GPL10333$TaxonomyId <- all_se_list$SE_Paul_2015_vivo_GSE62623_GPL10333$taxid_ch1 
 
 # experimental setting
-all_se_list$SE_Paul_2015_vivo_GSE62623_GPL10333$Exp_setting <- rep("vivo", 48)
+all_se_list$SE_Paul_2015_vivo_GSE62623_GPL10333$Exp_setting <- rep("InVivo", 48)
 
 print(all_se_list$SE_Paul_2015_vivo_GSE62623_GPL10333)
 ```
@@ -1715,7 +1788,7 @@ all_se_list$SE_Ghandhi_2018_vivo_GSE84898_GPL13497$Sample_id <- colnames(all_se_
 all_se_list$SE_Ghandhi_2018_vivo_GSE84898_GPL13497$TaxonomyId <- all_se_list$SE_Ghandhi_2018_vivo_GSE84898_GPL13497$taxid_ch1 
 
 # experimental setting
-all_se_list$SE_Ghandhi_2018_vivo_GSE84898_GPL13497$Exp_setting <- rep("vivo", 20)
+all_se_list$SE_Ghandhi_2018_vivo_GSE84898_GPL13497$Exp_setting <- rep("InVivo", 20)
 
 print(all_se_list$SE_Ghandhi_2018_vivo_GSE84898_GPL13497)
 ```
@@ -1765,7 +1838,7 @@ all_se_list$SE_Broustas_2021_vivo_GSE133451_GPL11202$Sample_id <- colnames(all_s
 all_se_list$SE_Broustas_2021_vivo_GSE133451_GPL11202$TaxonomyId <- all_se_list$SE_Broustas_2021_vivo_GSE133451_GPL11202$taxid_ch1 
 
 # experimental setting
-all_se_list$SE_Broustas_2021_vivo_GSE133451_GPL11202$Exp_setting <- rep("vivo", 20)
+all_se_list$SE_Broustas_2021_vivo_GSE133451_GPL11202$Exp_setting <- rep("InVivo", 20)
 
 print(all_se_list$SE_Broustas_2021_vivo_GSE133451_GPL11202)
 ```
@@ -1813,7 +1886,7 @@ SE_Salah_2025_vitro$Organism <- rep("Homo sapiens", 30)
 SE_Salah_2025_vitro$TaxonomyId <- rep("9606", 30)
 
 # experimental setting
-SE_Salah_2025_vitro$Exp_setting <- rep("vitro", 30)
+SE_Salah_2025_vitro$Exp_setting <- rep("ExVivo", 30)
 
 # remove unnecessary columns in the coldata
 colData(SE_Salah_2025_vitro) <- colData(SE_Salah_2025_vitro)[,- c(1,2,3,4,10,11,12)]
