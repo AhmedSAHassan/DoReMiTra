@@ -432,9 +432,9 @@ all_se_list$SE_Park_2017_ExVivo_GSE102971_GPL10332$Exp_setting <- rep("ExVivo", 
 
 # split the dataset for each organism
 
-all_se_list$SE_Park_2017_vitro_GSE102971_GPL10332_MacacaMulatta <- all_se_list$SE_Park_2017_ExVivo_GSE102971_GPL10332[, all_se_list$SE_Park_2017_ExVivo_GSE102971_GPL10332$Organism  == "Macaca mulatta"]
+all_se_list$SE_Park_2017_ExVivo_GSE102971_GPL10332_MacacaMulatta <- all_se_list$SE_Park_2017_ExVivo_GSE102971_GPL10332[, all_se_list$SE_Park_2017_ExVivo_GSE102971_GPL10332$Organism  == "Macaca mulatta"]
 
-all_se_list$SE_Park_2017_vitro_GSE102971_GPL10332_HomoSapiens <- all_se_list$SE_Park_2017_ExVivo_GSE102971_GPL10332[, all_se_list$SE_Park_2017_ExVivo_GSE102971_GPL10332$Organism  == "Homo sapiens"]
+all_se_list$SE_Park_2017_ExVivo_GSE102971_GPL10332_HomoSapiens <- all_se_list$SE_Park_2017_ExVivo_GSE102971_GPL10332[, all_se_list$SE_Park_2017_ExVivo_GSE102971_GPL10332$Organism  == "Homo sapiens"]
 
 # remove the combined se
 
