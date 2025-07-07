@@ -247,7 +247,7 @@ Most of the GEO datasets do not provide metadata in a consistently structured or
 * the `Age` of the samples (of course, if reported)
 * the `Sample_id`entifier, in order to have a fully standardized field for this
 * the `TaxonomyId` according to the xxyy nomenclature
-* the `Exp_setting`, where details are provided on the in vivo/in vitro nature of the study
+* the `Exp_setting`, where details are provided on the in InVivo/in ExVivo nature of the study
 
 ## F&G se for gamma rays studies
 
@@ -440,8 +440,8 @@ all_se_list$SE_Park_2017_ExVivo_GSE102971_GPL10332_HomoSapiens <- all_se_list$SE
 
 all_se_list$SE_Park_2017_ExVivo_GSE102971_GPL10332 <- NULL
 
-print(all_se_list$SE_Park_2017_vitro_GSE102971_GPL10332_MacacaMulatta)
-print(all_se_list$SE_Park_2017_vitro_GSE102971_GPL10332_HomoSapiens)
+print(all_se_list$SE_Park_2017_ExVivo_GSE102971_GPL10332_MacacaMulatta)
+print(all_se_list$SE_Park_2017_ExVivo_GSE102971_GPL10332_HomoSapiens)
 
 ```
 
