@@ -30,6 +30,4 @@ The package includes preprocessed and annotated datasets from public repositorie
 
 ✅ Organism (e.g., human, mouse)
 
-✅ Disease status (healthy vs disease models)
-
-✅ Experimental setting (vivo, vitro)
+✅ Experimental setting (InVivo, ExVivo)
