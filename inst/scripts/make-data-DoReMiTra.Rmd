@@ -430,6 +430,10 @@ all_se_list$SE_Park_2017_ExVivo_GSE102971_GPL10332$TaxonomyId <- all_se_list$SE_
 # experimental setting
 all_se_list$SE_Park_2017_ExVivo_GSE102971_GPL10332$Exp_setting <- rep("ExVivo", 167)
 
+# assigning the probe/spot id as rownames
+
+rownames(all_se_list$SE_Park_2017_ExVivo_GSE102971_GPL10332) <- rowData(all_se_list$SE_Park_2017_ExVivo_GSE102971_GPL10332)$SPOT_ID
+
 # split the dataset for each organism
 
 all_se_list$SE_Park_2017_ExVivo_GSE102971_GPL10332_MacacaMulatta <- all_se_list$SE_Park_2017_ExVivo_GSE102971_GPL10332[, all_se_list$SE_Park_2017_ExVivo_GSE102971_GPL10332$Organism  == "Macaca mulatta"]
@@ -575,39 +579,39 @@ all_se_list <- process_geo_dataset(
   all_se_list
 )
 
-# colData(all_se_list$SE_NOSEL_2013_ExVivo_GSE43151_GPL13497) |>
+# colData(all_se_list$SE_Nosel_2013_ExVivo_GSE43151_GPL13497) |>
 #   as.data.frame() |>
 #   head()
 
 # Dose
-all_se_list$SE_NOSEL_2013_ExVivo_GSE43151_GPL13497$Dose <- ifelse(
-  str_detect(all_se_list$SE_NOSEL_2013_ExVivo_GSE43151_GPL13497$source_name_ch1, regex("sham", ignore_case = TRUE)),
+all_se_list$SE_Nosel_2013_ExVivo_GSE43151_GPL13497$Dose <- ifelse(
+  str_detect(all_se_list$SE_Nosel_2013_ExVivo_GSE43151_GPL13497$source_name_ch1, regex("sham", ignore_case = TRUE)),
   "0Gy",
-  paste0(as.numeric(str_extract(all_se_list$SE_NOSEL_2013_ExVivo_GSE43151_GPL13497$source_name_ch1, "\\d+(?=\\s*mGy)")) / 1000, "Gy")
+  paste0(as.numeric(str_extract(all_se_list$SE_Nosel_2013_ExVivo_GSE43151_GPL13497$source_name_ch1, "\\d+(?=\\s*mGy)")) / 1000, "Gy")
 )
 
 # radiation type
-all_se_list$SE_NOSEL_2013_ExVivo_GSE43151_GPL13497$Radiation_type <- rep("gamma ray", 121)
+all_se_list$SE_Nosel_2013_ExVivo_GSE43151_GPL13497$Radiation_type <- rep("gamma ray", 121)
 
 # time
-all_se_list$SE_NOSEL_2013_ExVivo_GSE43151_GPL13497$Time_point <- str_extract(all_se_list$SE_NOSEL_2013_ExVivo_GSE43151_GPL13497$source_name_ch1, "\\d+\\s*min") |> str_replace_all("\\s+", "")
+all_se_list$SE_Nosel_2013_ExVivo_GSE43151_GPL13497$Time_point <- str_extract(all_se_list$SE_Nosel_2013_ExVivo_GSE43151_GPL13497$source_name_ch1, "\\d+\\s*min") |> str_replace_all("\\s+", "")
 
 # sex
-all_se_list$SE_NOSEL_2013_ExVivo_GSE43151_GPL13497$Sex <- all_se_list$SE_NOSEL_2013_ExVivo_GSE43151_GPL13497$gender.ch1
+all_se_list$SE_Nosel_2013_ExVivo_GSE43151_GPL13497$Sex <- all_se_list$SE_Nosel_2013_ExVivo_GSE43151_GPL13497$gender.ch1
 
 # organism
-all_se_list$SE_NOSEL_2013_ExVivo_GSE43151_GPL13497$Organism <- all_se_list$SE_NOSEL_2013_ExVivo_GSE43151_GPL13497$organism_ch1
+all_se_list$SE_Nosel_2013_ExVivo_GSE43151_GPL13497$Organism <- all_se_list$SE_Nosel_2013_ExVivo_GSE43151_GPL13497$organism_ch1
 
 # sample id
-all_se_list$SE_NOSEL_2013_ExVivo_GSE43151_GPL13497$Sample_id <- colnames(all_se_list$SE_NOSEL_2013_ExVivo_GSE43151_GPL13497)
+all_se_list$SE_Nosel_2013_ExVivo_GSE43151_GPL13497$Sample_id <- colnames(all_se_list$SE_Nosel_2013_ExVivo_GSE43151_GPL13497)
 
 # taxonomy id
-all_se_list$SE_NOSEL_2013_ExVivo_GSE43151_GPL13497$TaxonomyId <- all_se_list$SE_NOSEL_2013_ExVivo_GSE43151_GPL13497$taxid_ch1 
+all_se_list$SE_Nosel_2013_ExVivo_GSE43151_GPL13497$TaxonomyId <- all_se_list$SE_Nosel_2013_ExVivo_GSE43151_GPL13497$taxid_ch1 
 
 # experimental setting
-all_se_list$SE_NOSEL_2013_ExVivo_GSE43151_GPL13497$Exp_setting <- rep("ExVivo", 121)
+all_se_list$SE_Nosel_2013_ExVivo_GSE43151_GPL13497$Exp_setting <- rep("ExVivo", 121)
 
-print(all_se_list$SE_NOSEL_2013_ExVivo_GSE43151_GPL13497)
+print(all_se_list$SE_Nosel_2013_ExVivo_GSE43151_GPL13497)
 ```
 
 ### F&G GSE20173
@@ -718,7 +722,7 @@ all_se_list <- process_geo_dataset(
 
 # the GeneSymbol column here contains wrong inputs so we will correct it manually
 
-# Entrez<- rowData(all_se_list$SE_GRUEL_2008_ExVivo_GSE6978_GPL4803)$GENE
+# Entrez<- rowData(all_se_list$SE_Gruel_2008_ExVivo_GSE6978_GPL4803)$GENE
 # 
 # Entrez_to_symbol <- mapIds(
 #   org.Hs.eg.db,
@@ -728,43 +732,46 @@ all_se_list <- process_geo_dataset(
 #   multiVals = "first"
 # )
 # 
-# rowData(all_se_list$SE_GRUEL_2008_ExVivo_GSE6978_GPL4803)$SYMBOL<- Entrez_to_symbol
+# rowData(all_se_list$SE_Gruel_2008_ExVivo_GSE6978_GPL4803)$SYMBOL<- Entrez_to_symbol
 # 
 # # assigning the corrected gene symbols to the rownames of the se object
 # 
-# rownames(all_se_list$SE_GRUEL_2008_ExVivo_GSE6978_GPL4803) <- rowData(all_se_list$SE_GRUEL_2008_ExVivo_GSE6978_GPL4803)$SYMBOL
+# rownames(all_se_list$SE_Gruel_2008_ExVivo_GSE6978_GPL4803) <- rowData(all_se_list$SE_Gruel_2008_ExVivo_GSE6978_GPL4803)$SYMBOL
 
-# colData(all_se_list$SE_GRUEL_2008_ExVivo_GSE6978_GPL4803) |>
+# colData(all_se_list$SE_Gruel_2008_ExVivo_GSE6978_GPL4803) |>
 #   as.data.frame() |>
 #   head()
 
 # Dose
-all_se_list$SE_GRUEL_2008_ExVivo_GSE6978_GPL4803$Dose <- str_extract(all_se_list$SE_GRUEL_2008_ExVivo_GSE6978_GPL4803$title, "\\d+(\\.\\d+)?Gy")
+all_se_list$SE_Gruel_2008_ExVivo_GSE6978_GPL4803$Dose <- str_extract(all_se_list$SE_Gruel_2008_ExVivo_GSE6978_GPL4803$title, "\\d+(\\.\\d+)?Gy")
 
 # radiation type
-all_se_list$SE_GRUEL_2008_ExVivo_GSE6978_GPL4803$Radiation_type <- rep("gamma ray", 114)
+all_se_list$SE_Gruel_2008_ExVivo_GSE6978_GPL4803$Radiation_type <- rep("gamma ray", 114)
 
 # time
-all_se_list$SE_GRUEL_2008_ExVivo_GSE6978_GPL4803$Time_point <- str_extract(all_se_list$SE_GRUEL_2008_ExVivo_GSE6978_GPL4803$title, "\\d+h") |> str_replace("h", "hr")
+all_se_list$SE_Gruel_2008_ExVivo_GSE6978_GPL4803$Time_point <- str_extract(all_se_list$SE_Gruel_2008_ExVivo_GSE6978_GPL4803$title, "\\d+h") |> str_replace("h", "hr")
 # sex
-all_se_list$SE_GRUEL_2008_ExVivo_GSE6978_GPL4803$Sex <- rep("male", 114)
+all_se_list$SE_Gruel_2008_ExVivo_GSE6978_GPL4803$Sex <- rep("male", 114)
 
 # organism
-all_se_list$SE_GRUEL_2008_ExVivo_GSE6978_GPL4803$Organism <- all_se_list$SE_GRUEL_2008_ExVivo_GSE6978_GPL4803$organism_ch1
+all_se_list$SE_Gruel_2008_ExVivo_GSE6978_GPL4803$Organism <- all_se_list$SE_Gruel_2008_ExVivo_GSE6978_GPL4803$organism_ch1
 
 # sample id
-all_se_list$SE_GRUEL_2008_ExVivo_GSE6978_GPL4803$Sample_id <- colnames(all_se_list$SE_GRUEL_2008_ExVivo_GSE6978_GPL4803)
+all_se_list$SE_Gruel_2008_ExVivo_GSE6978_GPL4803$Sample_id <- colnames(all_se_list$SE_Gruel_2008_ExVivo_GSE6978_GPL4803)
 
 # cell type
-all_se_list$SE_GRUEL_2008_ExVivo_GSE6978_GPL4803$Cell_type <- str_extract(all_se_list$SE_GRUEL_2008_ExVivo_GSE6978_GPL4803$title, "^[^_]+")
+all_se_list$SE_Gruel_2008_ExVivo_GSE6978_GPL4803$Cell_type <- str_extract(all_se_list$SE_Gruel_2008_ExVivo_GSE6978_GPL4803$title, "^[^_]+")
 
 # taxonomy id
-all_se_list$SE_GRUEL_2008_ExVivo_GSE6978_GPL4803$TaxonomyId <- all_se_list$SE_GRUEL_2008_ExVivo_GSE6978_GPL4803$taxid_ch1 
+all_se_list$SE_Gruel_2008_ExVivo_GSE6978_GPL4803$TaxonomyId <- all_se_list$SE_Gruel_2008_ExVivo_GSE6978_GPL4803$taxid_ch1 
 
 # experimental setting
-all_se_list$SE_GRUEL_2008_ExVivo_GSE6978_GPL4803$Exp_setting <- rep("ExVivo", 114)
+all_se_list$SE_Gruel_2008_ExVivo_GSE6978_GPL4803$Exp_setting <- rep("ExVivo", 114)
 
-print(all_se_list$SE_GRUEL_2008_ExVivo_GSE6978_GPL4803)
+print(all_se_list$SE_Gruel_2008_ExVivo_GSE6978_GPL4803)
+
+# add the gene bank accession?
+
 ```
 
 ### F&G GSE63952
@@ -849,6 +856,10 @@ all_se_list$SE_Amundson_2008_ExVivo_GSE8917_GPL1708$TaxonomyId <- all_se_list$SE
 # experimental setting
 all_se_list$SE_Amundson_2008_ExVivo_GSE8917_GPL1708$Exp_setting <- rep("ExVivo", 50)
 
+# assigning the spot id as rownames
+
+rownames(all_se_list$SE_Amundson_2008_ExVivo_GSE8917_GPL1708)<- rowData(all_se_list$SE_Amundson_2008_ExVivo_GSE8917_GPL1708)$SPOT_ID
+
 print(all_se_list$SE_Amundson_2008_ExVivo_GSE8917_GPL1708)
 ```
 
@@ -861,37 +872,37 @@ all_se_list <- process_geo_dataset(
   all_se_list
 )
 
-# colData(all_se_list$SE_MANIKANDAN_2014_ExVivo_GSE36355_GPL6883) |>
+# colData(all_se_list$SE_Manikandan_2014_ExVivo_GSE36355_GPL6883) |>
 #   as.data.frame() |>
 #   head()
 
 # there is no info about sex
 
 # dose
-all_se_list$SE_MANIKANDAN_2014_ExVivo_GSE36355_GPL6883$Dose <- rep(c("0Gy", "1Gy"), 8)
+all_se_list$SE_Manikandan_2014_ExVivo_GSE36355_GPL6883$Dose <- rep(c("0Gy", "1Gy"), 8)
 
 # time
-all_se_list$SE_MANIKANDAN_2014_ExVivo_GSE36355_GPL6883$Time_point <- rep("30min", 16)
+all_se_list$SE_Manikandan_2014_ExVivo_GSE36355_GPL6883$Time_point <- rep("30min", 16)
 
 # radiation
-all_se_list$SE_MANIKANDAN_2014_ExVivo_GSE36355_GPL6883$Radiation_type <- rep("gamma ray", 16)
+all_se_list$SE_Manikandan_2014_ExVivo_GSE36355_GPL6883$Radiation_type <- rep("gamma ray", 16)
 
 # cell type
-all_se_list$SE_MANIKANDAN_2014_ExVivo_GSE36355_GPL6883$Cell_type <- all_se_list$SE_MANIKANDAN_2014_ExVivo_GSE36355_GPL6883$cell.type.ch1
+all_se_list$SE_Manikandan_2014_ExVivo_GSE36355_GPL6883$Cell_type <- all_se_list$SE_Manikandan_2014_ExVivo_GSE36355_GPL6883$cell.type.ch1
 
 # organism
-all_se_list$SE_MANIKANDAN_2014_ExVivo_GSE36355_GPL6883$Organism <- all_se_list$SE_MANIKANDAN_2014_ExVivo_GSE36355_GPL6883$organism_ch1
+all_se_list$SE_Manikandan_2014_ExVivo_GSE36355_GPL6883$Organism <- all_se_list$SE_Manikandan_2014_ExVivo_GSE36355_GPL6883$organism_ch1
 
 # sample id
-all_se_list$SE_MANIKANDAN_2014_ExVivo_GSE36355_GPL6883$Sample_id <- colnames(all_se_list$SE_MANIKANDAN_2014_ExVivo_GSE36355_GPL6883)
+all_se_list$SE_Manikandan_2014_ExVivo_GSE36355_GPL6883$Sample_id <- colnames(all_se_list$SE_Manikandan_2014_ExVivo_GSE36355_GPL6883)
 
 # taxonomy id
-all_se_list$SE_MANIKANDAN_2014_ExVivo_GSE36355_GPL6883$TaxonomyId <- all_se_list$SE_MANIKANDAN_2014_ExVivo_GSE36355_GPL6883$taxid_ch1 
+all_se_list$SE_Manikandan_2014_ExVivo_GSE36355_GPL6883$TaxonomyId <- all_se_list$SE_Manikandan_2014_ExVivo_GSE36355_GPL6883$taxid_ch1 
 
 # experimental setting
-all_se_list$SE_MANIKANDAN_2014_ExVivo_GSE36355_GPL6883$Exp_setting <- rep("ExVivo", 16)
+all_se_list$SE_Manikandan_2014_ExVivo_GSE36355_GPL6883$Exp_setting <- rep("ExVivo", 16)
 
-print(all_se_list$SE_MANIKANDAN_2014_ExVivo_GSE36355_GPL6883)
+print(all_se_list$SE_Manikandan_2014_ExVivo_GSE36355_GPL6883)
 ```
 
 ### F&G GSE44245
@@ -942,7 +953,14 @@ all_se_list <- process_geo_dataset(
   all_se_list
 )
 
-# extract the gene symbols here because it has a different pattern compared to the pther datasets
+# adding the gene symbol to the rowdata
+
+gene_assignment <- rowData(all_se_list$SE_Rouchka_2015_ExVivo_GSE64375_GPL6244)$gene_assignment
+extracted_symbols <- stringr::str_match(gene_assignment, "//\\s*([^/]+)\\s*//")[, 2]
+rowData(all_se_list$SE_Rouchka_2015_ExVivo_GSE64375_GPL6244)$SYMBOL<- extracted_symbols
+
+
+# extract the gene symbols here because it has a different pattern compared to the other datasets
 
 # Extract gene symbols
 # 
@@ -1142,6 +1160,10 @@ all_se_list$SE_Broustas_2017_InVivo_GSE85323_GPL10333$TaxonomyId <- all_se_list$
 
 # experimental setting
 all_se_list$SE_Broustas_2017_InVivo_GSE85323_GPL10333$Exp_setting <- rep("InVivo", 72)
+
+# assigning the spot id as rownames
+
+rownames(all_se_list$SE_Broustas_2017_InVivo_GSE85323_GPL10333) <- rowData(all_se_list$SE_Broustas_2017_InVivo_GSE85323_GPL10333)$SPOT_ID
 
 print(all_se_list$SE_Broustas_2017_InVivo_GSE85323_GPL10333)
 ```
@@ -1756,7 +1778,12 @@ all_se_list$SE_Paul_2015_InVivo_GSE62623_GPL10333$TaxonomyId <- all_se_list$SE_P
 # experimental setting
 all_se_list$SE_Paul_2015_InVivo_GSE62623_GPL10333$Exp_setting <- rep("InVivo", 48)
 
+# assigning the spot id as rownames
+
+rownames(all_se_list$SE_Paul_2015_InVivo_GSE62623_GPL10333) <- rowData(all_se_list$SE_Paul_2015_InVivo_GSE62623_GPL10333)$SPOT_ID
+
 print(all_se_list$SE_Paul_2015_InVivo_GSE62623_GPL10333)
+
 ```
 
 ### F&G GSE84898
