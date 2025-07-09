@@ -1,0 +1,1945 @@
+---
+title: "make-data-DoReMiTra"
+author: "Ahmed Salah"
+date: "`r Sys.Date()`"
+output:
+  html_document:
+    toc: true
+    toc_float: true
+editor_options: 
+  chunk_output_type: console
+---
+
+# Loading required packages
+
+```{r}
+library(readxl)
+library(GEOquery)
+library(org.Hs.eg.db)
+library(SummarizedExperiment)
+library(dplyr)
+library(S4Vectors)
+library(stringr)
+library(matrixStats)
+```
+
+# Defining helper functions
+
+## Fetching and generating summarized experiment objects for each dataset with rownames as gene symbols
+
+```{r}
+process_geo_dataset <- function(
+    accession_id,
+    excel_path,
+    se_list = list(), # 🆕 the accumulating list of SE objects
+    sheet = 1,
+    accession_col = "Accession_no",
+    author_col = "Author",
+    year_col = "Year",
+    setting_col = "Exp_Setting",
+    possible_gene_cols = c("GENE_SYMBOL", "Gene.Symbol", "ILMN_Gene", "GeneSymbol")) {
+  # Read metadata from Excel
+  df <- readxl::read_excel(excel_path, sheet = sheet)
+  idx <- which(trimws(df[[accession_col]]) == trimws(accession_id))
+  if (length(idx) == 0) stop(sprintf("❌ Accession %s not found in Excel.", accession_id))
+
+  # Extract and sanitize naming components
+  author_val <- ifelse(is.na(df[[author_col]][idx[1]]), "unknown", df[[author_col]][idx[1]])
+  year_val <- ifelse(is.na(df[[year_col]][idx[1]]), "0000", as.character(df[[year_col]][idx[1]]))
+  setting_val <- ifelse(is.na(df[[setting_col]][idx[1]]), "unspecified", df[[setting_col]][idx[1]])
+
+  author <- gsub("[^A-Za-z0-9]", "_", trimws(author_val))
+  year <- gsub("[^0-9]", "", year_val)
+  setting <- gsub("[^A-Za-z0-9]", "_", trimws(setting_val))
+  accession_clean <- gsub("[^A-Za-z0-9]", "", accession_id)
+  base_prefix <- gsub("_+", "_", paste("SE", author, year, setting, accession_clean, sep = "_"))
+
+  # Fetch GEO dataset(s)
+  gse_list <- tryCatch(
+    {
+      GEOquery::getGEO(accession_id, GSEMatrix = TRUE)
+    },
+    error = function(e) stop(sprintf("❌ GEO fetch failed: %s", e$message))
+  )
+
+  if (inherits(gse_list, "ExpressionSet")) {
+    gse_list <- list(gse_list)
+  }
+
+  # Process each platform
+  for (i in seq_along(gse_list)) {
+    gse <- gse_list[[i]]
+    platform <- annotation(gse)
+    obj_name <- gsub("_+", "_", paste(base_prefix, platform, sep = "_"))
+
+    message(sprintf("🔧 Processing %s", obj_name))
+
+    se <- SummarizedExperiment::makeSummarizedExperimentFromExpressionSet(gse)
+    rownames(se) <- rownames(Biobase::exprs(gse))
+
+    # Extract and simplify
+    counts <- SummarizedExperiment::assay(se)
+    rd <- SummarizedExperiment::rowData(se)
+    cd <- SummarizedExperiment::colData(se)
+
+    # Add standardized empty metadata columns
+    cd$Dose <- NA_character_
+    cd$Time_point <- NA_character_
+    cd$Sex <- NA_character_
+    cd$Radiation_type <- NA_character_
+    cd$Sample_id <- NA_character_
+    cd$Organism <- NA_character_
+
+    # gene_symbol_col <- NULL
+    # for (col in possible_gene_cols) {
+    #   if (col %in% colnames(rd)) {
+    #     gene_symbol_col <- col
+    #     break
+    #   }
+    # }
+    # 
+    # if (!is.null(gene_symbol_col)) {
+    #   gene_symbols <- as.character(rd[[gene_symbol_col]])
+    #   valid <- !is.na(gene_symbols) & gene_symbols != ""
+    #   counts <- counts[valid, , drop = FALSE]
+    #   gene_symbols <- gene_symbols[valid]
+    #   rd <- rd[valid, , drop = FALSE]
+    # 
+    #   # Average expression per gene
+    #   counts_sum <- rowsum(counts, group = gene_symbols)
+    #   counts_n <- table(gene_symbols)
+    #   counts_avg <- sweep(counts_sum, 1, counts_n, FUN = "/")
+    #   rownames(counts_avg) <- rownames(counts_sum)
+    # 
+    #   rd_df <- as.data.frame(rd)
+    #   rd_df$GENE_SYMBOL_AGG <- gene_symbols
+    #   rd_agg_df <- dplyr::group_by(rd_df, GENE_SYMBOL_AGG) |>
+    #     dplyr::slice(1) |>
+    #     dplyr::ungroup()
+    #   rd_agg_df$GENE_SYMBOL_AGG <- NULL
+    #   rd <- S4Vectors::DataFrame(rd_agg_df)
+    # 
+    #   counts <- counts_avg
+    # } else {
+    #   warning(sprintf("⚠️ No gene symbol column found for %s. Using probe-level IDs.", obj_name))
+    # }
+
+    # Rebuild SE
+    if (!all(colnames(counts) == rownames(cd))) stop("❌ colnames(counts) ≠ rownames(colData)")
+    if (!all(rownames(counts) == rownames(rd))) stop("❌ rownames(counts) ≠ rownames(rowData)")
+
+    final_se <- SummarizedExperiment::SummarizedExperiment(
+      assays = list(exprs = counts),
+      rowData = rd,
+      colData = cd
+    )
+
+    se_list[[obj_name]] <- final_se
+  }
+
+  return(se_list)
+}
+
+```
+
+## Exporting RDS files for each curated summarized experiment
+
+```{r}
+
+save_se_objects <- function(se_list, output_dir = ".",
+                               save_se_obj = TRUE,
+                               save_se_components = TRUE) {
+  dir.create(output_dir, showWarnings = FALSE, recursive = TRUE)
+
+  for (name in names(se_list)) {
+    se <- se_list[[name]]
+    
+    if (save_se_obj) {
+      output_file <- file.path(output_dir, paste0(name, ".RDS"))
+      saveRDS(se, output_file)
+      message(sprintf("💾 Saved: %s", basename(output_file)))
+    }
+    
+    if (save_se_components) {
+      base_name <- sub("^SE_", "", name)
+      output_file_assays <- file.path(output_dir, paste0(base_name, "_counts.RDS"))
+      output_file_rd     <- file.path(output_dir, paste0(base_name, "_rowData.RDS"))
+      output_file_cd     <- file.path(output_dir, paste0(base_name, "_colData.RDS"))
+
+      # Save individual components
+      saveRDS(SummarizedExperiment::assay(se),   file = output_file_assays)
+      saveRDS(SummarizedExperiment::rowData(se), file = output_file_rd)
+      saveRDS(SummarizedExperiment::colData(se), file = output_file_cd)
+      
+      message(sprintf("💾 Saved individual components for: %s", basename(output_file)))
+    }
+  }
+}
+
+```
+
+## Convert ENSEMBL id to gene symbol
+
+Here we convert the ensemble id to gene symbol, remove NA, choose the highest variable gene symbol in case of genes with multiple ENSEMBL id. lastly, we assign the resulting gene symbols back as rownames
+
+```{r}
+collapse_by_symbol_variance <- function(se_object, symbol_col = "SYMBOL") {
+  # Extract expression matrix and symbol
+  counts <- assay(se_object)
+  symbols <- as.character(rowData(se_object)[[symbol_col]])
+
+  # Filter out missing symbols
+  valid <- !is.na(symbols) & symbols != ""
+  counts <- counts[valid, , drop = FALSE]
+  symbols <- symbols[valid]
+  row_data <- rowData(se_object)[valid, , drop = FALSE]
+
+  # Compute row variances
+  row_vars <- matrixStats::rowVars(as.matrix(counts))
+
+  # Build a data.frame to track symbols and variance
+  gene_df <- data.frame(
+    idx = seq_along(symbols),
+    symbol = symbols,
+    variance = row_vars,
+    stringsAsFactors = FALSE
+  )
+
+  # Select one row per symbol (highest variance)
+  best_rows <- gene_df %>%
+    group_by(symbol) %>%
+    slice_max(variance, n = 1, with_ties = FALSE) %>%
+    pull(idx)
+
+  # Subset final components
+  final_counts <- counts[best_rows, , drop = FALSE]
+  final_rowData <- row_data[best_rows, , drop = FALSE]
+  rownames(final_counts) <- symbols[best_rows]
+  rownames(final_rowData) <- symbols[best_rows]
+
+  # Build the final SE
+  final_se <- SummarizedExperiment(
+    assays = list(counts = final_counts),
+    rowData = final_rowData,
+    colData = colData(se_object)
+  )
+
+  return(final_se)
+}
+
+```
+
+# Fetching and generating the individual datasets
+
+We first create an empty list object, where we will store the individual SE objects for the different studies we included in this scope.
+
+```{r}
+all_se_list <- list()
+```
+
+Most of the GEO datasets do not provide metadata in a consistently structured or standardized format. When metadata is available, it often suffers from inconsistent wording, varying column names, and heterogeneous annotation across samples—even within the same dataset. This makes it extremely difficult to define experimental factors (e.g., Dose, Time_point) and construct appropriate design formulas for downstream modeling with tools like DESeq2 or limma. Therefore, We will process the sample-level metadata for each study, with a special care for:
+
+* the `Dose` of the radiation
+* the `Radiation_type`
+* the `Sex` of the samples included
+* the `Time_point` of when the samples were collected (e.g. yadda hours after irradiation)
+* the `Organism` where the measurements were performed
+* the `Age` of the samples (of course, if reported)
+* the `Sample_id`entifier, in order to have a fully standardized field for this
+* the `TaxonomyId` according to the xxyy nomenclature
+* the `Exp_setting`, where details are provided on the in InVivo/in ExVivo nature of the study
+
+## F&G se for gamma rays studies
+
+### F&G GSE124612
+
+```{r}
+all_se_list <- process_geo_dataset(
+  accession_id = "GSE124612",
+  excel_path = system.file("extdata", "Curated_datasets.xlsx", package = "DoReMiTra"), 
+  se_list = all_se_list
+)
+
+# colData(all_se_list$SE_Amundson_2019_InVivo_GSE124612_GPL11202) |>
+#   as.data.frame() |>
+#   head()
+
+## correcting coldata
+
+# Dose
+all_se_list$SE_Amundson_2019_InVivo_GSE124612_GPL11202$Dose <- ifelse(
+  grepl("control", all_se_list$SE_Amundson_2019_InVivo_GSE124612_GPL11202$treatment.ch1, ignore.case = TRUE),
+  "Control",
+  str_replace_all(
+    str_extract(
+      all_se_list$SE_Amundson_2019_InVivo_GSE124612_GPL11202$treatment.ch1,
+      "\\d+(\\.\\d+)?\\s*Gy"
+    ),
+    "\\s+",
+    ""
+  )
+)
+
+# Radiation type
+all_se_list$SE_Amundson_2019_InVivo_GSE124612_GPL11202$Radiation_type <- rep("gamma ray", 248)
+
+# Sex
+all_se_list$SE_Amundson_2019_InVivo_GSE124612_GPL11202$Sex <- str_to_title(all_se_list$SE_Amundson_2019_InVivo_GSE124612_GPL11202$Sex.ch1)
+
+# Time
+all_se_list$SE_Amundson_2019_InVivo_GSE124612_GPL11202$Time_point <- str_replace_all(
+  str_extract(all_se_list$SE_Amundson_2019_InVivo_GSE124612_GPL11202$treatment.ch1, "Day[_\\s]*\\d+"),
+  "[_\\s]+", ""
+)
+
+# organism
+all_se_list$SE_Amundson_2019_InVivo_GSE124612_GPL11202$Organism <- all_se_list$SE_Amundson_2019_InVivo_GSE124612_GPL11202$organism_ch1
+
+# age
+all_se_list$SE_Amundson_2019_InVivo_GSE124612_GPL11202$Age <- all_se_list$SE_Amundson_2019_InVivo_GSE124612_GPL11202$age.ch1
+
+# sample id
+all_se_list$SE_Amundson_2019_InVivo_GSE124612_GPL11202$Sample_id <- colnames(all_se_list$SE_Amundson_2019_InVivo_GSE124612_GPL11202)
+
+# taxonomy id
+all_se_list$SE_Amundson_2019_InVivo_GSE124612_GPL11202$TaxonomyId <- all_se_list$SE_Amundson_2019_InVivo_GSE124612_GPL11202$taxid_ch1 
+
+# experimental setting
+all_se_list$SE_Amundson_2019_InVivo_GSE124612_GPL11202$Exp_setting <- rep("InVivo", 248)
+
+print(all_se_list$SE_Amundson_2019_InVivo_GSE124612_GPL11202)
+```
+
+### F&G GSE104121
+
+```{r}
+all_se_list <- process_geo_dataset(
+  accession_id = "GSE104121",
+  excel_path = system.file("extdata", "Curated_datasets.xlsx", package = "DoReMiTra"), all_se_list
+)
+
+# colData(all_se_list$SE_Aryankalayil_2018_InVivo_GSE104121_GPL10787) |>
+#   as.data.frame() |>
+#   head()
+
+
+# working on platform GPL10787
+
+# Sex
+all_se_list$SE_Aryankalayil_2018_InVivo_GSE104121_GPL10787$Sex <- str_to_title(all_se_list$SE_Aryankalayil_2018_InVivo_GSE104121_GPL10787$gender.ch1)
+
+# time
+all_se_list$SE_Aryankalayil_2018_InVivo_GSE104121_GPL10787$Time_point <- str_to_title(all_se_list$SE_Aryankalayil_2018_InVivo_GSE104121_GPL10787$time.point.ch1)
+
+# dose
+all_se_list$SE_Aryankalayil_2018_InVivo_GSE104121_GPL10787$Dose <- str_replace_all(
+  str_extract(
+    all_se_list$SE_Aryankalayil_2018_InVivo_GSE104121_GPL10787$treatment.ch1,
+    "\\d+(\\.\\d+)?\\s*Gy"
+  ), "\\s+", ""
+)
+
+# radiation type
+all_se_list$SE_Aryankalayil_2018_InVivo_GSE104121_GPL10787$Radiation_type <- rep("gamma ray", 24)
+
+
+# organism
+all_se_list$SE_Aryankalayil_2018_InVivo_GSE104121_GPL10787$Organism <- all_se_list$SE_Aryankalayil_2018_InVivo_GSE104121_GPL10787$organism_ch1
+
+# age
+all_se_list$SE_Aryankalayil_2018_InVivo_GSE104121_GPL10787$Age <- all_se_list$SE_Aryankalayil_2018_InVivo_GSE104121_GPL10787$age.ch1
+
+# sample id
+all_se_list$SE_Aryankalayil_2018_InVivo_GSE104121_GPL10787$Sample_id <- colnames(all_se_list$SE_Aryankalayil_2018_InVivo_GSE104121_GPL10787)
+
+# taxonomy id
+all_se_list$SE_Aryankalayil_2018_InVivo_GSE104121_GPL10787$TaxonomyId <- all_se_list$SE_Aryankalayil_2018_InVivo_GSE104121_GPL10787$taxid_ch1 
+
+# experimental setting
+all_se_list$SE_Aryankalayil_2018_InVivo_GSE104121_GPL10787$Exp_setting <- rep("InVivo", 24)
+
+
+# working on platform GPL21163
+
+# Sex
+all_se_list$SE_Aryankalayil_2018_InVivo_GSE104121_GPL21163$Sex <- str_to_title(all_se_list$SE_Aryankalayil_2018_InVivo_GSE104121_GPL21163$gender.ch1)
+
+# time
+all_se_list$SE_Aryankalayil_2018_InVivo_GSE104121_GPL21163$Time_point <- str_to_title(all_se_list$SE_Aryankalayil_2018_InVivo_GSE104121_GPL21163$time.point.ch1)
+
+# dose
+all_se_list$SE_Aryankalayil_2018_InVivo_GSE104121_GPL21163$Dose <- str_replace_all(
+  str_extract(
+    all_se_list$SE_Aryankalayil_2018_InVivo_GSE104121_GPL21163$treatment.ch1,
+    "\\d+(\\.\\d+)?\\s*Gy"
+  ), "\\s+", ""
+)
+
+# radiation type
+all_se_list$SE_Aryankalayil_2018_InVivo_GSE104121_GPL21163$Radiation_type <- rep("gamma ray", 24)
+# organism
+all_se_list$SE_Aryankalayil_2018_InVivo_GSE104121_GPL21163$Organism <- all_se_list$SE_Aryankalayil_2018_InVivo_GSE104121_GPL21163$organism_ch1
+
+# age
+all_se_list$SE_Aryankalayil_2018_InVivo_GSE104121_GPL21163$Age <- all_se_list$SE_Aryankalayil_2018_InVivo_GSE104121_GPL21163$age.ch1
+
+# sample id
+all_se_list$SE_Aryankalayil_2018_InVivo_GSE104121_GPL21163$Sample_id <- colnames(all_se_list$SE_Aryankalayil_2018_InVivo_GSE104121_GPL21163)
+
+# taxonomy id
+all_se_list$SE_Aryankalayil_2018_InVivo_GSE104121_GPL21163$TaxonomyId <- all_se_list$SE_Aryankalayil_2018_InVivo_GSE104121_GPL21163$taxid_ch1 
+# experimental setting
+all_se_list$SE_Aryankalayil_2018_InVivo_GSE104121_GPL21163$Exp_setting <- rep("InVivo", 24)
+
+print(all_se_list$SE_Aryankalayil_2018_InVivo_GSE104121_GPL21163)
+```
+
+### F&G GSE102971
+
+```{r}
+all_se_list <- process_geo_dataset(
+  accession_id = "GSE102971",
+  excel_path = system.file("extdata", "Curated_datasets.xlsx", package = "DoReMiTra"), all_se_list
+)
+
+# colData(all_se_list$SE_Park_2017_ExVivo_GSE102971_GPL10332) |>
+#   as.data.frame() |>
+#   head()
+
+# Dose
+all_se_list$SE_Park_2017_ExVivo_GSE102971_GPL10332$Dose <- all_se_list$SE_Park_2017_ExVivo_GSE102971_GPL10332$dose.ch1
+
+# time
+all_se_list$SE_Park_2017_ExVivo_GSE102971_GPL10332$Time_point <- rep("24h", 167)
+
+# radiation type
+all_se_list$SE_Park_2017_ExVivo_GSE102971_GPL10332$Radiation_type <- rep("gamma ray", 167)
+
+# sex
+all_se_list$SE_Park_2017_ExVivo_GSE102971_GPL10332$Sex <- all_se_list$SE_Park_2017_ExVivo_GSE102971_GPL10332$gender.ch1
+
+# organism
+all_se_list$SE_Park_2017_ExVivo_GSE102971_GPL10332$Organism <- all_se_list$SE_Park_2017_ExVivo_GSE102971_GPL10332$organism_ch1
+
+# sample id
+all_se_list$SE_Park_2017_ExVivo_GSE102971_GPL10332$Sample_id <- colnames(all_se_list$SE_Park_2017_ExVivo_GSE102971_GPL10332)
+
+# taxonomy id
+all_se_list$SE_Park_2017_ExVivo_GSE102971_GPL10332$TaxonomyId <- all_se_list$SE_Park_2017_ExVivo_GSE102971_GPL10332$taxid_ch1 
+
+# experimental setting
+all_se_list$SE_Park_2017_ExVivo_GSE102971_GPL10332$Exp_setting <- rep("ExVivo", 167)
+
+# assigning the probe/spot id as rownames
+
+rownames(all_se_list$SE_Park_2017_ExVivo_GSE102971_GPL10332) <- rowData(all_se_list$SE_Park_2017_ExVivo_GSE102971_GPL10332)$SPOT_ID
+
+# split the dataset for each organism
+
+all_se_list$SE_Park_2017_ExVivo_GSE102971_GPL10332_MacacaMulatta <- all_se_list$SE_Park_2017_ExVivo_GSE102971_GPL10332[, all_se_list$SE_Park_2017_ExVivo_GSE102971_GPL10332$Organism  == "Macaca mulatta"]
+
+all_se_list$SE_Park_2017_ExVivo_GSE102971_GPL10332_HomoSapiens <- all_se_list$SE_Park_2017_ExVivo_GSE102971_GPL10332[, all_se_list$SE_Park_2017_ExVivo_GSE102971_GPL10332$Organism  == "Homo sapiens"]
+
+# remove the combined se
+
+all_se_list$SE_Park_2017_ExVivo_GSE102971_GPL10332 <- NULL
+
+print(all_se_list$SE_Park_2017_ExVivo_GSE102971_GPL10332_MacacaMulatta)
+print(all_se_list$SE_Park_2017_ExVivo_GSE102971_GPL10332_HomoSapiens)
+
+```
+
+### F&G GSE97000
+
+```{r}
+all_se_list <- process_geo_dataset(
+  accession_id = "GSE97000",
+  excel_path = system.file("extdata", "Curated_datasets.xlsx", package = "DoReMiTra"),
+  all_se_list
+)
+
+# colData(all_se_list$SE_Vasilyev_2017_ExVivo_GSE97000_GPL17077) |>
+#   as.data.frame() |>
+#   head()
+
+# dose
+all_se_list$SE_Vasilyev_2017_ExVivo_GSE97000_GPL17077$Dose <- ifelse(
+  str_detect(all_se_list$SE_Vasilyev_2017_ExVivo_GSE97000_GPL17077$treatment.ch1, regex("control", ignore_case = TRUE)), "0Gy",
+  str_replace_all(
+    str_extract(all_se_list$SE_Vasilyev_2017_ExVivo_GSE97000_GPL17077$treatment.ch1, "\\d+(\\.\\d+)?\\s*Gy"), "\\s+", ""
+  )
+)
+
+# time
+all_se_list$SE_Vasilyev_2017_ExVivo_GSE97000_GPL17077$Time_point <- rep("24h", 12)
+
+# radiation type
+all_se_list$SE_Vasilyev_2017_ExVivo_GSE97000_GPL17077$Radiation_type <- rep("gamma ray", 12)
+
+# sex
+all_se_list$SE_Vasilyev_2017_ExVivo_GSE97000_GPL17077$Sex <- all_se_list$SE_Vasilyev_2017_ExVivo_GSE97000_GPL17077$gender.ch1
+
+# age
+all_se_list$SE_Vasilyev_2017_ExVivo_GSE97000_GPL17077$Age <- all_se_list$SE_Vasilyev_2017_ExVivo_GSE97000_GPL17077$age.ch1
+
+# organism
+all_se_list$SE_Vasilyev_2017_ExVivo_GSE97000_GPL17077$Organism <- all_se_list$SE_Vasilyev_2017_ExVivo_GSE97000_GPL17077$organism_ch1
+
+# sample id
+all_se_list$SE_Vasilyev_2017_ExVivo_GSE97000_GPL17077$Sample_id <- colnames(all_se_list$SE_Vasilyev_2017_ExVivo_GSE97000_GPL17077)
+
+# taxonomy id
+all_se_list$SE_Vasilyev_2017_ExVivo_GSE97000_GPL17077$TaxonomyId <- all_se_list$SE_Vasilyev_2017_ExVivo_GSE97000_GPL17077$taxid_ch1 
+
+# experimental setting
+all_se_list$SE_Vasilyev_2017_ExVivo_GSE97000_GPL17077$Exp_setting <- rep("ExVivo", 12)
+
+print(all_se_list$SE_Vasilyev_2017_ExVivo_GSE97000_GPL17077)
+```
+
+### F&G GSE44201
+
+```{r}
+all_se_list <- process_geo_dataset(
+  accession_id = "GSE44201",
+  excel_path = system.file("extdata", "Curated_datasets.xlsx", package = "DoReMiTra"),
+  all_se_list
+)
+
+# working on platform GPL6480
+
+# colData(all_se_list$SE_Paul_2013_ExVivo_GSE44201_GPL6480) |>
+#   as.data.frame() |>
+#   head()
+
+# Dose
+all_se_list$SE_Paul_2013_ExVivo_GSE44201_GPL6480$Dose <- all_se_list$SE_Paul_2013_ExVivo_GSE44201_GPL6480$treatment.ch1
+# radiation type
+all_se_list$SE_Paul_2013_ExVivo_GSE44201_GPL6480$Radiation_type <- rep("gamma ray", 25)
+
+# time
+all_se_list$SE_Paul_2013_ExVivo_GSE44201_GPL6480$Time_point <- all_se_list$SE_Paul_2013_ExVivo_GSE44201_GPL6480$time.ch1
+# sex
+all_se_list$SE_Paul_2013_ExVivo_GSE44201_GPL6480$Sex <- all_se_list$SE_Paul_2013_ExVivo_GSE44201_GPL6480$gender.ch1
+# age
+all_se_list$SE_Paul_2013_ExVivo_GSE44201_GPL6480$Age <- all_se_list$SE_Paul_2013_ExVivo_GSE44201_GPL6480$age.ch1
+# organism
+all_se_list$SE_Paul_2013_ExVivo_GSE44201_GPL6480$Organism <- all_se_list$SE_Paul_2013_ExVivo_GSE44201_GPL6480$organism_ch1
+
+# sample id
+all_se_list$SE_Paul_2013_ExVivo_GSE44201_GPL6480$Sample_id <- colnames(all_se_list$SE_Paul_2013_ExVivo_GSE44201_GPL6480)
+
+# taxonomy id
+all_se_list$SE_Paul_2013_ExVivo_GSE44201_GPL6480$TaxonomyId <- all_se_list$SE_Paul_2013_ExVivo_GSE44201_GPL6480$taxid_ch1 
+
+# experimental setting
+all_se_list$SE_Paul_2013_ExVivo_GSE44201_GPL6480$Exp_setting <- rep("ExVivo", 25)
+
+print(all_se_list$SE_Paul_2013_ExVivo_GSE44201_GPL6480)
+
+
+# working on platform GPL6848
+
+# colData(all_se_list$SE_Paul_2013_ExVivo_GSE44201_GPL6848) |>
+#   as.data.frame() |>
+#   head()
+
+# Dose
+all_se_list$SE_Paul_2013_ExVivo_GSE44201_GPL6848$Dose <- all_se_list$SE_Paul_2013_ExVivo_GSE44201_GPL6848$treatment.ch1
+# radiation type
+all_se_list$SE_Paul_2013_ExVivo_GSE44201_GPL6848$Radiation_type <- rep("gamma ray", 50)
+
+# time
+all_se_list$SE_Paul_2013_ExVivo_GSE44201_GPL6848$Time_point <- all_se_list$SE_Paul_2013_ExVivo_GSE44201_GPL6848$time.ch1
+# sex
+all_se_list$SE_Paul_2013_ExVivo_GSE44201_GPL6848$Sex <- all_se_list$SE_Paul_2013_ExVivo_GSE44201_GPL6848$gender.ch1
+# age
+all_se_list$SE_Paul_2013_ExVivo_GSE44201_GPL6848$Age <- all_se_list$SE_Paul_2013_ExVivo_GSE44201_GPL6848$age.ch1
+# organism
+all_se_list$SE_Paul_2013_ExVivo_GSE44201_GPL6848$Organism <- all_se_list$SE_Paul_2013_ExVivo_GSE44201_GPL6848$organism_ch1
+
+# sample id
+all_se_list$SE_Paul_2013_ExVivo_GSE44201_GPL6848$Sample_id <- colnames(all_se_list$SE_Paul_2013_ExVivo_GSE44201_GPL6848)
+
+# taxonomy id
+all_se_list$SE_Paul_2013_ExVivo_GSE44201_GPL6848$TaxonomyId <- all_se_list$SE_Paul_2013_ExVivo_GSE44201_GPL6848$taxid_ch1 
+
+# experimental setting
+all_se_list$SE_Paul_2013_ExVivo_GSE44201_GPL6848$Exp_setting <- rep("ExVivo", 50)
+
+print(all_se_list$SE_Paul_2013_ExVivo_GSE44201_GPL6848)
+```
+
+### F&G GSE43151
+
+```{r}
+all_se_list <- process_geo_dataset(
+  accession_id = "GSE43151",
+  excel_path = system.file("extdata", "Curated_datasets.xlsx", package = "DoReMiTra"),
+  all_se_list
+)
+
+# colData(all_se_list$SE_Nosel_2013_ExVivo_GSE43151_GPL13497) |>
+#   as.data.frame() |>
+#   head()
+
+# Dose
+all_se_list$SE_Nosel_2013_ExVivo_GSE43151_GPL13497$Dose <- ifelse(
+  str_detect(all_se_list$SE_Nosel_2013_ExVivo_GSE43151_GPL13497$source_name_ch1, regex("sham", ignore_case = TRUE)),
+  "0Gy",
+  paste0(as.numeric(str_extract(all_se_list$SE_Nosel_2013_ExVivo_GSE43151_GPL13497$source_name_ch1, "\\d+(?=\\s*mGy)")) / 1000, "Gy")
+)
+
+# radiation type
+all_se_list$SE_Nosel_2013_ExVivo_GSE43151_GPL13497$Radiation_type <- rep("gamma ray", 121)
+
+# time
+all_se_list$SE_Nosel_2013_ExVivo_GSE43151_GPL13497$Time_point <- str_extract(all_se_list$SE_Nosel_2013_ExVivo_GSE43151_GPL13497$source_name_ch1, "\\d+\\s*min") |> str_replace_all("\\s+", "")
+
+# sex
+all_se_list$SE_Nosel_2013_ExVivo_GSE43151_GPL13497$Sex <- all_se_list$SE_Nosel_2013_ExVivo_GSE43151_GPL13497$gender.ch1
+
+# organism
+all_se_list$SE_Nosel_2013_ExVivo_GSE43151_GPL13497$Organism <- all_se_list$SE_Nosel_2013_ExVivo_GSE43151_GPL13497$organism_ch1
+
+# sample id
+all_se_list$SE_Nosel_2013_ExVivo_GSE43151_GPL13497$Sample_id <- colnames(all_se_list$SE_Nosel_2013_ExVivo_GSE43151_GPL13497)
+
+# taxonomy id
+all_se_list$SE_Nosel_2013_ExVivo_GSE43151_GPL13497$TaxonomyId <- all_se_list$SE_Nosel_2013_ExVivo_GSE43151_GPL13497$taxid_ch1 
+
+# experimental setting
+all_se_list$SE_Nosel_2013_ExVivo_GSE43151_GPL13497$Exp_setting <- rep("ExVivo", 121)
+
+print(all_se_list$SE_Nosel_2013_ExVivo_GSE43151_GPL13497)
+```
+
+### F&G GSE20173
+
+```{r}
+all_se_list <- process_geo_dataset(
+  accession_id = "GSE20173",
+  excel_path = system.file("extdata", "Curated_datasets.xlsx", package = "DoReMiTra"),
+  all_se_list
+)
+
+# keep is for later... this dataset structure is messy.. the information on GEO doesn't match the info from the publication
+
+# colData(all_se_list$SE_Girardi_2012_ExVivo_GSE20173_GPL6480) |>
+#   as.data.frame() |>
+#   head()
+
+# there is no informatio about the sex here
+
+treatments <- all_se_list$SE_Girardi_2012_ExVivo_GSE20173_GPL6480$treatment.ch1
+
+# Create clean labels
+Treatment_clean <- case_when(
+  str_detect(treatments, "irradiated.*gamma.*parallel ground") ~ "2Gy-parallel_ground_conditions",
+  str_detect(treatments, "irradiated.*gamma.*modelled microgravity") ~ "2Gy-modelled_microgravity",
+  str_detect(treatments, regex("modelled|modeled microgravity", ignore_case = TRUE)) ~ "Control-modelled_microgravity",
+  str_detect(treatments, "1g condition") ~ "Control-parallel_ground_conditions",
+  TRUE ~ "unknown"
+)
+
+# dose
+all_se_list$SE_Girardi_2012_ExVivo_GSE20173_GPL6480$Dose <- Treatment_clean
+
+# time
+all_se_list$SE_Girardi_2012_ExVivo_GSE20173_GPL6480$Time_point <- rep("24hr", 20)
+
+# radiation
+all_se_list$SE_Girardi_2012_ExVivo_GSE20173_GPL6480$Radiation_type <- rep("gamma ray", 20)
+
+# organism
+all_se_list$SE_Girardi_2012_ExVivo_GSE20173_GPL6480$Organism <- all_se_list$SE_Girardi_2012_ExVivo_GSE20173_GPL6480$organism_ch1
+
+# sample id
+all_se_list$SE_Girardi_2012_ExVivo_GSE20173_GPL6480$Sample_id <- colnames(all_se_list$SE_Girardi_2012_ExVivo_GSE20173_GPL6480)
+
+# taxonomy id
+all_se_list$SE_Girardi_2012_ExVivo_GSE20173_GPL6480$TaxonomyId <- all_se_list$SE_Girardi_2012_ExVivo_GSE20173_GPL6480$taxid_ch1 
+
+# experimental setting
+all_se_list$SE_Girardi_2012_ExVivo_GSE20173_GPL6480$Exp_setting <- rep("ExVivo", 20)
+
+print(all_se_list$SE_Girardi_2012_ExVivo_GSE20173_GPL6480)
+```
+
+### F&G GSE23515
+
+```{r}
+all_se_list <- process_geo_dataset(
+  accession_id = "GSE23515",
+  excel_path = system.file("extdata", "Curated_datasets.xlsx", package = "DoReMiTra"),
+  all_se_list
+)
+
+# colData(all_se_list$SE_Amundson_2011_ExVivo_GSE23515_GPL6480) |>
+#   as.data.frame() |>
+#   head()
+
+# Dose
+all_se_list$SE_Amundson_2011_ExVivo_GSE23515_GPL6480$Dose <- all_se_list$SE_Amundson_2011_ExVivo_GSE23515_GPL6480$radiation.dose.ch1
+
+# radiation type
+all_se_list$SE_Amundson_2011_ExVivo_GSE23515_GPL6480$Radiation_type <- rep("gamma ray", 95)
+
+# time
+all_se_list$SE_Amundson_2011_ExVivo_GSE23515_GPL6480$Time_point <- rep("6hr", 95)
+# sex
+all_se_list$SE_Amundson_2011_ExVivo_GSE23515_GPL6480$Sex <- all_se_list$SE_Amundson_2011_ExVivo_GSE23515_GPL6480$gender.ch1
+
+# age
+all_se_list$SE_Amundson_2011_ExVivo_GSE23515_GPL6480$Age <- all_se_list$SE_Amundson_2011_ExVivo_GSE23515_GPL6480$age.ch1
+
+# organism
+all_se_list$SE_Amundson_2011_ExVivo_GSE23515_GPL6480$Organism <- all_se_list$SE_Amundson_2011_ExVivo_GSE23515_GPL6480$organism_ch1
+
+# sample id
+all_se_list$SE_Amundson_2011_ExVivo_GSE23515_GPL6480$Sample_id <- colnames(all_se_list$SE_Amundson_2011_ExVivo_GSE23515_GPL6480)
+
+# smoking status
+all_se_list$SE_Amundson_2011_ExVivo_GSE23515_GPL6480$Smoking_status <- all_se_list$SE_Amundson_2011_ExVivo_GSE23515_GPL6480$smoking.status.ch1
+
+# taxonomy id
+all_se_list$SE_Amundson_2011_ExVivo_GSE23515_GPL6480$TaxonomyId <- all_se_list$SE_Amundson_2011_ExVivo_GSE23515_GPL6480$taxid_ch1 
+
+# experimental setting
+all_se_list$SE_Amundson_2011_ExVivo_GSE23515_GPL6480$Exp_setting <- rep("ExVivo", 95)
+
+print(all_se_list$SE_Amundson_2011_ExVivo_GSE23515_GPL6480)
+```
+
+### F&G GSE6978
+
+```{r}
+all_se_list <- process_geo_dataset(
+  accession_id = "GSE6978",
+  excel_path = system.file("extdata", "Curated_datasets.xlsx", package = "DoReMiTra"),
+  all_se_list
+)
+
+# the GeneSymbol column here contains wrong inputs so we will correct it manually
+
+# Entrez<- rowData(all_se_list$SE_Gruel_2008_ExVivo_GSE6978_GPL4803)$GENE
+# 
+# Entrez_to_symbol <- mapIds(
+#   org.Hs.eg.db,
+#   keys = Entrez,
+#   column = "SYMBOL",
+#   keytype = "ENTREZID",
+#   multiVals = "first"
+# )
+# 
+# rowData(all_se_list$SE_Gruel_2008_ExVivo_GSE6978_GPL4803)$SYMBOL<- Entrez_to_symbol
+# 
+# # assigning the corrected gene symbols to the rownames of the se object
+# 
+# rownames(all_se_list$SE_Gruel_2008_ExVivo_GSE6978_GPL4803) <- rowData(all_se_list$SE_Gruel_2008_ExVivo_GSE6978_GPL4803)$SYMBOL
+
+# colData(all_se_list$SE_Gruel_2008_ExVivo_GSE6978_GPL4803) |>
+#   as.data.frame() |>
+#   head()
+
+# Dose
+all_se_list$SE_Gruel_2008_ExVivo_GSE6978_GPL4803$Dose <- str_extract(all_se_list$SE_Gruel_2008_ExVivo_GSE6978_GPL4803$title, "\\d+(\\.\\d+)?Gy")
+
+# radiation type
+all_se_list$SE_Gruel_2008_ExVivo_GSE6978_GPL4803$Radiation_type <- rep("gamma ray", 114)
+
+# time
+all_se_list$SE_Gruel_2008_ExVivo_GSE6978_GPL4803$Time_point <- str_extract(all_se_list$SE_Gruel_2008_ExVivo_GSE6978_GPL4803$title, "\\d+h") |> str_replace("h", "hr")
+# sex
+all_se_list$SE_Gruel_2008_ExVivo_GSE6978_GPL4803$Sex <- rep("male", 114)
+
+# organism
+all_se_list$SE_Gruel_2008_ExVivo_GSE6978_GPL4803$Organism <- all_se_list$SE_Gruel_2008_ExVivo_GSE6978_GPL4803$organism_ch1
+
+# sample id
+all_se_list$SE_Gruel_2008_ExVivo_GSE6978_GPL4803$Sample_id <- colnames(all_se_list$SE_Gruel_2008_ExVivo_GSE6978_GPL4803)
+
+# cell type
+all_se_list$SE_Gruel_2008_ExVivo_GSE6978_GPL4803$Cell_type <- str_extract(all_se_list$SE_Gruel_2008_ExVivo_GSE6978_GPL4803$title, "^[^_]+")
+
+# taxonomy id
+all_se_list$SE_Gruel_2008_ExVivo_GSE6978_GPL4803$TaxonomyId <- all_se_list$SE_Gruel_2008_ExVivo_GSE6978_GPL4803$taxid_ch1 
+
+# experimental setting
+all_se_list$SE_Gruel_2008_ExVivo_GSE6978_GPL4803$Exp_setting <- rep("ExVivo", 114)
+
+print(all_se_list$SE_Gruel_2008_ExVivo_GSE6978_GPL4803)
+
+# add the gene bank accession?
+
+```
+
+### F&G GSE63952
+
+```{r}
+all_se_list <- process_geo_dataset(
+  accession_id = "GSE63952",
+  excel_path = system.file("extdata", "Curated_datasets.xlsx", package = "DoReMiTra"),
+  all_se_list
+)
+
+# colData(all_se_list$SE_Rouchka_2019_ExVivo_GSE63952_GPL15207) |>
+#   as.data.frame() |>
+#   head()
+
+# there is no information about sex
+
+# dose ... there is a space between the dose and the unit
+all_se_list$SE_Rouchka_2019_ExVivo_GSE63952_GPL15207$Dose <- all_se_list$SE_Rouchka_2019_ExVivo_GSE63952_GPL15207$radiation.dose.ch1
+
+# time
+all_se_list$SE_Rouchka_2019_ExVivo_GSE63952_GPL15207$Time_point <- all_se_list$SE_Rouchka_2019_ExVivo_GSE63952_GPL15207$time.ch1
+
+# radiation type
+all_se_list$SE_Rouchka_2019_ExVivo_GSE63952_GPL15207$Radiation_type <- rep("gamma ray", 100)
+
+# organism
+all_se_list$SE_Rouchka_2019_ExVivo_GSE63952_GPL15207$Organism <- all_se_list$SE_Rouchka_2019_ExVivo_GSE63952_GPL15207$organism_ch1
+
+# sex ... it is not mentioned on GEO or in the publication
+all_se_list$SE_Rouchka_2019_ExVivo_GSE63952_GPL15207$Sex <- NA
+
+# sample id
+all_se_list$SE_Rouchka_2019_ExVivo_GSE63952_GPL15207$Sample_id <- colnames(all_se_list$SE_Rouchka_2019_ExVivo_GSE63952_GPL15207)
+
+# taxonomy id
+all_se_list$SE_Rouchka_2019_ExVivo_GSE63952_GPL15207$TaxonomyId <- all_se_list$SE_Rouchka_2019_ExVivo_GSE63952_GPL15207$taxid_ch1 
+
+# experimental setting
+all_se_list$SE_Rouchka_2019_ExVivo_GSE63952_GPL15207$Exp_setting <- rep("ExVivo", 100)
+
+print(all_se_list$SE_Rouchka_2019_ExVivo_GSE63952_GPL15207)
+```
+
+### F&G GSE8917
+
+```{r}
+all_se_list <- process_geo_dataset(
+  accession_id = "GSE8917",
+  excel_path = system.file("extdata", "Curated_datasets.xlsx", package = "DoReMiTra"),
+  all_se_list
+)
+
+# colData(all_se_list$SE_Amundson_2008_ExVivo_GSE8917_GPL1708) |>
+#   as.data.frame() |>
+#   head()
+
+# dose
+all_se_list$SE_Amundson_2008_ExVivo_GSE8917_GPL1708$Dose <- str_extract(all_se_list$SE_Amundson_2008_ExVivo_GSE8917_GPL1708$title, "\\d+(\\.\\d+)?Gy")
+
+# time
+all_se_list$SE_Amundson_2008_ExVivo_GSE8917_GPL1708$Time_point <- str_extract(all_se_list$SE_Amundson_2008_ExVivo_GSE8917_GPL1708$title, "\\d+hr")
+
+# radiaation
+all_se_list$SE_Amundson_2008_ExVivo_GSE8917_GPL1708$Radiation_type <- rep("gamma ray", 50)
+
+# sex
+all_se_list$SE_Amundson_2008_ExVivo_GSE8917_GPL1708$Sex <- all_se_list$SE_Amundson_2008_ExVivo_GSE8917_GPL1708$Gender.ch1
+
+# organism
+all_se_list$SE_Amundson_2008_ExVivo_GSE8917_GPL1708$Organism <- all_se_list$SE_Amundson_2008_ExVivo_GSE8917_GPL1708$organism_ch1
+
+# age
+all_se_list$SE_Amundson_2008_ExVivo_GSE8917_GPL1708$Age <- all_se_list$SE_Amundson_2008_ExVivo_GSE8917_GPL1708$Age.ch1
+
+# sample id
+all_se_list$SE_Amundson_2008_ExVivo_GSE8917_GPL1708$Sample_id <- colnames(all_se_list$SE_Amundson_2008_ExVivo_GSE8917_GPL1708)
+
+# taxonomy id
+all_se_list$SE_Amundson_2008_ExVivo_GSE8917_GPL1708$TaxonomyId <- all_se_list$SE_Amundson_2008_ExVivo_GSE8917_GPL1708$taxid_ch1 
+
+# experimental setting
+all_se_list$SE_Amundson_2008_ExVivo_GSE8917_GPL1708$Exp_setting <- rep("ExVivo", 50)
+
+# assigning the spot id as rownames
+
+rownames(all_se_list$SE_Amundson_2008_ExVivo_GSE8917_GPL1708)<- rowData(all_se_list$SE_Amundson_2008_ExVivo_GSE8917_GPL1708)$SPOT_ID
+
+print(all_se_list$SE_Amundson_2008_ExVivo_GSE8917_GPL1708)
+```
+
+### F&G GSE36355
+
+```{r}
+all_se_list <- process_geo_dataset(
+  accession_id = "GSE36355",
+  excel_path = system.file("extdata", "Curated_datasets.xlsx", package = "DoReMiTra"),
+  all_se_list
+)
+
+# colData(all_se_list$SE_Manikandan_2014_ExVivo_GSE36355_GPL6883) |>
+#   as.data.frame() |>
+#   head()
+
+# there is no info about sex
+
+# dose
+all_se_list$SE_Manikandan_2014_ExVivo_GSE36355_GPL6883$Dose <- rep(c("0Gy", "1Gy"), 8)
+
+# time
+all_se_list$SE_Manikandan_2014_ExVivo_GSE36355_GPL6883$Time_point <- rep("30min", 16)
+
+# radiation
+all_se_list$SE_Manikandan_2014_ExVivo_GSE36355_GPL6883$Radiation_type <- rep("gamma ray", 16)
+
+# cell type
+all_se_list$SE_Manikandan_2014_ExVivo_GSE36355_GPL6883$Cell_type <- all_se_list$SE_Manikandan_2014_ExVivo_GSE36355_GPL6883$cell.type.ch1
+
+# organism
+all_se_list$SE_Manikandan_2014_ExVivo_GSE36355_GPL6883$Organism <- all_se_list$SE_Manikandan_2014_ExVivo_GSE36355_GPL6883$organism_ch1
+
+# sample id
+all_se_list$SE_Manikandan_2014_ExVivo_GSE36355_GPL6883$Sample_id <- colnames(all_se_list$SE_Manikandan_2014_ExVivo_GSE36355_GPL6883)
+
+# taxonomy id
+all_se_list$SE_Manikandan_2014_ExVivo_GSE36355_GPL6883$TaxonomyId <- all_se_list$SE_Manikandan_2014_ExVivo_GSE36355_GPL6883$taxid_ch1 
+
+# experimental setting
+all_se_list$SE_Manikandan_2014_ExVivo_GSE36355_GPL6883$Exp_setting <- rep("ExVivo", 16)
+
+print(all_se_list$SE_Manikandan_2014_ExVivo_GSE36355_GPL6883)
+```
+
+### F&G GSE44245
+
+```{r}
+all_se_list <- process_geo_dataset(
+  accession_id = "GSE44245",
+  excel_path = system.file("extdata", "Curated_datasets.xlsx", package = "DoReMiTra"),
+  all_se_list
+)
+
+# colData(all_se_list$SE_Lee_2013_ExVivo_GSE44245_GPL570) |>
+#   as.data.frame() |>
+#   head()
+
+# there is no info about sex here
+
+# dose
+all_se_list$SE_Lee_2013_ExVivo_GSE44245_GPL570$Dose <- c(rep("0Gy", 3), rep("5Gy", 3))
+
+# time
+all_se_list$SE_Lee_2013_ExVivo_GSE44245_GPL570$Time_point <- rep("24hr", 6)
+
+# radiation
+all_se_list$SE_Lee_2013_ExVivo_GSE44245_GPL570$Radiation_type <- rep("gamma ray", 6)
+
+# organism
+all_se_list$SE_Lee_2013_ExVivo_GSE44245_GPL570$Organism <- all_se_list$SE_Lee_2013_ExVivo_GSE44245_GPL570$organism_ch1
+
+# sample id
+all_se_list$SE_Lee_2013_ExVivo_GSE44245_GPL570$Sample_id <- colnames(all_se_list$SE_Lee_2013_ExVivo_GSE44245_GPL570)
+
+# taxonomy id
+all_se_list$SE_Lee_2013_ExVivo_GSE44245_GPL570$TaxonomyId <- all_se_list$SE_Lee_2013_ExVivo_GSE44245_GPL570$taxid_ch1 
+
+# experimental setting
+all_se_list$SE_Lee_2013_ExVivo_GSE44245_GPL570$Exp_setting <- rep("ExVivo", 6)
+
+print(all_se_list$SE_Lee_2013_ExVivo_GSE44245_GPL570)
+```
+
+### F&G GSE64375
+
+```{r}
+all_se_list <- process_geo_dataset(
+  accession_id = "GSE64375",
+  excel_path = system.file("extdata", "Curated_datasets.xlsx", package = "DoReMiTra"),
+  all_se_list
+)
+
+# adding the gene symbol to the rowdata
+
+gene_assignment <- rowData(all_se_list$SE_Rouchka_2015_ExVivo_GSE64375_GPL6244)$gene_assignment
+extracted_symbols <- stringr::str_match(gene_assignment, "//\\s*([^/]+)\\s*//")[, 2]
+rowData(all_se_list$SE_Rouchka_2015_ExVivo_GSE64375_GPL6244)$SYMBOL<- extracted_symbols
+
+
+# extract the gene symbols here because it has a different pattern compared to the other datasets
+
+# Extract gene symbols
+# 
+# se <- all_se_list$SE_Rouchka_2015_ExVivo_GSE64375_GPL6244
+# gene_assignment <- rowData(se)$gene_assignment
+# extracted_symbols <- stringr::str_match(gene_assignment, "//\\s*([^/]+)\\s*//")[, 2]
+# 
+# # Filter valid gene symbols
+# valid <- !is.na(extracted_symbols) & extracted_symbols != ""
+# extracted_symbols <- extracted_symbols[valid]
+# se <- se[valid, ]
+# 
+# # Aggregate expression
+# exprs_mat <- assay(se)
+# exprs_sum <- rowsum(exprs_mat, group = extracted_symbols)
+# exprs_n <- table(extracted_symbols)
+# exprs_avg <- sweep(exprs_sum, 1, exprs_n, FUN = "/")
+# rownames(exprs_avg) <- rownames(exprs_sum)
+# 
+# # Aggregate rowData
+# rd_df <- as.data.frame(rowData(se))
+# rd_df$GENE_SYMBOL_AGG <- extracted_symbols
+# rd_agg_df <- dplyr::group_by(rd_df, GENE_SYMBOL_AGG) |>
+#   dplyr::slice(1) |> dplyr::ungroup()
+# rd_agg_df$GENE_SYMBOL_AGG <- NULL
+# rd <- S4Vectors::DataFrame(rd_agg_df)
+# 
+# # Build final SE
+# cd <- colData(se)
+# all_se_list$SE_Rouchka_2015_ExVivo_GSE64375_GPL6244 <- SummarizedExperiment::SummarizedExperiment(
+#   assays = list(exprs = exprs_avg),
+#   rowData = rd,
+#   colData = cd
+# )
+
+
+# colData(all_se_list$SE_Rouchka_2015_ExVivo_GSE64375_GPL6244) |>
+#   as.data.frame() |>
+#   head()
+
+# there is no info about sex here
+
+# dose
+all_se_list$SE_Rouchka_2015_ExVivo_GSE64375_GPL6244$Dose <- all_se_list$SE_Rouchka_2015_ExVivo_GSE64375_GPL6244$radiation.dose.ch1
+
+# time
+all_se_list$SE_Rouchka_2015_ExVivo_GSE64375_GPL6244$Time_point <- all_se_list$SE_Rouchka_2015_ExVivo_GSE64375_GPL6244$time.ch1
+
+# radiation
+all_se_list$SE_Rouchka_2015_ExVivo_GSE64375_GPL6244$Radiation_type <- rep("gamma ray", 16)
+
+# organism
+all_se_list$SE_Rouchka_2015_ExVivo_GSE64375_GPL6244$Organism <- all_se_list$SE_Rouchka_2015_ExVivo_GSE64375_GPL6244$organism_ch1
+
+# sample id
+all_se_list$SE_Rouchka_2015_ExVivo_GSE64375_GPL6244$Sample_id <- colnames(all_se_list$SE_Rouchka_2015_ExVivo_GSE64375_GPL6244)
+
+# taxonomy id
+all_se_list$SE_Rouchka_2015_ExVivo_GSE64375_GPL6244$TaxonomyId <- all_se_list$SE_Rouchka_2015_ExVivo_GSE64375_GPL6244$taxid_ch1 
+
+# experimental setting
+all_se_list$SE_Rouchka_2015_ExVivo_GSE64375_GPL6244$Exp_setting <- rep("ExVivo", 16)
+
+print(all_se_list$SE_Rouchka_2015_ExVivo_GSE64375_GPL6244)
+```
+
+### F&G GSE55953
+
+```{r}
+all_se_list <- process_geo_dataset(
+  accession_id = "GSE55953",
+  excel_path = system.file("extdata", "Curated_datasets.xlsx", package = "DoReMiTra"),
+  all_se_list
+)
+
+# colData(all_se_list$SE_Ankermit_2015_ExVivo_GSE55953_GPL14550) |>
+#   as.data.frame() |>
+#   head()
+
+# dose
+all_se_list$SE_Ankermit_2015_ExVivo_GSE55953_GPL14550$Dose <- rep(c("0Gy", "60Gy", "0Gy", "60Gy", "0Gy", "60Gy", "0Gy"), each = 4)
+
+# time
+all_se_list$SE_Ankermit_2015_ExVivo_GSE55953_GPL14550$Time_point <- all_se_list$SE_Ankermit_2015_ExVivo_GSE55953_GPL14550$time.ch1
+
+# radiation
+all_se_list$SE_Ankermit_2015_ExVivo_GSE55953_GPL14550$Radiation_type <- rep("gamma ray", 28)
+
+# sex
+all_se_list$SE_Ankermit_2015_ExVivo_GSE55953_GPL14550$Sex <- rep("male", 28)
+
+# organism
+all_se_list$SE_Ankermit_2015_ExVivo_GSE55953_GPL14550$Organism <- all_se_list$SE_Ankermit_2015_ExVivo_GSE55953_GPL14550$organism_ch1
+
+# sample id
+all_se_list$SE_Ankermit_2015_ExVivo_GSE55953_GPL14550$Sample_id <- colnames(all_se_list$SE_Ankermit_2015_ExVivo_GSE55953_GPL14550)
+
+# taxonomy id
+all_se_list$SE_Ankermit_2015_ExVivo_GSE55953_GPL14550$TaxonomyId <- all_se_list$SE_Ankermit_2015_ExVivo_GSE55953_GPL14550$taxid_ch1 
+
+# experimental setting
+all_se_list$SE_Ankermit_2015_ExVivo_GSE55953_GPL14550$Exp_setting <- rep("ExVivo", 28)
+
+print(all_se_list$SE_Ankermit_2015_ExVivo_GSE55953_GPL14550)
+```
+
+## F&G se for neutron studies
+
+### F&G GSE113509
+
+```{r}
+all_se_list <- process_geo_dataset(
+  accession_id = "GSE113509",
+  excel_path = system.file("extdata", "Curated_datasets.xlsx", package = "DoReMiTra"),
+  all_se_list
+)
+
+# colData(all_se_list$SE_Broustas_2018_InVivo_GSE113509_GPL11202) |>
+#   as.data.frame() |>
+#   head()
+
+# remove samples with mixed field irradiation
+
+all_se_list$SE_Broustas_2018_InVivo_GSE113509_GPL11202 <- all_se_list$SE_Broustas_2018_InVivo_GSE113509_GPL11202[, -c(13:30)]
+
+# dose
+all_se_list$SE_Broustas_2018_InVivo_GSE113509_GPL11202$Dose <- ifelse(
+  str_detect(all_se_list$SE_Broustas_2018_InVivo_GSE113509_GPL11202$treatment.ch1, regex("none", ignore_case = TRUE)), "0Gy", str_remove_all(str_extract(all_se_list$SE_Broustas_2018_InVivo_GSE113509_GPL11202$treatment.ch1, "\\d+(\\.\\d+)?\\s*Gy"), "\\s+")
+)
+
+# time
+all_se_list$SE_Broustas_2018_InVivo_GSE113509_GPL11202$Time_point <- rep("7 days", 18)
+
+# radiation
+all_se_list$SE_Broustas_2018_InVivo_GSE113509_GPL11202$Radiation_type <- c(rep("Control",6), rep("X-ray", 6), rep("Neutron", 6))
+
+# organism
+all_se_list$SE_Broustas_2018_InVivo_GSE113509_GPL11202$Organism <- all_se_list$SE_Broustas_2018_InVivo_GSE113509_GPL11202$organism_ch1
+
+# sex
+all_se_list$SE_Broustas_2018_InVivo_GSE113509_GPL11202$Sex <- all_se_list$SE_Broustas_2018_InVivo_GSE113509_GPL11202$Sex.ch1
+
+# sample id
+all_se_list$SE_Broustas_2018_InVivo_GSE113509_GPL11202$Sample_id <- colnames(all_se_list$SE_Broustas_2018_InVivo_GSE113509_GPL11202)
+
+# taxonomy id
+all_se_list$SE_Broustas_2018_InVivo_GSE113509_GPL11202$TaxonomyId <- all_se_list$SE_Broustas_2018_InVivo_GSE113509_GPL11202$taxid_ch1 
+
+# experimental setting
+all_se_list$SE_Broustas_2018_InVivo_GSE113509_GPL11202$Exp_setting <- rep("InVivo", 18)
+
+print(all_se_list$SE_Broustas_2018_InVivo_GSE113509_GPL11202)
+```
+
+### F&G GSE85323
+
+```{r}
+all_se_list <- process_geo_dataset(
+  accession_id = "GSE85323",
+  excel_path = system.file("extdata", "Curated_datasets.xlsx", package = "DoReMiTra"),
+  all_se_list
+)
+
+# colData(all_se_list$SE_Broustas_2017_InVivo_GSE85323_GPL10333) |>
+#   as.data.frame() |>
+#   head()
+
+# dose
+all_se_list$SE_Broustas_2017_InVivo_GSE85323_GPL10333$Dose <- ifelse(
+  str_detect(all_se_list$SE_Broustas_2017_InVivo_GSE85323_GPL10333$protocol.ch1, regex("control", ignore_case = TRUE)), "0Gy",
+  str_replace_all(
+    str_extract(all_se_list$SE_Broustas_2017_InVivo_GSE85323_GPL10333$protocol.ch1, "\\d+(\\.\\d+)?\\s*Gy"), "\\s+", ""
+  )
+)
+
+# time
+all_se_list$SE_Broustas_2017_InVivo_GSE85323_GPL10333$Time_point <- str_extract(all_se_list$SE_Broustas_2017_InVivo_GSE85323_GPL10333$title, "day\\d+")
+
+# radiation
+all_se_list$SE_Broustas_2017_InVivo_GSE85323_GPL10333$Radiation_type <- ifelse(
+  str_detect(all_se_list$SE_Broustas_2017_InVivo_GSE85323_GPL10333$protocol.ch1, regex("control", ignore_case = TRUE)),
+  "control",
+  str_extract(all_se_list$SE_Broustas_2017_InVivo_GSE85323_GPL10333$protocol.ch1, "^(X-ray|Neutron)")
+)
+
+# sex
+all_se_list$SE_Broustas_2017_InVivo_GSE85323_GPL10333$Sex <- all_se_list$SE_Broustas_2017_InVivo_GSE85323_GPL10333$gender.ch1
+
+# organism
+all_se_list$SE_Broustas_2017_InVivo_GSE85323_GPL10333$Organism <- all_se_list$SE_Broustas_2017_InVivo_GSE85323_GPL10333$organism_ch1
+
+# sample id
+all_se_list$SE_Broustas_2017_InVivo_GSE85323_GPL10333$Sample_id <- colnames(all_se_list$SE_Broustas_2017_InVivo_GSE85323_GPL10333)
+
+# taxonomy id
+all_se_list$SE_Broustas_2017_InVivo_GSE85323_GPL10333$TaxonomyId <- all_se_list$SE_Broustas_2017_InVivo_GSE85323_GPL10333$taxid_ch1 
+
+# experimental setting
+all_se_list$SE_Broustas_2017_InVivo_GSE85323_GPL10333$Exp_setting <- rep("InVivo", 72)
+
+# assigning the spot id as rownames
+
+rownames(all_se_list$SE_Broustas_2017_InVivo_GSE85323_GPL10333) <- rowData(all_se_list$SE_Broustas_2017_InVivo_GSE85323_GPL10333)$SPOT_ID
+
+print(all_se_list$SE_Broustas_2017_InVivo_GSE85323_GPL10333)
+```
+
+### F&G GSE90909
+
+```{r}
+all_se_list <- process_geo_dataset(
+  accession_id = "GSE90909",
+  excel_path = system.file("extdata", "Curated_datasets.xlsx", package = "DoReMiTra"),
+  all_se_list
+)
+
+# colData(all_se_list$SE_Broustas_2017_ExVivo_GSE90909_GPL13497) |>
+#   as.data.frame() |>
+#   head()
+
+# there is no info about sex here
+
+# dose
+all_se_list$SE_Broustas_2017_ExVivo_GSE90909_GPL13497$Dose <- ifelse(
+  str_detect(all_se_list$SE_Broustas_2017_ExVivo_GSE90909_GPL13497$title, regex("control", ignore_case = TRUE)),
+  "0Gy",
+  str_extract(all_se_list$SE_Broustas_2017_ExVivo_GSE90909_GPL13497$title, "\\d+(\\.\\d+)?Gy")
+)
+
+# time
+all_se_list$SE_Broustas_2017_ExVivo_GSE90909_GPL13497$Time_point <- rep("24h", 92)
+
+# radiation
+all_se_list$SE_Broustas_2017_ExVivo_GSE90909_GPL13497$Radiation_type <- ifelse(
+  str_detect(all_se_list$SE_Broustas_2017_ExVivo_GSE90909_GPL13497$title, regex("control", ignore_case = TRUE)),
+  "control",
+  str_extract(all_se_list$SE_Broustas_2017_ExVivo_GSE90909_GPL13497$title, "(?i)(X-ray|Neutron)")
+)
+
+# Organism
+all_se_list$SE_Broustas_2017_ExVivo_GSE90909_GPL13497$Organism <- all_se_list$SE_Broustas_2017_ExVivo_GSE90909_GPL13497$organism_ch1
+
+# sample id
+all_se_list$SE_Broustas_2017_ExVivo_GSE90909_GPL13497$Sample_id <- colnames(all_se_list$SE_Broustas_2017_ExVivo_GSE90909_GPL13497)
+
+# taxonomy id
+all_se_list$SE_Broustas_2017_ExVivo_GSE90909_GPL13497$TaxonomyId <- all_se_list$SE_Broustas_2017_ExVivo_GSE90909_GPL13497$taxid_ch1 
+
+# experimental setting
+all_se_list$SE_Broustas_2017_ExVivo_GSE90909_GPL13497$Exp_setting <- rep("ExVivo", 92)
+
+print(all_se_list$SE_Broustas_2017_ExVivo_GSE90909_GPL13497)
+```
+
+## F&G se for X-ray studies
+### F&G GSE23393
+
+```{r}
+all_se_list <- process_geo_dataset(
+  accession_id = "GSE23393",
+  excel_path = system.file("extdata", "Curated_datasets.xlsx", package = "DoReMiTra"),
+  all_se_list
+)
+
+# colData(all_se_list$SE_Paul_2010_InVivo_GSE23393_GPL6480) |>
+#   as.data.frame() |>
+#   head()
+
+# dose ... there is a space between the value and the unite
+all_se_list$SE_Paul_2010_InVivo_GSE23393_GPL6480$Dose <- str_extract(
+  all_se_list$SE_Paul_2010_InVivo_GSE23393_GPL6480$source_name_ch1,
+  "\\d+(\\.\\d+)?\\s*Gy"
+)
+
+# time
+all_se_list$SE_Paul_2010_InVivo_GSE23393_GPL6480$Time_point <- rep("4hr", 16)
+
+# radiation
+all_se_list$SE_Paul_2010_InVivo_GSE23393_GPL6480$Radiation_type <- rep("X-ray", 16)
+
+# sex
+all_se_list$SE_Paul_2010_InVivo_GSE23393_GPL6480$Sex <- all_se_list$SE_Paul_2010_InVivo_GSE23393_GPL6480$gender.ch1
+
+# age
+all_se_list$SE_Paul_2010_InVivo_GSE23393_GPL6480$Age <- all_se_list$SE_Paul_2010_InVivo_GSE23393_GPL6480$age.ch1
+
+# organism
+all_se_list$SE_Paul_2010_InVivo_GSE23393_GPL6480$Organism <- all_se_list$SE_Paul_2010_InVivo_GSE23393_GPL6480$organism_ch1
+
+# sample id
+all_se_list$SE_Paul_2010_InVivo_GSE23393_GPL6480$Sample_id <- colnames(all_se_list$SE_Paul_2010_InVivo_GSE23393_GPL6480)
+
+# taxonomy id
+all_se_list$SE_Paul_2010_InVivo_GSE23393_GPL6480$TaxonomyId <- all_se_list$SE_Paul_2010_InVivo_GSE23393_GPL6480$taxid_ch1 
+
+# experimental setting
+all_se_list$SE_Paul_2010_InVivo_GSE23393_GPL6480$Exp_setting <- rep("InVivo", 16)
+
+print(all_se_list$SE_Paul_2010_InVivo_GSE23393_GPL6480)
+```
+
+### F&G GSE65292
+
+```{r}
+all_se_list <- process_geo_dataset(
+  accession_id = "GSE65292",
+  excel_path = system.file("extdata", "Curated_datasets.xlsx", package = "DoReMiTra"),
+  all_se_list
+)
+
+# colData(all_se_list$SE_Ghandhi_2015_ExVivo_GSE65292_GPL13497) |>
+#   as.data.frame() |>
+#   head()
+
+# dose
+all_se_list$SE_Ghandhi_2015_ExVivo_GSE65292_GPL13497$Dose <- all_se_list$SE_Ghandhi_2015_ExVivo_GSE65292_GPL13497$dose.ch1
+
+# time
+all_se_list$SE_Ghandhi_2015_ExVivo_GSE65292_GPL13497$Time_point <- rep("24hr", 35)
+
+# radiation
+all_se_list$SE_Ghandhi_2015_ExVivo_GSE65292_GPL13497$Radiation_type <- rep("X-ray", 35)
+
+# sex--- not provided
+
+# dose rate
+all_se_list$SE_Ghandhi_2015_ExVivo_GSE65292_GPL13497$Dose_rate <- all_se_list$SE_Ghandhi_2015_ExVivo_GSE65292_GPL13497$dose.rate.ch1
+
+# organism
+all_se_list$SE_Ghandhi_2015_ExVivo_GSE65292_GPL13497$Organism <- all_se_list$SE_Ghandhi_2015_ExVivo_GSE65292_GPL13497$organism_ch1
+
+# sample id
+all_se_list$SE_Ghandhi_2015_ExVivo_GSE65292_GPL13497$Sample_id <- colnames(all_se_list$SE_Ghandhi_2015_ExVivo_GSE65292_GPL13497)
+
+# taxonomy id
+all_se_list$SE_Ghandhi_2015_ExVivo_GSE65292_GPL13497$TaxonomyId <- all_se_list$SE_Ghandhi_2015_ExVivo_GSE65292_GPL13497$taxid_ch1 
+
+# experimental setting
+all_se_list$SE_Ghandhi_2015_ExVivo_GSE65292_GPL13497$Exp_setting <- rep("ExVivo", 35)
+
+print(all_se_list$SE_Ghandhi_2015_ExVivo_GSE65292_GPL13497)
+```
+
+### F&G GSE15341
+
+```{r}
+all_se_list <- process_geo_dataset(
+  accession_id = "GSE15341",
+  excel_path = system.file("extdata", "Curated_datasets.xlsx", package = "DoReMiTra"),
+  all_se_list
+)
+
+
+# colData(all_se_list$SE_Flores_2009_ExVivo_GSE15341_GPL8332) |>
+#   as.data.frame() |>
+#   head()
+
+# dose
+
+all_se_list$SE_Flores_2009_ExVivo_GSE15341_GPL8332$Dose <- if_else(
+  str_detect(all_se_list$SE_Flores_2009_ExVivo_GSE15341_GPL8332$protocol.ch1, "non-radiated"),
+  "0Gy",
+  str_extract(all_se_list$SE_Flores_2009_ExVivo_GSE15341_GPL8332$protocol.ch1, "\\d+(\\.\\d+)?Gy")
+)
+
+
+# radiation
+
+all_se_list$SE_Flores_2009_ExVivo_GSE15341_GPL8332$Radiation_type <- rep("X-ray", 24)
+
+# sex
+all_se_list$SE_Flores_2009_ExVivo_GSE15341_GPL8332$Sex <- all_se_list$SE_Flores_2009_ExVivo_GSE15341_GPL8332$gender.ch1
+
+# organism
+all_se_list$SE_Flores_2009_ExVivo_GSE15341_GPL8332$Organism <- all_se_list$SE_Flores_2009_ExVivo_GSE15341_GPL8332$organism_ch1
+
+
+# sample id
+all_se_list$SE_Flores_2009_ExVivo_GSE15341_GPL8332$Sample_id <- colnames(all_se_list$SE_Flores_2009_ExVivo_GSE15341_GPL8332)
+
+# taxonomy id
+all_se_list$SE_Flores_2009_ExVivo_GSE15341_GPL8332$TaxonomyId <- all_se_list$SE_Flores_2009_ExVivo_GSE15341_GPL8332$taxid_ch1 
+
+# experimental setting
+all_se_list$SE_Flores_2009_ExVivo_GSE15341_GPL8332$Exp_setting <- rep("ExVivo", 24)
+
+print(all_se_list$SE_Flores_2009_ExVivo_GSE15341_GPL8332)
+```
+
+### F&G GSE20162
+
+```{r}
+all_se_list <- process_geo_dataset(
+  accession_id = "GSE20162",
+  excel_path = system.file("extdata", "Curated_datasets.xlsx", package = "DoReMiTra"),
+  all_se_list
+)
+
+# colData(all_se_list$SE_Amundson_2011_InVivo_GSE20162_GPL6480) |>
+#   as.data.frame() |>
+#   head()
+
+# dose
+all_se_list$SE_Amundson_2011_InVivo_GSE20162_GPL6480$Dose <- if_else(
+  str_detect(all_se_list$SE_Amundson_2011_InVivo_GSE20162_GPL6480$treatment.group.ch1, "Gy"),
+  str_extract(all_se_list$SE_Amundson_2011_InVivo_GSE20162_GPL6480$treatment.group.ch1, "\\d+(\\.\\d+)?Gy"),
+  "0Gy"
+)
+
+# time
+all_se_list$SE_Amundson_2011_InVivo_GSE20162_GPL6480$Time_point <- if_else(
+  str_detect(all_se_list$SE_Amundson_2011_InVivo_GSE20162_GPL6480$treatment.group.ch1, "\\d+hr"),
+  str_extract(all_se_list$SE_Amundson_2011_InVivo_GSE20162_GPL6480$treatment.group.ch1, "\\d+hr"),
+  "0hr"
+)
+
+# radiation
+all_se_list$SE_Amundson_2011_InVivo_GSE20162_GPL6480$Radiation_type <- rep("X-ray", 66)
+
+# sex
+all_se_list$SE_Amundson_2011_InVivo_GSE20162_GPL6480$Sex <- all_se_list$SE_Amundson_2011_InVivo_GSE20162_GPL6480$gender.ch1
+
+# organism
+all_se_list$SE_Amundson_2011_InVivo_GSE20162_GPL6480$Organism <- all_se_list$SE_Amundson_2011_InVivo_GSE20162_GPL6480$organism_ch1
+
+# age
+all_se_list$SE_Amundson_2011_InVivo_GSE20162_GPL6480$Age <- all_se_list$SE_Amundson_2011_InVivo_GSE20162_GPL6480$age.ch1
+
+# status
+all_se_list$SE_Amundson_2011_InVivo_GSE20162_GPL6480$Disease_status <- ifelse(
+  str_detect(all_se_list$SE_Amundson_2011_InVivo_GSE20162_GPL6480$disease.status.ch1, regex("healthy", ignore_case = TRUE)),
+  "healthy",
+  "patient"
+)
+
+# sample id
+all_se_list$SE_Amundson_2011_InVivo_GSE20162_GPL6480$Sample_id <- colnames(all_se_list$SE_Amundson_2011_InVivo_GSE20162_GPL6480)
+
+# taxonomy id
+all_se_list$SE_Amundson_2011_InVivo_GSE20162_GPL6480$TaxonomyId <- all_se_list$SE_Amundson_2011_InVivo_GSE20162_GPL6480$taxid_ch1 
+
+# experimental setting
+all_se_list$SE_Amundson_2011_InVivo_GSE20162_GPL6480$Exp_setting <- rep("InVivo", 66)
+
+print(all_se_list$SE_Amundson_2011_InVivo_GSE20162_GPL6480)
+```
+
+### F&G GSE196400
+
+```{r}
+all_se_list <- process_geo_dataset(
+  accession_id = "GSE196400",
+  excel_path = system.file("extdata", "Curated_datasets.xlsx", package = "DoReMiTra"),
+  all_se_list
+)
+
+# colData(all_se_list$SE_Broustas_2023_InVivo_GSE196400_GPL11202) |>
+#   as.data.frame() |>
+#   head()
+
+# dose
+all_se_list$SE_Broustas_2023_InVivo_GSE196400_GPL11202$Dose <- ifelse(
+  str_detect(all_se_list$SE_Broustas_2023_InVivo_GSE196400_GPL11202$protocol.ch1, regex("0Gy", ignore_case = TRUE)),
+  "0Gy",
+  str_extract(all_se_list$SE_Broustas_2023_InVivo_GSE196400_GPL11202$protocol.ch1, "\\d+(\\.\\d+)?\\s*Gy")
+)
+
+# time
+all_se_list$SE_Broustas_2023_InVivo_GSE196400_GPL11202$Time_point <- rep("24hr", 24)
+
+# radiation
+all_se_list$SE_Broustas_2023_InVivo_GSE196400_GPL11202$Radiation_type <- rep("X-ray", 24)
+
+# sex
+all_se_list$SE_Broustas_2023_InVivo_GSE196400_GPL11202$Sex <- all_se_list$SE_Broustas_2023_InVivo_GSE196400_GPL11202$Sex.ch1
+
+# genotype
+all_se_list$SE_Broustas_2023_InVivo_GSE196400_GPL11202$Genotype <- all_se_list$SE_Broustas_2023_InVivo_GSE196400_GPL11202$genotype.ch1
+
+# organism
+all_se_list$SE_Broustas_2023_InVivo_GSE196400_GPL11202$Organism <- all_se_list$SE_Broustas_2023_InVivo_GSE196400_GPL11202$organism_ch1
+
+# sample id
+all_se_list$SE_Broustas_2023_InVivo_GSE196400_GPL11202$Sample_id <- colnames(all_se_list$SE_Broustas_2023_InVivo_GSE196400_GPL11202)
+
+# taxonomy id
+all_se_list$SE_Broustas_2023_InVivo_GSE196400_GPL11202$TaxonomyId <- all_se_list$SE_Broustas_2023_InVivo_GSE196400_GPL11202$taxid_ch1 
+
+# experimental setting
+all_se_list$SE_Broustas_2023_InVivo_GSE196400_GPL11202$Exp_setting <- rep("InVivo", 24)
+
+print(all_se_list$SE_Broustas_2023_InVivo_GSE196400_GPL11202)
+```
+
+### F&G GSE184361
+
+```{r}
+all_se_list <- process_geo_dataset(
+  accession_id = "GSE184361",
+  excel_path = system.file("extdata", "Curated_datasets.xlsx", package = "DoReMiTra"),
+  all_se_list
+)
+
+# colData(all_se_list$SE_Broustas_2022_InVivo_GSE184361_GPL11202) |>
+#   as.data.frame() |>
+#   head()
+
+# dose
+all_se_list$SE_Broustas_2022_InVivo_GSE184361_GPL11202$Dose <- rep(c(rep("0Gy", 5), rep("7Gy", 5)), 3)
+
+# time
+all_se_list$SE_Broustas_2022_InVivo_GSE184361_GPL11202$Time_point <- rep("24hr", 30)
+
+# radiation
+all_se_list$SE_Broustas_2022_InVivo_GSE184361_GPL11202$Radiation_type <- rep("X-ray", 30)
+
+# sex
+all_se_list$SE_Broustas_2022_InVivo_GSE184361_GPL11202$Sex <- all_se_list$SE_Broustas_2022_InVivo_GSE184361_GPL11202$Sex.ch1
+
+# organism
+all_se_list$SE_Broustas_2022_InVivo_GSE184361_GPL11202$Organism <- all_se_list$SE_Broustas_2022_InVivo_GSE184361_GPL11202$organism_ch1
+
+# genotype
+all_se_list$SE_Broustas_2022_InVivo_GSE184361_GPL11202$Genotype <- str_extract(all_se_list$SE_Broustas_2022_InVivo_GSE184361_GPL11202$title, "p38_(dki|dn|wt)")
+
+all_se_list$SE_Broustas_2022_InVivo_GSE184361_GPL11202$Genotype <- recode(all_se_list$SE_Broustas_2022_InVivo_GSE184361_GPL11202$Genotype,
+  "p38_dki" = "p38_double_knockout",
+  "p38_dn"  = "p38_dominant_negative_mutation",
+  "p38_wt"  = "p38_wild_type"
+)
+
+# sample id
+all_se_list$SE_Broustas_2022_InVivo_GSE184361_GPL11202$Sample_id <- colnames(all_se_list$SE_Broustas_2022_InVivo_GSE184361_GPL11202)
+
+# taxonomy id
+all_se_list$SE_Broustas_2022_InVivo_GSE184361_GPL11202$TaxonomyId <- all_se_list$SE_Broustas_2022_InVivo_GSE184361_GPL11202$taxid_ch1 
+
+# experimental setting
+all_se_list$SE_Broustas_2022_InVivo_GSE184361_GPL11202$Exp_setting <- rep("InVivo", 30)
+
+print(all_se_list$SE_Broustas_2022_InVivo_GSE184361_GPL11202)
+```
+
+### F&G GSE132559
+
+```{r}
+all_se_list <- process_geo_dataset(
+  accession_id = "GSE132559",
+  excel_path = system.file("extdata", "Curated_datasets.xlsx", package = "DoReMiTra"),
+  all_se_list
+)
+
+# colData(all_se_list$SE_Broustas_2021_InVivo_GSE132559_GPL11202) |>
+#   as.data.frame() |>
+#   head()
+
+# dose
+all_se_list$SE_Broustas_2021_InVivo_GSE132559_GPL11202$Dose <- ifelse(
+  grepl("Unirradiated", all_se_list$SE_Broustas_2021_InVivo_GSE132559_GPL11202$title, ignore.case = TRUE),
+  "0Gy",
+  "4Gy"
+)
+
+# time
+all_se_list$SE_Broustas_2021_InVivo_GSE132559_GPL11202$Time_point <- rep("24hr", 24)
+
+# radiation
+all_se_list$SE_Broustas_2021_InVivo_GSE132559_GPL11202$Radiation_type <- rep("X-ray", 24)
+
+# age
+all_se_list$SE_Broustas_2021_InVivo_GSE132559_GPL11202$Age <- dplyr::case_when(
+  grepl("Young", all_se_list$SE_Broustas_2021_InVivo_GSE132559_GPL11202$title, ignore.case = TRUE) ~ "2 months",
+  grepl("Old", all_se_list$SE_Broustas_2021_InVivo_GSE132559_GPL11202$title, ignore.case = TRUE) ~ "21 months",
+  TRUE ~ NA_character_
+)
+
+# sex
+all_se_list$SE_Broustas_2021_InVivo_GSE132559_GPL11202$Sex <- all_se_list$SE_Broustas_2021_InVivo_GSE132559_GPL11202$gender.ch1
+
+# organism
+all_se_list$SE_Broustas_2021_InVivo_GSE132559_GPL11202$Organism <- all_se_list$SE_Broustas_2021_InVivo_GSE132559_GPL11202$organism_ch1
+
+# sample id
+all_se_list$SE_Broustas_2021_InVivo_GSE132559_GPL11202$Sample_id <- colnames(all_se_list$SE_Broustas_2021_InVivo_GSE132559_GPL11202)
+
+# taxonomy id
+all_se_list$SE_Broustas_2021_InVivo_GSE132559_GPL11202$TaxonomyId <- all_se_list$SE_Broustas_2021_InVivo_GSE132559_GPL11202$taxid_ch1 
+
+# experimental setting
+all_se_list$SE_Broustas_2021_InVivo_GSE132559_GPL11202$Exp_setting <- rep("InVivo", 24)
+
+print(all_se_list$SE_Broustas_2021_InVivo_GSE132559_GPL11202)
+```
+
+### F&G GSE137192
+
+```{r}
+all_se_list <- process_geo_dataset(
+  accession_id = "GSE137192",
+  excel_path = system.file("extdata", "Curated_datasets.xlsx", package = "DoReMiTra"),
+  all_se_list
+)
+
+# colData(all_se_list$SE_Yamaguchi_2020_InVivo_GSE137192_GPL1261) |>
+#   as.data.frame() |>
+#   head()
+
+
+all_se_list$SE_Yamaguchi_2020_InVivo_GSE137192_GPL1261$Dose <- if_else(
+  str_detect(all_se_list$SE_Yamaguchi_2020_InVivo_GSE137192_GPL1261$treatment.ch1, regex("control", ignore_case = TRUE)),
+  "0Gy",
+  str_remove_all(str_extract(all_se_list$SE_Yamaguchi_2020_InVivo_GSE137192_GPL1261$treatment.ch1, "\\d+(\\.\\d+)?\\s*Gy"), "\\s+")
+)
+
+# time
+all_se_list$SE_Yamaguchi_2020_InVivo_GSE137192_GPL1261$Time_point <- rep("24hr", 17)
+
+# radiation
+all_se_list$SE_Yamaguchi_2020_InVivo_GSE137192_GPL1261$Radiation_type <- rep("X-ray", 17)
+
+# sex
+all_se_list$SE_Yamaguchi_2020_InVivo_GSE137192_GPL1261$Sex <- all_se_list$SE_Yamaguchi_2020_InVivo_GSE137192_GPL1261$gender.ch1
+
+# organism
+all_se_list$SE_Yamaguchi_2020_InVivo_GSE137192_GPL1261$Organism <- all_se_list$SE_Yamaguchi_2020_InVivo_GSE137192_GPL1261$organism_ch1
+
+# sample id
+all_se_list$SE_Yamaguchi_2020_InVivo_GSE137192_GPL1261$Sample_id <- colnames(all_se_list$SE_Yamaguchi_2020_InVivo_GSE137192_GPL1261)
+
+# taxonomy id
+all_se_list$SE_Yamaguchi_2020_InVivo_GSE137192_GPL1261$TaxonomyId <- all_se_list$SE_Yamaguchi_2020_InVivo_GSE137192_GPL1261$taxid_ch1 
+
+# experimental setting
+all_se_list$SE_Yamaguchi_2020_InVivo_GSE137192_GPL1261$Exp_setting <- rep("InVivo", 17)
+
+print(all_se_list$SE_Yamaguchi_2020_InVivo_GSE137192_GPL1261)
+```
+
+### F&G GSE114142
+
+```{r}
+all_se_list <- process_geo_dataset(
+  accession_id = "GSE114142",
+  excel_path = system.file("extdata", "Curated_datasets.xlsx", package = "DoReMiTra"),
+  all_se_list
+)
+
+# colData(all_se_list$SE_Mukherjee_2019_InVivo_GSE114142_GPL11202) |>
+#   as.data.frame() |>
+#   head()
+
+# dose
+all_se_list$SE_Mukherjee_2019_InVivo_GSE114142_GPL11202$Dose <- str_replace_all(str_extract(all_se_list$SE_Mukherjee_2019_InVivo_GSE114142_GPL11202$title, "\\d+\\s*Gy"), "\\s+", "")
+
+# time
+all_se_list$SE_Mukherjee_2019_InVivo_GSE114142_GPL11202$Time_point <- rep("24hr", 20)
+
+# radiation
+all_se_list$SE_Mukherjee_2019_InVivo_GSE114142_GPL11202$Radiation_type <- rep("X-ray", 20)
+
+# sex
+all_se_list$SE_Mukherjee_2019_InVivo_GSE114142_GPL11202$Sex <- all_se_list$SE_Mukherjee_2019_InVivo_GSE114142_GPL11202$gender.ch1
+
+# organism
+all_se_list$SE_Mukherjee_2019_InVivo_GSE114142_GPL11202$Organism <- all_se_list$SE_Mukherjee_2019_InVivo_GSE114142_GPL11202$organism_ch1
+
+# genotype
+all_se_list$SE_Mukherjee_2019_InVivo_GSE114142_GPL11202$Genotype <- str_extract(all_se_list$SE_Mukherjee_2019_InVivo_GSE114142_GPL11202$title, "WT|Il10-/-")
+
+# sample id
+all_se_list$SE_Mukherjee_2019_InVivo_GSE114142_GPL11202$Sample_id <- colnames(all_se_list$SE_Mukherjee_2019_InVivo_GSE114142_GPL11202)
+
+# taxonomy id
+all_se_list$SE_Mukherjee_2019_InVivo_GSE114142_GPL11202$TaxonomyId <- all_se_list$SE_Mukherjee_2019_InVivo_GSE114142_GPL11202$taxid_ch1 
+
+# experimental setting
+all_se_list$SE_Mukherjee_2019_InVivo_GSE114142_GPL11202$Exp_setting <- rep("InVivo", 20)
+
+print(all_se_list$SE_Mukherjee_2019_InVivo_GSE114142_GPL11202)
+```
+
+### F&G GSE101402
+
+```{r}
+all_se_list <- process_geo_dataset(
+  accession_id = "GSE101402",
+  excel_path = system.file("extdata", "Curated_datasets.xlsx", package = "DoReMiTra"),
+  all_se_list
+)
+
+
+# colData(all_se_list$SE_Amundson_2018_InVivo_GSE101402_GPL11202) |>
+#   as.data.frame() |>
+#   head()
+
+# dose
+all_se_list$SE_Amundson_2018_InVivo_GSE101402_GPL11202$Dose <- paste0(all_se_list$SE_Amundson_2018_InVivo_GSE101402_GPL11202$x.ray.dose..gy..ch1, "Gy")
+
+# time
+all_se_list$SE_Amundson_2018_InVivo_GSE101402_GPL11202$Time_point <- rep("24hr", 24)
+
+# radiation
+all_se_list$SE_Amundson_2018_InVivo_GSE101402_GPL11202$Radiation_type <- rep("X-ray", 24)
+
+# genotype
+all_se_list$SE_Amundson_2018_InVivo_GSE101402_GPL11202$Genotype <- all_se_list$SE_Amundson_2018_InVivo_GSE101402_GPL11202$genotype.ch1
+
+# sex
+all_se_list$SE_Amundson_2018_InVivo_GSE101402_GPL11202$Sex <- all_se_list$SE_Amundson_2018_InVivo_GSE101402_GPL11202$Sex.ch1
+
+# organism
+all_se_list$SE_Amundson_2018_InVivo_GSE101402_GPL11202$Organism <- all_se_list$SE_Amundson_2018_InVivo_GSE101402_GPL11202$organism_ch1
+
+# sample id
+all_se_list$SE_Amundson_2018_InVivo_GSE101402_GPL11202$Sample_id <- colnames(all_se_list$SE_Amundson_2018_InVivo_GSE101402_GPL11202)
+
+# taxonomy id
+all_se_list$SE_Amundson_2018_InVivo_GSE101402_GPL11202$TaxonomyId <- all_se_list$SE_Amundson_2018_InVivo_GSE101402_GPL11202$taxid_ch1 
+
+# experimental setting
+all_se_list$SE_Amundson_2018_InVivo_GSE101402_GPL11202$Exp_setting <- rep("InVivo", 24)
+
+print(all_se_list$SE_Amundson_2018_InVivo_GSE101402_GPL11202)
+```
+
+### F&G GSE99176
+
+```{r}
+all_se_list <- process_geo_dataset(
+  accession_id = "GSE99176",
+  excel_path = system.file("extdata", "Curated_datasets.xlsx", package = "DoReMiTra"),
+  all_se_list
+)
+
+# colData(all_se_list$SE_Amundson_2018_InVivo_GSE99176_GPL11202) |>
+#   as.data.frame() |>
+#   head()
+
+# dose
+all_se_list$SE_Amundson_2018_InVivo_GSE99176_GPL11202$Dose <- paste0(all_se_list$SE_Amundson_2018_InVivo_GSE99176_GPL11202$x.ray.dose..gy..ch1, "Gy")
+
+
+# time
+all_se_list$SE_Amundson_2018_InVivo_GSE99176_GPL11202$Time_point <- rep("24hr", 32)
+
+# radiation
+all_se_list$SE_Amundson_2018_InVivo_GSE99176_GPL11202$Radiation_type <- rep("X-ray", 32)
+
+# genotype
+all_se_list$SE_Amundson_2018_InVivo_GSE99176_GPL11202$Genotype <- all_se_list$SE_Amundson_2018_InVivo_GSE99176_GPL11202$genotype.ch1
+
+# sex
+all_se_list$SE_Amundson_2018_InVivo_GSE99176_GPL11202$Sex <- all_se_list$SE_Amundson_2018_InVivo_GSE99176_GPL11202$Sex.ch1
+
+# organism
+all_se_list$SE_Amundson_2018_InVivo_GSE99176_GPL11202$Organism <- all_se_list$SE_Amundson_2018_InVivo_GSE99176_GPL11202$organism_ch1
+
+# sample id
+all_se_list$SE_Amundson_2018_InVivo_GSE99176_GPL11202$Sample_id <- colnames(all_se_list$SE_Amundson_2018_InVivo_GSE99176_GPL11202)
+
+# taxonomy id
+all_se_list$SE_Amundson_2018_InVivo_GSE99176_GPL11202$TaxonomyId <- all_se_list$SE_Amundson_2018_InVivo_GSE99176_GPL11202$taxid_ch1 
+
+# experimental setting
+all_se_list$SE_Amundson_2018_InVivo_GSE99176_GPL11202$Exp_setting <- rep("InVivo", 32)
+
+print(all_se_list$SE_Amundson_2018_InVivo_GSE99176_GPL11202)
+```
+
+### F&G GSE62623
+
+```{r}
+all_se_list <- process_geo_dataset(
+  accession_id = "GSE62623",
+  excel_path = system.file("extdata", "Curated_datasets.xlsx", package = "DoReMiTra"),
+  all_se_list
+)
+
+# colData(all_se_list$SE_Paul_2015_InVivo_GSE62623_GPL10333) |>
+#   as.data.frame() |>
+#   head()
+
+# dose
+all_se_list$SE_Paul_2015_InVivo_GSE62623_GPL10333$Dose <- ifelse(
+  grepl("unirradiated", all_se_list$SE_Paul_2015_InVivo_GSE62623_GPL10333$treatment.ch1, ignore.case = TRUE),
+  "0Gy",
+  stringr::str_extract(all_se_list$SE_Paul_2015_InVivo_GSE62623_GPL10333$treatment.ch1, "\\d+(\\.\\d+)?Gy")
+)
+
+# time
+all_se_list$SE_Paul_2015_InVivo_GSE62623_GPL10333$Time_point <- rep("24hr", 48)
+
+# radiation
+all_se_list$SE_Paul_2015_InVivo_GSE62623_GPL10333$Radiation_type <- rep("X-ray", 48)
+
+# dose rate
+all_se_list$SE_Paul_2015_InVivo_GSE62623_GPL10333$Dose_rate <- ifelse(
+  grepl("unirradiated", all_se_list$SE_Paul_2015_InVivo_GSE62623_GPL10333$treatment.ch1, ignore.case = TRUE),
+  "Control",
+  stringr::str_extract(all_se_list$SE_Paul_2015_InVivo_GSE62623_GPL10333$treatment.ch1, "(low|high)-dose-rate")
+)
+
+# sex
+all_se_list$SE_Paul_2015_InVivo_GSE62623_GPL10333$Sex <- all_se_list$SE_Paul_2015_InVivo_GSE62623_GPL10333$Sex.ch1
+
+# organism
+all_se_list$SE_Paul_2015_InVivo_GSE62623_GPL10333$Organism <- all_se_list$SE_Paul_2015_InVivo_GSE62623_GPL10333$organism_ch1
+
+# sample id
+all_se_list$SE_Paul_2015_InVivo_GSE62623_GPL10333$Sample_id <- colnames(all_se_list$SE_Paul_2015_InVivo_GSE62623_GPL10333)
+
+# taxonomy id
+all_se_list$SE_Paul_2015_InVivo_GSE62623_GPL10333$TaxonomyId <- all_se_list$SE_Paul_2015_InVivo_GSE62623_GPL10333$taxid_ch1 
+
+# experimental setting
+all_se_list$SE_Paul_2015_InVivo_GSE62623_GPL10333$Exp_setting <- rep("InVivo", 48)
+
+# assigning the spot id as rownames
+
+rownames(all_se_list$SE_Paul_2015_InVivo_GSE62623_GPL10333) <- rowData(all_se_list$SE_Paul_2015_InVivo_GSE62623_GPL10333)$SPOT_ID
+
+print(all_se_list$SE_Paul_2015_InVivo_GSE62623_GPL10333)
+
+```
+
+### F&G GSE84898
+
+```{r}
+all_se_list <- process_geo_dataset(
+  accession_id = "GSE84898",
+  excel_path = system.file("extdata", "Curated_datasets.xlsx", package = "DoReMiTra"),
+  all_se_list
+)
+
+# colData(all_se_list$SE_Ghandhi_2018_InVivo_GSE84898_GPL13497) |>
+#   as.data.frame() |>
+#   head()
+
+# dose
+all_se_list$SE_Ghandhi_2018_InVivo_GSE84898_GPL13497$Dose <- c(rep("0Gy", 5), rep("10.1Gy", 15))
+
+# time
+all_se_list$SE_Ghandhi_2018_InVivo_GSE84898_GPL13497$Time_point <- rep(c("pre-irradiation", "2 days", "5 days", "30 days"), each = 5)
+
+# radiation
+all_se_list$SE_Ghandhi_2018_InVivo_GSE84898_GPL13497$Radiation_type <- rep("X-ray", 20)
+
+# sex
+all_se_list$SE_Ghandhi_2018_InVivo_GSE84898_GPL13497$Sex <- rep("male", 20)
+
+# organism
+all_se_list$SE_Ghandhi_2018_InVivo_GSE84898_GPL13497$Organism <- all_se_list$SE_Ghandhi_2018_InVivo_GSE84898_GPL13497$organism_ch1
+
+# sample id
+all_se_list$SE_Ghandhi_2018_InVivo_GSE84898_GPL13497$Sample_id <- colnames(all_se_list$SE_Ghandhi_2018_InVivo_GSE84898_GPL13497)
+
+# taxonomy id
+all_se_list$SE_Ghandhi_2018_InVivo_GSE84898_GPL13497$TaxonomyId <- all_se_list$SE_Ghandhi_2018_InVivo_GSE84898_GPL13497$taxid_ch1 
+
+# experimental setting
+all_se_list$SE_Ghandhi_2018_InVivo_GSE84898_GPL13497$Exp_setting <- rep("InVivo", 20)
+
+print(all_se_list$SE_Ghandhi_2018_InVivo_GSE84898_GPL13497)
+```
+
+### F&G GSE133451
+
+```{r}
+all_se_list <- process_geo_dataset(
+  accession_id = "GSE133451",
+  excel_path = system.file("extdata", "Curated_datasets.xlsx", package = "DoReMiTra"),
+  all_se_list
+)
+
+# colData(all_se_list$SE_Broustas_2021_InVivo_GSE133451_GPL11202) |>
+#   as.data.frame() |>
+#   head()
+
+# dose
+all_se_list$SE_Broustas_2021_InVivo_GSE133451_GPL11202$Dose <- dplyr::recode(all_se_list$SE_Broustas_2021_InVivo_GSE133451_GPL11202$treatment.ch1,
+  "UnIrradiated" = "0Gy",
+  "Irradiated" = "4Gy"
+)
+
+# time
+all_se_list$SE_Broustas_2021_InVivo_GSE133451_GPL11202$Time_point <- rep("24hr", 20)
+
+# radiation
+all_se_list$SE_Broustas_2021_InVivo_GSE133451_GPL11202$Radiation_type <- rep("X-ray", 20)
+
+# age
+all_se_list$SE_Broustas_2021_InVivo_GSE133451_GPL11202$Age <- dplyr::case_when(
+  grepl("Young", all_se_list$SE_Broustas_2021_InVivo_GSE133451_GPL11202$age.ch1, ignore.case = TRUE) ~ "2 months",
+  grepl("Old", all_se_list$SE_Broustas_2021_InVivo_GSE133451_GPL11202$age.ch1, ignore.case = TRUE) ~ "24 months",
+  TRUE ~ NA_character_
+)
+
+# sex
+all_se_list$SE_Broustas_2021_InVivo_GSE133451_GPL11202$Sex <- all_se_list$SE_Broustas_2021_InVivo_GSE133451_GPL11202$gender.ch1
+
+# organism
+all_se_list$SE_Broustas_2021_InVivo_GSE133451_GPL11202$Organism <- all_se_list$SE_Broustas_2021_InVivo_GSE133451_GPL11202$organism_ch1
+
+# sample id
+all_se_list$SE_Broustas_2021_InVivo_GSE133451_GPL11202$Sample_id <- colnames(all_se_list$SE_Broustas_2021_InVivo_GSE133451_GPL11202)
+
+# taxonomy id
+all_se_list$SE_Broustas_2021_InVivo_GSE133451_GPL11202$TaxonomyId <- all_se_list$SE_Broustas_2021_InVivo_GSE133451_GPL11202$taxid_ch1 
+
+# experimental setting
+all_se_list$SE_Broustas_2021_InVivo_GSE133451_GPL11202$Exp_setting <- rep("InVivo", 20)
+
+print(all_se_list$SE_Broustas_2021_InVivo_GSE133451_GPL11202)
+```
+
+# Loading Salah_2025 dataset
+
+This dataset is publicly available on GitHub -> "https://github.com/AhmedSAHassan/Phybion_ShortReads_Analysis"
+
+You can fetch this dataset using the following terminal command
+
+```
+curl -L -o SE_Salah_2025_ExVivo.RDS \
+  https://github.com/AhmedSAHassan/Phybion_ShortReads_Analysis/raw/main/PhyBioN_SR_Analysis/gse_PhyBioN_Pseudonymized.RDS
+```
+
+Or using the following R code:
+
+```{r eval=TRUE}
+# fetch the dataset
+dest_tempfile_salah <- file.path(tempdir(), "SE_Salah_2025_ExVivo.RDS")
+
+if (!file.exists(dest_tempfile_salah)) {
+  download.file(
+    url = "https://github.com/AhmedSAHassan/Phybion_ShortReads_Analysis/raw/main/PhyBioN_SR_Analysis/gse_PhyBioN_Pseudonymized.RDS",
+    destfile = dest_tempfile_salah,
+    mode = "wb"
+  )
+}  
+ 
+SE_Salah_2025_ExVivo<- readRDS(dest_tempfile_salah) |> as("SummarizedExperiment")
+
+# convert gencode id to ensemble id
+rownames(SE_Salah_2025_ExVivo) <- substr(rownames(SE_Salah_2025_ExVivo), start = 1, stop = 15)
+
+# For gene symbols with more than 1 ensemble id, we pick the one with higher variability. also we removed the ensemble id with no matching gene symbols
+
+#SE_Salah_2025_ExVivo <- collapse_by_symbol_variance(SE_Salah_2025_ExVivo, symbol_col = "SYMBOL")
+
+# adding radiation type
+SE_Salah_2025_ExVivo$Radiation_type <- rep("X-ray", 30)
+
+# adding organism
+SE_Salah_2025_ExVivo$Organism <- rep("Homo sapiens", 30)
+
+# taxonomy id
+SE_Salah_2025_ExVivo$TaxonomyId <- rep("9606", 30)
+
+# experimental setting
+SE_Salah_2025_ExVivo$Exp_setting <- rep("ExVivo", 30)
+
+# remove unnecessary columns in the coldata
+colData(SE_Salah_2025_ExVivo) <- colData(SE_Salah_2025_ExVivo)[,- c(1,2,3,4,10,11,12)]
+
+# adding it to the se list
+all_se_list[["SE_Salah_2025_ExVivo"]] <- SE_Salah_2025_ExVivo
+
+print(all_se_list$SE_Salah_2025_ExVivo)
+```
+
+# Saving summarized experiment RDS objects
+
+```{r eval=TRUE}
+save_se_objects(all_se_list, output_dir = "./DoReMiTra/", 
+                save_se_obj = TRUE, save_se_components = FALSE)
+```
+
+# Session info {-}
+
+```{r}
+sessionInfo()
+```
