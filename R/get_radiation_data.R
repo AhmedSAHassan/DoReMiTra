@@ -1,5 +1,3 @@
-<<<<<<< HEAD
-
 # fetching selected dataset
 
 # here we can add the argument to assign the gene symbol to the rownames
@@ -18,11 +16,11 @@ get_radiation_data <- function(name) {
     stop("Dataset '", name, "' not found in DoReMiTra")
   }
   return(query_results[[match_idx]])
-=======
-get_radiation_data <- function() {
-
-
 }
+
+
+# fetching selected dataset
+
 
 
 
@@ -30,5 +28,8 @@ get_radiation_data <- function() {
 
 get_DoReMiTra_datasets_info <- function() {
 
->>>>>>> 6cc850ef34a271f51ceb42c8136b91c86b4e1178
 }
+
+# here we can add the argument to assign the gene symbol to the rownames
+
+
