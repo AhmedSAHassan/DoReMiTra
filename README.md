@@ -24,10 +24,16 @@ devtools::install_github("AhmedSAHassan/DoReMiTra")
 
 ## Overview
 
-The package includes preprocessed and annotated datasets from public repositories (primarily GEO), with harmonized metadata and consistent formatting. Datasets can be filtered by:
+The package includes preprocessed and annotated datasets from public repositories (primarily GEO), with harmonized metadata and consistent formatting. All the datasets will contain the following information in a uniform way:
 
 ✅ Radiation type (neutron, x-ray, gamma ray)
+
+✅ Dose
+
+✅ Time point
 
 ✅ Organism (e.g., human, mouse)
 
 ✅ Experimental setting (InVivo, ExVivo)
+
+✅ Sex (Male, Female)
