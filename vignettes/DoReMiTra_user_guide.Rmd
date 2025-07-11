@@ -32,8 +32,6 @@ Exp_setting
 
 The package delivers data as `SummarizedExperiment` objects directly accessible via `ExperimentHub`, enabling easy subsetting, filtering, and comparative analyses.
 
-These datasets are hosted through ExperimentHub.
-
 This vignette guides you through:
 
 * Exploring available datasets
@@ -53,7 +51,7 @@ head(datasets)
 You can filter datasets based on radiation type, organism, and experimental setting.
 
 ```{r search-datasets, eval=FALSE}
-search_datasets(radiation_type = "x-ray", organism = "Homo sapiens", exp_setting = "ex vivo")
+search_datasets(radiation_type = "x-ray", organism = "Homo sapiens", exp_setting = "ExVivo")
 ```
 
 # Load a Dataset
