@@ -1,3 +1,20 @@
+
+
+#' Title
+#' Compares the essential metadata information of 2 or more SE objects
+#' including radiation type, dose, time point, etc.
+#'
+
+#' @param fields a character vector of the main metadata info
+#'
+#' @returns a dataframe comparing the metadata of the selected datasets
+#'
+#' @export
+#'
+#' @examples
+#' get_radiation_data()
+#' compare_datasets()
+
 compare_datasets <- function(..., fields = c("Radiation_type", "Dose", "Sex", "Time_point", "Organism")) {
   se_list <- list(...)
 

@@ -1,6 +1,18 @@
 
 # filters and output the name of the datasets that matches the inclusion criteria selected by the user
 
+#' Title
+#'
+#' @param radiation_type Character string (optional). Filter datasets by radiation type (e.g., "x-ray", "neutron").
+#' @param organism Character string (optional). Filter by organism (e.g., "Homo sapiens").
+#' @param exp_setting Character string (optional). Filter by experimental setting (e.g., "in vivo", "ex vivo").
+#' @returns
+#' a character string of the name of the se objects matching the inclusion criteria. If none match, returns an empty vector with a message.
+#' @export
+#'
+#' @examples
+#' search_datasets()
+#'
 search_datasets <- function(radiation_type = NULL, organism = NULL, exp_setting = NULL) {
   all_data <- list_datasets()
 

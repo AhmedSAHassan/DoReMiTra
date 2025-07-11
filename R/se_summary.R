@@ -1,25 +1,34 @@
 
-# summarize metadata for a DoReMiTra Dataset
-
-se_summary <- function(name) {
-  if (missing(name) || !is.character(name)) {
+#'Summarize Metadata for a DoReMiTra Dataset
+#'
+#' @param dataset_name Character string specifying the name of the dataset
+#'
+#' @returns A character string containing a essential information about the dataset metadata
+#'
+#' @export
+#'
+#' @examples
+#' se_name()
+#' se_summary()
+se_summary <- function(dataset_name) {
+  if (missing(dataset_name) || !is.character(dataset_name)) {
     stop("Please provide the dataset name as a character string.")
   }
 
   # Load metadata table
   metadata <- list_datasets()
 
-  if (!(name %in% metadata$DatasetName)) {
-    stop("Dataset name '", name, "' not found in metadata.")
+  if (!(dataset_name %in% metadata$DatasetName)) {
+    stop("Dataset name '", dataset_name, "' not found in metadata.")
   }
 
   # Extract row for this dataset
 
-  meta_row <- metadata[metadata$DatasetName == name, ]
+  meta_row <- metadata[metadata$DatasetName == dataset_name, ]
 
   # Load SummarizedExperiment object to get the number of samples included
 
-  se <- get_dataset(name)
+  se <- get_dataset(dataset_name)
   metadata_file <- system.file("extdata", "metadata-DoReMiTra.csv", package = "DoReMiTra")
 
   n_samples <- ncol(se)
@@ -30,7 +39,7 @@ se_summary <- function(name) {
   link <- metadata_file$SourceUrl
 
   message(glue::glue(
-    "\n Dataset: {name}",
+    "\n Dataset: {dataset_name}",
     "\n Organism(s): {species}",
     "\n️  Radiation Type: {radiation}",
     "\n Experiment Setting: {setting}",
@@ -43,12 +52,13 @@ se_summary <- function(name) {
 
   invisible(
     list(
-    name = name,
-    organism = species,
-    radiation_type = radiation,
-    exp_setting = setting,
-    accession = accession,
-    n_samples = n_samples,
-    link <- meta_row$SourceUrl
-  ))
+      name = dataset_name,
+      organism = species,
+      radiation_type = radiation,
+      exp_setting = setting,
+      accession = accession,
+      n_samples = n_samples,
+      link <- meta_row$SourceUrl
+    )
+  )
 }
