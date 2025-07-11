@@ -8,3 +8,5 @@ fetch&generate_Neutron_SE.RDS
 fetch&generate_Gamma_SE.RDS
 fetch&generate_Xray_SE.RDS
 
+data/large_file.csv
+vignettes/DoReMiTra_users_guide.Rmd
