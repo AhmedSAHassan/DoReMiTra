@@ -1,20 +1,23 @@
 ---
-title: "DoReMiTra: User Guide"
-output:
-BiocStyle::html\_document:
-toc: true
-number\_sections: true
+title: "DoReMiTra"
+output: BiocStyle::html_document
 vignette: >
-%\VignetteIndexEntry{DoReMiTra: User Guide}
-%\VignetteEngine{knitr::rmarkdown}
-%\VignetteEncoding{UTF-8}
--------------------------
+  %\VignetteIndexEntry{DoReMiTra User Guide}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(message = TRUE, warning = FALSE)
-library(DoReMiTra)
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+
 library(SummarizedExperiment)
+library(ExperimentHub)
+library(DoReMiTra)
 ```
+
 
 # Introduction
 
@@ -40,7 +43,7 @@ This vignette guides you through:
 
 # List All Available Datasets
 
-```{r list-datasets}
+```{r list-datasets, eval=FALSE}
 datasets <- list_datasets()
 head(datasets)
 ```
@@ -49,7 +52,7 @@ head(datasets)
 
 You can filter datasets based on radiation type, organism, and experimental setting.
 
-```{r search-datasets}
+```{r search-datasets, eval=FALSE}
 search_datasets(radiation_type = "x-ray", organism = "Homo sapiens", exp_setting = "ex vivo")
 ```
 
@@ -57,7 +60,7 @@ search_datasets(radiation_type = "x-ray", organism = "Homo sapiens", exp_setting
 
 To access an individual dataset, use its exact name as provided by `list_datasets()`:
 
-```{r load-dataset}
+```{r load-dataset, eval=FALSE}
 dataset_name <- "SE_Amundson_2008_ExVivo_GSE8917_GPL1708"
 se <- get_radiation_data(dataset_name)
 se
@@ -67,7 +70,7 @@ se
 
 You can get a quick metadata summary of a dataset using `se_summary()`:
 
-```{r summarize}
+```{r summarize, eval=FALSE}
 se_summary("SE_Amundson_2008_ExVivo_GSE8917_GPL1708")
 ```
 
@@ -75,7 +78,7 @@ se_summary("SE_Amundson_2008_ExVivo_GSE8917_GPL1708")
 
 This is useful for checking compatibility before combined analysis:
 
-```{r compare}
+```{r compare, eval=FALSE}
 se1 <- get_radiation_data("SE_Amundson_2008_ExVivo_GSE8917_GPL1708")
 se2 <- get_radiation_data("SE_Park_2017_ExVivo_GSE102971_GPL10332")
 compare_datasets(Amundson = se1, Park = se2)
