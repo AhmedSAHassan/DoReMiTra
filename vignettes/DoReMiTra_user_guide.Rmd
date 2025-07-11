@@ -16,7 +16,7 @@ library(DoReMiTra)
 library(SummarizedExperiment)
 ```
 
-# 1. Introduction
+# Introduction
 
 `DoReMiTra` provides a curated resource of radiation transcriptomic datasets with harmonized metadata for cross-study comparison such as:
   
@@ -38,14 +38,14 @@ This vignette guides you through:
 * Filtering datasets
 * Comparing metadata across datasets
 
-# 2. List All Available Datasets
+# List All Available Datasets
 
 ```{r list-datasets}
 datasets <- list_datasets()
 head(datasets)
 ```
 
-# 3. Search for Specific Datasets
+# Search for Specific Datasets
 
 You can filter datasets based on radiation type, organism, and experimental setting.
 
@@ -53,7 +53,7 @@ You can filter datasets based on radiation type, organism, and experimental sett
 search_datasets(radiation_type = "x-ray", organism = "Homo sapiens", exp_setting = "ex vivo")
 ```
 
-# 4. Load a Dataset
+# Load a Dataset
 
 To access an individual dataset, use its exact name as provided by `list_datasets()`:
 
@@ -81,7 +81,7 @@ se2 <- get_radiation_data("SE_Park_2017_ExVivo_GSE102971_GPL10332")
 compare_datasets(Amundson = se1, Park = se2)
 ```
 
-# 7. Appendix: Troubleshooting and Tips
+# Troubleshooting and Tips
 
 * Always use exact dataset names from `list_datasets()` when calling `get_radiation_data()`.
 * Use `search_datasets()` to dynamically find datasets of interest based on key metadata fields.
@@ -91,7 +91,7 @@ compare_datasets(Amundson = se1, Park = se2)
 
 To cite the datasets or studies, please refer to the original GEO accession IDs (e.g., GSE124612). More details are included in the metadata.
 
-# 8. Session Info
+# Session Info
 
 ```{r session}
 sessionInfo()
