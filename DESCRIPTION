@@ -24,6 +24,7 @@ Suggests:
 Config/testthat/edition: 3
 Imports: 
     ExperimentHub,
+    ComplexHeatmap,
     utils
 URL: https://github.com/AhmedSAHassan/DoReMiTra
 BugReports: https://github.com/AhmedSAHassan/DoReMiTra/issues

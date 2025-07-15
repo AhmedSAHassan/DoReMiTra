@@ -25,7 +25,7 @@ library(matrixStats)
 
 # Defining helper functions
 
-## Fetching and generating summarized experiment objects for each dataset with rownames as gene symbols
+## Fetching microarray datasets and generating summarized experiment objects for each dataset
 
 ```{r}
 process_geo_dataset <- function(
@@ -89,6 +89,7 @@ process_geo_dataset <- function(
     cd$Radiation_type <- NA_character_
     cd$Sample_id <- NA_character_
     cd$Organism <- NA_character_
+    cd$Platform <- "Microarray"
 
     # gene_symbol_col <- NULL
     # for (col in possible_gene_cols) {
@@ -242,6 +243,7 @@ Most of the GEO datasets do not provide metadata in a consistently structured or
 * the `Dose` of the radiation
 * the `Radiation_type`
 * the `Sex` of the samples included
+* the `Platform` used to generate the dataset (eg. microarray or RNAseq)
 * the `Time_point` of when the samples were collected (e.g. yadda hours after irradiation)
 * the `Organism` where the measurements were performed
 * the `Age` of the samples (of course, if reported)
@@ -263,6 +265,10 @@ all_se_list <- process_geo_dataset(
 # colData(all_se_list$SE_Amundson_2019_InVivo_GSE124612_GPL11202) |>
 #   as.data.frame() |>
 #   head()
+
+# adding SYMBOL column to the rowdata
+
+rowData(all_se_list$SE_Amundson_2019_InVivo_GSE124612_GPL11202)$SYMBOL <- rowData(all_se_list$SE_Amundson_2019_InVivo_GSE124612_GPL11202)$GENE_SYMBOL
 
 ## correcting coldata
 
@@ -308,6 +314,7 @@ all_se_list$SE_Amundson_2019_InVivo_GSE124612_GPL11202$TaxonomyId <- all_se_list
 all_se_list$SE_Amundson_2019_InVivo_GSE124612_GPL11202$Exp_setting <- rep("InVivo", 248)
 
 print(all_se_list$SE_Amundson_2019_InVivo_GSE124612_GPL11202)
+
 ```
 
 ### F&G GSE104121
@@ -318,6 +325,11 @@ all_se_list <- process_geo_dataset(
   excel_path = system.file("extdata", "Curated_datasets.xlsx", package = "DoReMiTra"), all_se_list
 )
 
+# adding SYMBOL column to the rowdata
+
+rowData(all_se_list$SE_Aryankalayil_2018_InVivo_GSE104121_GPL10787)$SYMBOL <- rowData(all_se_list$SE_Aryankalayil_2018_InVivo_GSE104121_GPL10787)$GENE_SYMBOL
+
+  
 # colData(all_se_list$SE_Aryankalayil_2018_InVivo_GSE104121_GPL10787) |>
 #   as.data.frame() |>
 #   head()
@@ -361,6 +373,10 @@ all_se_list$SE_Aryankalayil_2018_InVivo_GSE104121_GPL10787$Exp_setting <- rep("I
 
 # working on platform GPL21163
 
+# adding SYMBOL column to the rowdata
+
+rowData(all_se_list$SE_Aryankalayil_2018_InVivo_GSE104121_GPL21163)$SYMBOL <- rowData(all_se_list$SE_Aryankalayil_2018_InVivo_GSE104121_GPL21163)$GENE_SYMBOL
+
 # Sex
 all_se_list$SE_Aryankalayil_2018_InVivo_GSE104121_GPL21163$Sex <- str_to_title(all_se_list$SE_Aryankalayil_2018_InVivo_GSE104121_GPL21163$gender.ch1)
 
@@ -402,6 +418,15 @@ all_se_list <- process_geo_dataset(
   excel_path = system.file("extdata", "Curated_datasets.xlsx", package = "DoReMiTra"), all_se_list
 )
 
+# adding SYMBOL column to the rowdata
+
+rowData(all_se_list$SE_Park_2017_ExVivo_GSE102971_GPL10332)$SYMBOL <- rowData(all_se_list$SE_Park_2017_ExVivo_GSE102971_GPL10332)$GENE_SYMBOL
+
+# adding SYMBOL column in the rowdata
+
+rowData(SE_Park_2017_ExVivo_GSE102971_GPL10332)$SYMBOL <- 
+  
+  
 # colData(all_se_list$SE_Park_2017_ExVivo_GSE102971_GPL10332) |>
 #   as.data.frame() |>
 #   head()
@@ -458,6 +483,12 @@ all_se_list <- process_geo_dataset(
   all_se_list
 )
 
+
+# adding SYMBOL column to the rowdata
+
+rowData(all_se_list$SE_Vasilyev_2017_ExVivo_GSE97000_GPL17077)$SYMBOL <- rowData(all_se_list$SE_Vasilyev_2017_ExVivo_GSE97000_GPL17077)$GENE_SYMBOL
+
+  
 # colData(all_se_list$SE_Vasilyev_2017_ExVivo_GSE97000_GPL17077) |>
 #   as.data.frame() |>
 #   head()
@@ -506,6 +537,11 @@ all_se_list <- process_geo_dataset(
   all_se_list
 )
 
+# adding SYMBOL column to the rowdata
+
+rowData(all_se_list$SE_Paul_2013_ExVivo_GSE44201_GPL6480)$SYMBOL <- rowData(all_se_list$SE_Paul_2013_ExVivo_GSE44201_GPL6480)$GENE_SYMBOL
+
+
 # working on platform GPL6480
 
 # colData(all_se_list$SE_Paul_2013_ExVivo_GSE44201_GPL6480) |>
@@ -539,6 +575,10 @@ print(all_se_list$SE_Paul_2013_ExVivo_GSE44201_GPL6480)
 
 
 # working on platform GPL6848
+
+# adding SYMBOL column to the rowdata
+
+rowData(all_se_list$SE_Paul_2013_ExVivo_GSE44201_GPL6848)$SYMBOL <- rowData(all_se_list$SE_Paul_2013_ExVivo_GSE44201_GPL6848)$GENE_SYMBOL
 
 # colData(all_se_list$SE_Paul_2013_ExVivo_GSE44201_GPL6848) |>
 #   as.data.frame() |>
@@ -578,6 +618,11 @@ all_se_list <- process_geo_dataset(
   excel_path = system.file("extdata", "Curated_datasets.xlsx", package = "DoReMiTra"),
   all_se_list
 )
+
+# adding SYMBOL column to the rowdata
+
+rowData(all_se_list$SE_Nosel_2013_ExVivo_GSE43151_GPL13497)$SYMBOL <- rowData(all_se_list$SE_Nosel_2013_ExVivo_GSE43151_GPL13497)$GENE_SYMBOL
+
 
 # colData(all_se_list$SE_Nosel_2013_ExVivo_GSE43151_GPL13497) |>
 #   as.data.frame() |>
@@ -622,6 +667,10 @@ all_se_list <- process_geo_dataset(
   excel_path = system.file("extdata", "Curated_datasets.xlsx", package = "DoReMiTra"),
   all_se_list
 )
+
+# adding SYMBOL column to the rowdata
+
+rowData(all_se_list$SE_Girardi_2012_ExVivo_GSE20173_GPL6480)$SYMBOL <- rowData(all_se_list$SE_Girardi_2012_ExVivo_GSE20173_GPL6480)$GENE_SYMBOL
 
 # keep is for later... this dataset structure is messy.. the information on GEO doesn't match the info from the publication
 
@@ -675,6 +724,10 @@ all_se_list <- process_geo_dataset(
   all_se_list
 )
 
+# adding SYMBOL column to the rowdata
+
+rowData(all_se_list$SE_Amundson_2011_ExVivo_GSE23515_GPL6480)$SYMBOL <- rowData(all_se_list$SE_Amundson_2011_ExVivo_GSE23515_GPL6480)$GENE_SYMBOL
+
 # colData(all_se_list$SE_Amundson_2011_ExVivo_GSE23515_GPL6480) |>
 #   as.data.frame() |>
 #   head()
@@ -719,6 +772,10 @@ all_se_list <- process_geo_dataset(
   excel_path = system.file("extdata", "Curated_datasets.xlsx", package = "DoReMiTra"),
   all_se_list
 )
+
+# adding SYMBOL column to the rowdata
+
+rowData(all_se_list$SE_Gruel_2008_ExVivo_GSE6978_GPL4803)$SYMBOL <- rowData(all_se_list$SE_Gruel_2008_ExVivo_GSE6978_GPL4803)$GeneSymbol
 
 # the GeneSymbol column here contains wrong inputs so we will correct it manually
 
@@ -783,6 +840,11 @@ all_se_list <- process_geo_dataset(
   all_se_list
 )
 
+# adding SYMBOL column to the rowdata
+
+rowData(all_se_list$SE_Rouchka_2019_ExVivo_GSE63952_GPL15207)$SYMBOL <- rowData(all_se_list$SE_Rouchka_2019_ExVivo_GSE63952_GPL15207)$Gene.Symbol
+
+
 # colData(all_se_list$SE_Rouchka_2019_ExVivo_GSE63952_GPL15207) |>
 #   as.data.frame() |>
 #   head()
@@ -824,6 +886,11 @@ all_se_list <- process_geo_dataset(
   excel_path = system.file("extdata", "Curated_datasets.xlsx", package = "DoReMiTra"),
   all_se_list
 )
+
+# adding SYMBOL column to the rowdata
+
+rowData(all_se_list$SE_Amundson_2008_ExVivo_GSE8917_GPL1708)$SYMBOL <- rowData(all_se_list$SE_Amundson_2008_ExVivo_GSE8917_GPL1708)$GENE_SYMBOL
+
 
 # colData(all_se_list$SE_Amundson_2008_ExVivo_GSE8917_GPL1708) |>
 #   as.data.frame() |>
@@ -872,6 +939,11 @@ all_se_list <- process_geo_dataset(
   all_se_list
 )
 
+# adding SYMBOL column to the rowdata
+
+rowData(all_se_list$SE_Manikandan_2014_ExVivo_GSE36355_GPL6883)$SYMBOL <- rowData(all_se_list$SE_Manikandan_2014_ExVivo_GSE36355_GPL6883)$Symbol
+
+
 # colData(all_se_list$SE_Manikandan_2014_ExVivo_GSE36355_GPL6883) |>
 #   as.data.frame() |>
 #   head()
@@ -914,6 +986,11 @@ all_se_list <- process_geo_dataset(
   all_se_list
 )
 
+# adding SYMBOL column to the rowdata
+
+rowData(all_se_list$SE_Lee_2013_ExVivo_GSE44245_GPL570)$SYMBOL <- rowData(all_se_list$SE_Lee_2013_ExVivo_GSE44245_GPL570)$Gene.Symbol
+
+
 # colData(all_se_list$SE_Lee_2013_ExVivo_GSE44245_GPL570) |>
 #   as.data.frame() |>
 #   head()
@@ -953,7 +1030,7 @@ all_se_list <- process_geo_dataset(
   all_se_list
 )
 
-# adding the gene symbol to the rowdata
+# adding SYMBOL column to the rowdata
 
 gene_assignment <- rowData(all_se_list$SE_Rouchka_2015_ExVivo_GSE64375_GPL6244)$gene_assignment
 extracted_symbols <- stringr::str_match(gene_assignment, "//\\s*([^/]+)\\s*//")[, 2]
@@ -1036,6 +1113,11 @@ all_se_list <- process_geo_dataset(
   all_se_list
 )
 
+# adding SYMBOL column to the rowdata
+
+rowData(all_se_list$SE_Ankermit_2015_ExVivo_GSE55953_GPL14550)$SYMBOL <- rowData(all_se_list$SE_Ankermit_2015_ExVivo_GSE55953_GPL14550)$GENE_SYMBOL
+
+
 # colData(all_se_list$SE_Ankermit_2015_ExVivo_GSE55953_GPL14550) |>
 #   as.data.frame() |>
 #   head()
@@ -1077,6 +1159,11 @@ all_se_list <- process_geo_dataset(
   excel_path = system.file("extdata", "Curated_datasets.xlsx", package = "DoReMiTra"),
   all_se_list
 )
+
+
+# adding SYMBOL column to the rowdata
+
+rowData(all_se_list$SE_Broustas_2018_InVivo_GSE113509_GPL11202)$SYMBOL <- rowData(all_se_list$SE_Broustas_2018_InVivo_GSE113509_GPL11202)$GENE_SYMBOL
 
 # colData(all_se_list$SE_Broustas_2018_InVivo_GSE113509_GPL11202) |>
 #   as.data.frame() |>
@@ -1124,6 +1211,11 @@ all_se_list <- process_geo_dataset(
   all_se_list
 )
 
+# adding SYMBOL column to the rowdata
+
+rowData(all_se_list$SE_Broustas_2017_InVivo_GSE85323_GPL10333)$SYMBOL <- rowData(all_se_list$SE_Broustas_2017_InVivo_GSE85323_GPL10333)$GENE_SYMBOL
+
+
 # colData(all_se_list$SE_Broustas_2017_InVivo_GSE85323_GPL10333) |>
 #   as.data.frame() |>
 #   head()
@@ -1161,11 +1253,17 @@ all_se_list$SE_Broustas_2017_InVivo_GSE85323_GPL10333$TaxonomyId <- all_se_list$
 # experimental setting
 all_se_list$SE_Broustas_2017_InVivo_GSE85323_GPL10333$Exp_setting <- rep("InVivo", 72)
 
-# assigning the spot id as rownames
+# some SPOT_ID has missing information, thus we will remove these rows and will will the spot id as rownames
+
+se <- all_se_list$SE_Broustas_2017_InVivo_GSE85323_GPL10333
+keep <- !is.na(rowData(se)$SPOT_ID)
+all_se_list$SE_Broustas_2017_InVivo_GSE85323_GPL10333 <- se[keep, ]
+
 
 rownames(all_se_list$SE_Broustas_2017_InVivo_GSE85323_GPL10333) <- rowData(all_se_list$SE_Broustas_2017_InVivo_GSE85323_GPL10333)$SPOT_ID
 
 print(all_se_list$SE_Broustas_2017_InVivo_GSE85323_GPL10333)
+
 ```
 
 ### F&G GSE90909
@@ -1176,6 +1274,11 @@ all_se_list <- process_geo_dataset(
   excel_path = system.file("extdata", "Curated_datasets.xlsx", package = "DoReMiTra"),
   all_se_list
 )
+
+# adding SYMBOL column to the rowdata
+
+rowData(all_se_list$SE_Broustas_2017_ExVivo_GSE90909_GPL13497)$SYMBOL <- rowData(all_se_list$SE_Broustas_2017_ExVivo_GSE90909_GPL13497)$GENE_SYMBOL
+
 
 # colData(all_se_list$SE_Broustas_2017_ExVivo_GSE90909_GPL13497) |>
 #   as.data.frame() |>
@@ -1225,6 +1328,11 @@ all_se_list <- process_geo_dataset(
   all_se_list
 )
 
+# adding SYMBOL column to the rowdata
+
+rowData(all_se_list$SE_Paul_2010_InVivo_GSE23393_GPL6480)$SYMBOL <- rowData(all_se_list$SE_Paul_2010_InVivo_GSE23393_GPL6480)$GENE_SYMBOL
+
+
 # colData(all_se_list$SE_Paul_2010_InVivo_GSE23393_GPL6480) |>
 #   as.data.frame() |>
 #   head()
@@ -1271,6 +1379,10 @@ all_se_list <- process_geo_dataset(
   all_se_list
 )
 
+# adding SYMBOL column to the rowdata
+
+rowData(all_se_list$SE_Ghandhi_2015_ExVivo_GSE65292_GPL13497)$SYMBOL <- rowData(all_se_list$SE_Ghandhi_2015_ExVivo_GSE65292_GPL13497)$GENE_SYMBOL
+
 # colData(all_se_list$SE_Ghandhi_2015_ExVivo_GSE65292_GPL13497) |>
 #   as.data.frame() |>
 #   head()
@@ -1312,6 +1424,10 @@ all_se_list <- process_geo_dataset(
   excel_path = system.file("extdata", "Curated_datasets.xlsx", package = "DoReMiTra"),
   all_se_list
 )
+
+# adding SYMBOL column to the rowdata
+
+rowData(all_se_list$SE_Flores_2009_ExVivo_GSE15341_GPL8332)$SYMBOL <- rowData(all_se_list$SE_Flores_2009_ExVivo_GSE15341_GPL8332)$Gene.Symbol
 
 
 # colData(all_se_list$SE_Flores_2009_ExVivo_GSE15341_GPL8332) |>
@@ -1358,6 +1474,11 @@ all_se_list <- process_geo_dataset(
   excel_path = system.file("extdata", "Curated_datasets.xlsx", package = "DoReMiTra"),
   all_se_list
 )
+
+# adding SYMBOL column to the rowdata
+
+rowData(all_se_list$SE_Amundson_2011_InVivo_GSE20162_GPL6480)$SYMBOL <- rowData(all_se_list$SE_Amundson_2011_InVivo_GSE20162_GPL6480)$GENE_SYMBOL
+
 
 # colData(all_se_list$SE_Amundson_2011_InVivo_GSE20162_GPL6480) |>
 #   as.data.frame() |>
@@ -1417,6 +1538,10 @@ all_se_list <- process_geo_dataset(
   all_se_list
 )
 
+# adding SYMBOL column to the rowdata
+
+rowData(all_se_list$SE_Broustas_2023_InVivo_GSE196400_GPL11202)$SYMBOL <- rowData(all_se_list$SE_Broustas_2023_InVivo_GSE196400_GPL11202)$GENE_SYMBOL
+
 # colData(all_se_list$SE_Broustas_2023_InVivo_GSE196400_GPL11202) |>
 #   as.data.frame() |>
 #   head()
@@ -1463,6 +1588,11 @@ all_se_list <- process_geo_dataset(
   excel_path = system.file("extdata", "Curated_datasets.xlsx", package = "DoReMiTra"),
   all_se_list
 )
+
+# adding SYMBOL column to the rowdata
+
+rowData(all_se_list$SE_Broustas_2022_InVivo_GSE184361_GPL11202)$SYMBOL <- rowData(all_se_list$SE_Broustas_2022_InVivo_GSE184361_GPL11202)$GENE_SYMBOL
+
 
 # colData(all_se_list$SE_Broustas_2022_InVivo_GSE184361_GPL11202) |>
 #   as.data.frame() |>
@@ -1512,6 +1642,11 @@ all_se_list <- process_geo_dataset(
   excel_path = system.file("extdata", "Curated_datasets.xlsx", package = "DoReMiTra"),
   all_se_list
 )
+
+# adding SYMBOL column to the rowdata
+
+rowData(all_se_list$SE_Broustas_2021_InVivo_GSE132559_GPL11202)$SYMBOL <- rowData(all_se_list$SE_Broustas_2021_InVivo_GSE132559_GPL11202)$GENE_SYMBOL
+
 
 # colData(all_se_list$SE_Broustas_2021_InVivo_GSE132559_GPL11202) |>
 #   as.data.frame() |>
@@ -1564,6 +1699,11 @@ all_se_list <- process_geo_dataset(
   all_se_list
 )
 
+# adding SYMBOL column to the rowdata
+
+rowData(all_se_list$SE_Yamaguchi_2020_InVivo_GSE137192_GPL1261)$SYMBOL <- rowData(all_se_list$SE_Yamaguchi_2020_InVivo_GSE137192_GPL1261)$Gene.Symbol
+
+
 # colData(all_se_list$SE_Yamaguchi_2020_InVivo_GSE137192_GPL1261) |>
 #   as.data.frame() |>
 #   head()
@@ -1608,6 +1748,11 @@ all_se_list <- process_geo_dataset(
   all_se_list
 )
 
+# adding SYMBOL column to the rowdata
+
+rowData(all_se_list$SE_Mukherjee_2019_InVivo_GSE114142_GPL11202)$SYMBOL <- rowData(all_se_list$SE_Mukherjee_2019_InVivo_GSE114142_GPL11202)$GENE_SYMBOL
+
+
 # colData(all_se_list$SE_Mukherjee_2019_InVivo_GSE114142_GPL11202) |>
 #   as.data.frame() |>
 #   head()
@@ -1650,6 +1795,10 @@ all_se_list <- process_geo_dataset(
   excel_path = system.file("extdata", "Curated_datasets.xlsx", package = "DoReMiTra"),
   all_se_list
 )
+
+# adding SYMBOL column to the rowdata
+
+rowData(all_se_list$SE_Amundson_2018_InVivo_GSE101402_GPL11202)$SYMBOL <- rowData(all_se_list$SE_Amundson_2018_InVivo_GSE101402_GPL11202)$GENE_SYMBOL
 
 
 # colData(all_se_list$SE_Amundson_2018_InVivo_GSE101402_GPL11202) |>
@@ -1695,6 +1844,10 @@ all_se_list <- process_geo_dataset(
   all_se_list
 )
 
+# adding SYMBOL column to the rowdata
+
+rowData(all_se_list$SE_Amundson_2018_InVivo_GSE99176_GPL11202)$SYMBOL <- rowData(all_se_list$SE_Amundson_2018_InVivo_GSE99176_GPL11202)$GENE_SYMBOL
+
 # colData(all_se_list$SE_Amundson_2018_InVivo_GSE99176_GPL11202) |>
 #   as.data.frame() |>
 #   head()
@@ -1738,6 +1891,11 @@ all_se_list <- process_geo_dataset(
   excel_path = system.file("extdata", "Curated_datasets.xlsx", package = "DoReMiTra"),
   all_se_list
 )
+
+# adding SYMBOL column to the rowdata
+
+rowData(all_se_list$SE_Paul_2015_InVivo_GSE62623_GPL10333)$SYMBOL <- rowData(all_se_list$SE_Paul_2015_InVivo_GSE62623_GPL10333)$GENE_SYMBOL
+
 
 # colData(all_se_list$SE_Paul_2015_InVivo_GSE62623_GPL10333) |>
 #   as.data.frame() |>
@@ -1795,6 +1953,11 @@ all_se_list <- process_geo_dataset(
   all_se_list
 )
 
+# adding SYMBOL column to the rowdata
+
+rowData(all_se_list$SE_Ghandhi_2018_InVivo_GSE84898_GPL13497)$SYMBOL <- rowData(all_se_list$SE_Ghandhi_2018_InVivo_GSE84898_GPL13497)$GENE_SYMBOL
+
+
 # colData(all_se_list$SE_Ghandhi_2018_InVivo_GSE84898_GPL13497) |>
 #   as.data.frame() |>
 #   head()
@@ -1834,6 +1997,11 @@ all_se_list <- process_geo_dataset(
   excel_path = system.file("extdata", "Curated_datasets.xlsx", package = "DoReMiTra"),
   all_se_list
 )
+
+
+# adding SYMBOL column to the rowdata
+
+rowData(all_se_list$SE_Broustas_2021_InVivo_GSE133451_GPL11202)$SYMBOL <- rowData(all_se_list$SE_Broustas_2021_InVivo_GSE133451_GPL11202)$GENE_SYMBOL
 
 # colData(all_se_list$SE_Broustas_2021_InVivo_GSE133451_GPL11202) |>
 #   as.data.frame() |>
