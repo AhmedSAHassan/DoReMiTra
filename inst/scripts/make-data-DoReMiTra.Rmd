@@ -421,10 +421,6 @@ all_se_list <- process_geo_dataset(
 # adding SYMBOL column to the rowdata
 
 rowData(all_se_list$SE_Park_2017_ExVivo_GSE102971_GPL10332)$SYMBOL <- rowData(all_se_list$SE_Park_2017_ExVivo_GSE102971_GPL10332)$GENE_SYMBOL
-
-# adding SYMBOL column in the rowdata
-
-rowData(SE_Park_2017_ExVivo_GSE102971_GPL10332)$SYMBOL <- 
   
   
 # colData(all_se_list$SE_Park_2017_ExVivo_GSE102971_GPL10332) |>
@@ -2089,6 +2085,10 @@ SE_Salah_2025_ExVivo$TaxonomyId <- rep("9606", 30)
 
 # experimental setting
 SE_Salah_2025_ExVivo$Exp_setting <- rep("ExVivo", 30)
+
+# Platform
+
+SE_Salah_2025_ExVivo$Platform <- rep("RNAseq", 30)
 
 # remove unnecessary columns in the coldata
 colData(SE_Salah_2025_ExVivo) <- colData(SE_Salah_2025_ExVivo)[,- c(1,2,3,4,10,11,12)]
