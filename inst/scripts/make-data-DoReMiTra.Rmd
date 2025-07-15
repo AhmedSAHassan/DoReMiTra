@@ -2087,7 +2087,6 @@ SE_Salah_2025_ExVivo$TaxonomyId <- rep("9606", 30)
 SE_Salah_2025_ExVivo$Exp_setting <- rep("ExVivo", 30)
 
 # Platform
-
 SE_Salah_2025_ExVivo$Platform <- rep("RNAseq", 30)
 
 # remove unnecessary columns in the coldata
