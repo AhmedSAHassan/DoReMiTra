@@ -14,9 +14,9 @@
 #'
 list_datasets <- function() {
   eh <- ExperimentHub::ExperimentHub()
-  res <- ExperimentHub::query(eh, "DoReMiTra")
+  res <- query(eh, "DoReMiTra")
 
-  meta <- S4Vectors::mcols(res)
+  meta = read.csv(system.file("extdata", "metadata-DoReMiTra.csv", package = "DoReMiTra"))
 
   data.frame(
     Dataset = meta$Title,
