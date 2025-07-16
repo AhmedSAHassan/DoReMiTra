@@ -98,10 +98,11 @@ metadata <- generate_experimenthub_metadata(
 
 metadata$Description[36]<- "Processed expression data from GitHub repository AhmedSAHassan/Phybion_ShortReads_Analysis related to X-ray exposure."
 
-metadata$SourceType[36]<- "RDS"
-metadata$DataProvider[36]<- "GitHub"
+metadata$SourceType[36] <- "RDS"
+metadata$DataProvider[36] <- "GitHub"
+metadata$SourceUrl[36] <- "https://github.com/AhmedSAHassan/Phybion_ShortReads_Analysis"
 
-metadata$Radiation_type[19:21]<- "Neutron; X-ray"
+metadata$Radiation_type[19:21] <- "Neutron; X-ray"
 
 # add more information related to Zenodo 
 
@@ -113,8 +114,6 @@ generate_zenodo_link <- function(se_title) {
 }
 
 metadata$RDataPath <- vapply(metadata$Title, generate_zenodo_link, character(1))
-
-
 
 ```
 
