@@ -109,7 +109,7 @@ metadata$Location_Prefix <- "https://zenodo.org/"
 
 generate_zenodo_link <- function(se_title) {
   paste0("records/15830247",
-         "/files/", se_title, ".RDS?download=1")
+         "/files/", se_title, ".RDS")
 }
 
 metadata$RDataPath <- vapply(metadata$Title, generate_zenodo_link, character(1))
