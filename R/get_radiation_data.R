@@ -19,9 +19,9 @@ get_radiation_data <- function(dataset_name) {
   }
 
   eh <- ExperimentHub::ExperimentHub()
-  query_results <- AnnotationHub::query(eh, "DoReMiTra")
+  query_results <- query(eh, "DoReMiTra")
 
-  match_idx <- which(names(query_results) == dataset_name)
+  match_idx <- which(query_results$title == dataset_name)
 
   if (length(match_idx) == 0) {
     stop("Dataset '", dataset_name, "' not found in DoReMiTra")
