@@ -41,16 +41,16 @@ This vignette guides you through:
 
 # List All Available Datasets
 
-```{r list-datasets, eval=FALSE}
+```{r list-datasets}
 datasets <- list_datasets()
-head(datasets)
+DT::datatable(datasets)
 ```
 
 # Search for Specific Datasets
 
 You can filter datasets based on radiation type, organism, and experimental setting.
 
-```{r search-datasets, eval=FALSE}
+```{r search-datasets}
 search_datasets(radiation_type = "x-ray", organism = "Homo sapiens", exp_setting = "ExVivo")
 ```
 
@@ -58,17 +58,27 @@ search_datasets(radiation_type = "x-ray", organism = "Homo sapiens", exp_setting
 
 To access an individual dataset, use its exact name as provided by `list_datasets()`:
 
-```{r load-dataset, eval=FALSE}
+```{r load-dataset}
 dataset_name <- "SE_Amundson_2008_ExVivo_GSE8917_GPL1708"
 se <- get_radiation_data(dataset_name)
 se
+```
+
+# Exploring a Dataset
+
+Each dataset is a SummarizedExperiment object with gene-level expression values, sample-level metadata (colData) and gene annotations (rowData):
+
+```{r explore-dataset}
+assay(se)[1:5, 1:5] # expression matrix
+rowData(se)|> as.data.frame() |> DT::datatable() # gene info
+colData(se) |> as.data.frame() |>DT::datatable() # sample info
 ```
 
 # 5. Summarize a Dataset
 
 You can get a quick metadata summary of a dataset using `se_summary()`:
 
-```{r summarize, eval=FALSE}
+```{r summarize}
 se_summary("SE_Amundson_2008_ExVivo_GSE8917_GPL1708")
 ```
 
@@ -76,10 +86,10 @@ se_summary("SE_Amundson_2008_ExVivo_GSE8917_GPL1708")
 
 This is useful for checking compatibility before combined analysis:
 
-```{r compare, eval=FALSE}
+```{r compare}
 se1 <- get_radiation_data("SE_Amundson_2008_ExVivo_GSE8917_GPL1708")
-se2 <- get_radiation_data("SE_Park_2017_ExVivo_GSE102971_GPL10332")
-compare_datasets(Amundson = se1, Park = se2)
+se2 <- get_radiation_data("SE_Paul_2013_ExVivo_GSE44201_GPL6480")
+compare_datasets(Amundson = se1, Paul = se2) |> DT::datatable()
 ```
 
 # Troubleshooting and Tips
