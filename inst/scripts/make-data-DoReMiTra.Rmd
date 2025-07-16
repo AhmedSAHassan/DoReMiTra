@@ -36,8 +36,7 @@ process_geo_dataset <- function(
     accession_col = "Accession_no",
     author_col = "Author",
     year_col = "Year",
-    setting_col = "Exp_Setting",
-    possible_gene_cols = c("GENE_SYMBOL", "Gene.Symbol", "ILMN_Gene", "GeneSymbol")) {
+    setting_col = "Exp_Setting") {
   # Read metadata from Excel
   df <- readxl::read_excel(excel_path, sheet = sheet)
   idx <- which(trimws(df[[accession_col]]) == trimws(accession_id))
@@ -70,7 +69,8 @@ process_geo_dataset <- function(
   for (i in seq_along(gse_list)) {
     gse <- gse_list[[i]]
     platform <- annotation(gse)
-    obj_name <- gsub("_+", "_", paste(base_prefix, platform, sep = "_"))
+    obj_name <- gsub("_+", "_", paste(base_prefix, platform, #"Microarray",
+                                      sep = "_"))
 
     message(sprintf("🔧 Processing %s", obj_name))
 
@@ -90,40 +90,6 @@ process_geo_dataset <- function(
     cd$Sample_id <- NA_character_
     cd$Organism <- NA_character_
     cd$Platform <- "Microarray"
-
-    # gene_symbol_col <- NULL
-    # for (col in possible_gene_cols) {
-    #   if (col %in% colnames(rd)) {
-    #     gene_symbol_col <- col
-    #     break
-    #   }
-    # }
-    # 
-    # if (!is.null(gene_symbol_col)) {
-    #   gene_symbols <- as.character(rd[[gene_symbol_col]])
-    #   valid <- !is.na(gene_symbols) & gene_symbols != ""
-    #   counts <- counts[valid, , drop = FALSE]
-    #   gene_symbols <- gene_symbols[valid]
-    #   rd <- rd[valid, , drop = FALSE]
-    # 
-    #   # Average expression per gene
-    #   counts_sum <- rowsum(counts, group = gene_symbols)
-    #   counts_n <- table(gene_symbols)
-    #   counts_avg <- sweep(counts_sum, 1, counts_n, FUN = "/")
-    #   rownames(counts_avg) <- rownames(counts_sum)
-    # 
-    #   rd_df <- as.data.frame(rd)
-    #   rd_df$GENE_SYMBOL_AGG <- gene_symbols
-    #   rd_agg_df <- dplyr::group_by(rd_df, GENE_SYMBOL_AGG) |>
-    #     dplyr::slice(1) |>
-    #     dplyr::ungroup()
-    #   rd_agg_df$GENE_SYMBOL_AGG <- NULL
-    #   rd <- S4Vectors::DataFrame(rd_agg_df)
-    # 
-    #   counts <- counts_avg
-    # } else {
-    #   warning(sprintf("⚠️ No gene symbol column found for %s. Using probe-level IDs.", obj_name))
-    # }
 
     # Rebuild SE
     if (!all(colnames(counts) == rownames(cd))) stop("❌ colnames(counts) ≠ rownames(colData)")
@@ -2047,7 +2013,7 @@ This dataset is publicly available on GitHub -> "https://github.com/AhmedSAHassa
 You can fetch this dataset using the following terminal command
 
 ```
-curl -L -o SE_Salah_2025_ExVivo.RDS \
+curl -L -o SE_Salah_2025_ExVivo \
   https://github.com/AhmedSAHassan/Phybion_ShortReads_Analysis/raw/main/PhyBioN_SR_Analysis/gse_PhyBioN_Pseudonymized.RDS
 ```
 
@@ -2055,7 +2021,7 @@ Or using the following R code:
 
 ```{r eval=TRUE}
 # fetch the dataset
-dest_tempfile_salah <- file.path(tempdir(), "SE_Salah_2025_ExVivo.RDS")
+dest_tempfile_salah <- file.path(tempdir(), "SE_Salah_2025_ExVivo")
 
 if (!file.exists(dest_tempfile_salah)) {
   download.file(
