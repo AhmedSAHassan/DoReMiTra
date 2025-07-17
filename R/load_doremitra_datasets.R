@@ -1,5 +1,4 @@
 
-
 #' Title
 #'
 #' @param verbose
@@ -29,5 +28,6 @@ load_doremitra_datasets <- function(verbose = TRUE) {
     # Assign to global environment
     assign(dataset_name, se_obj, envir = .GlobalEnv)
   }
+
   invisible(NULL)
 }
