@@ -6,6 +6,7 @@
 #' @param radiation_type Character string (optional). Filter datasets by radiation type (e.g., "x-ray", "neutron").
 #' @param organism Character string (optional). Filter by organism (e.g., "Homo sapiens").
 #' @param exp_setting Character string (optional). Filter by experimental setting (e.g., "in vivo", "ex vivo").
+#' @param fetch default is FALSE, when set to TRUE, the filtered datasets will be fetched and stored in the environment.
 #' @returns
 #' a character string of the name of the se objects matching the inclusion criteria. If none match, returns an empty vector with a message.
 #' @export
@@ -13,7 +14,7 @@
 #' @examples
 #' search_datasets()
 #'
-search_datasets <- function(radiation_type = NULL, organism = NULL, exp_setting = NULL) {
+search_datasets <- function(radiation_type = NULL, organism = NULL, exp_setting = NULL, fetch =FALSE) {
   all_data <- list_datasets()
 
   # Custom messages for missing arguments
@@ -52,8 +53,21 @@ search_datasets <- function(radiation_type = NULL, organism = NULL, exp_setting 
     return(character(0))
   }
 
-  return(unique(filtered_data$Dataset))
-}
+  dataset_names <- unique(filtered_data$Dataset)
+
+  if (fetch) {
+    eh <- ExperimentHub::ExperimentHub()
+    for (dataset_name in dataset_names) {
+      message("Fetching and assigning dataset: ", dataset_name)
+      # Assuming get_radiation_data() fetches the SummarizedExperiment object by name
+      se_obj <- get_radiation_data(dataset_name)
+      assign(dataset_name, se_obj, envir = .GlobalEnv)
+    }
+    invisible(NULL)
+  } else {
+    return(dataset_names)
+  }
+  }
 
 
 
