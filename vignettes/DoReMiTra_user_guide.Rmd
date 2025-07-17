@@ -94,7 +94,7 @@ compare_datasets(Amundson = se1, Paul = se2) |> DT::datatable()
 
 # Troubleshooting and Tips
 
-* Always use exact dataset names from `list_datasets()` when calling `get_radiation_data()`.
+* Always use exact dataset names from `list_datasets()` when calling `get_radiation_data()` or `se_summary()`.
 * Use `search_datasets()` to dynamically find datasets of interest based on key metadata fields.
 * If you get a missing dataset error, check for typos or mismatched casing.
 
