@@ -26,7 +26,12 @@ get_radiation_data <- function(dataset_name) {
   if (length(match_idx) == 0) {
     stop("Dataset '", dataset_name, "' not found in DoReMiTra")
   }
-  return(query_results[[match_idx]])
+
+  # Assign to global environment
+
+  se_obj <- query_results[[match_idx]]
+
+  assign(dataset_name, se_obj, envir = .GlobalEnv)
 }
 
 
