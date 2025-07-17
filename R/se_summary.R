@@ -19,7 +19,7 @@ se_summary <- function(dataset_name) {
   metadata <- list_datasets()
 
   if (!(dataset_name %in% metadata$Dataset)) {
-    stop("Dataset name '", dataset_name, "' not found in metadata.")
+    stop("Dataset name '", dataset_name, "' not found in metadata. Please provide exact names as obtained from list_datasets()")
   }
 
   # Extract row for this dataset
