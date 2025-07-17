@@ -26,7 +26,7 @@ compare_datasets <- function(..., fields = c("Radiation_type", "Dose", "Sex", "T
 
   results <- lapply(se_list, function(se) {
     coldata <- as.data.frame(colData(se))
-    sapply(fields, function(field) {
+    field_values <- sapply(fields, function(field) {
       if (field %in% colnames(coldata)) {
         vals <- unique(as.character(coldata[[field]]))
         paste(sort(vals), collapse = ", ")
@@ -34,11 +34,15 @@ compare_datasets <- function(..., fields = c("Radiation_type", "Dose", "Sex", "T
         NA_character_
       }
     })
+
+    # Add number of samples
+    c(field_values, Sample_number = as.character(ncol(se)))
   })
 
   # Combine into a data.frame
   df <- as.data.frame(do.call(cbind, results))
-  rownames(df) <- fields
+  rownames(df) <- c(fields, "Sample_number")
   colnames(df) <- se_names
   return(df)
 }
+
