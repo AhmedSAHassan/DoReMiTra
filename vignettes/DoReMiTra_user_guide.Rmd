@@ -46,6 +46,18 @@ datasets <- list_datasets()
 DT::datatable(datasets)
 ```
 
+# Load All Datasets
+
+You can use the function load_doremitra_datasets() to download all available DoReMiTra datasets from ExperimentHub and assign each as a SummarizedExperiment object in your global environment with its dataset name
+
+```{r load-datasets, eval= FALSE}
+
+load_doremitra_datasets()
+
+# Now you can access any loaded dataset by its name, for example:
+SE_Salah_2025_ExVivo
+```
+
 # Search for Specific Datasets
 
 You can filter datasets based on radiation type, organism, and experimental setting.
