@@ -1,5 +1,10 @@
 
-#' Title
+#' Fetch all datasets from the DoReMiTra collection
+#'
+#' Retrieves all datasets available in the DoReMiTra package from ExperimentHub
+#' and returns them as a named list of `SummarizedExperiment` objects. This is
+#' useful for batch processing or exploring all curated radiation response datasets
+#' at once.
 #'
 #' @param verbose Logical. Whether to print progress messages. Default is TRUE.
 #'

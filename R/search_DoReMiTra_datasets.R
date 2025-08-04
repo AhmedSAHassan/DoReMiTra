@@ -1,8 +1,9 @@
 
-# filters and output the name of the datasets that matches the inclusion criteria selected by the user
-
-#' Title
+#' Search DoReMiTra datasets by metadata filters
 #'
+#' Filters the available DoReMiTra datasets using metadata fields such as
+#' radiation type, organism, or experimental setting. This function helps narrow
+#' down datasets of interest before fetching them.
 #' @param radiation_type Character string (optional). Filter datasets by radiation type (e.g., "x-ray", "neutron").
 #' @param organism Character string (optional). Filter by organism (e.g., "Homo sapiens").
 #' @param exp_setting Character string (optional). Filter by experimental setting (e.g., "in vivo", "ex vivo").

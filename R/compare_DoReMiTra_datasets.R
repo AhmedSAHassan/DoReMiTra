@@ -1,7 +1,7 @@
 
-
-#' Title
-#' Compares the essential metadata information of 2 or more SE objects
+#' Compare two or more dataset from the DoReMiTra collection
+#'
+#'This function compares the essential metadata information of 2 or more SE objects
 #' including radiation type, dose, time point, etc.
 #'
 
@@ -17,6 +17,7 @@
 #' se1 <- get_DoReMiTra_data("SE_Paul_2010_InVivo_GSE23393_GPL6480")
 #' se2 <- get_DoReMiTra_data("SE_Amundson_2011_InVivo_GSE20162_GPL6480")
 #' compare_DoReMiTra_datasets(se1, se2)
+#'
 
 compare_DoReMiTra_datasets <- function(..., fields = c("Radiation_type", "Dose", "Sex", "Time_point", "Organism")) {
   se_list <- list(...)

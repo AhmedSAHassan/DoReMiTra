@@ -1,10 +1,11 @@
 
-# generate a dataframe for the metadata of all the datasets
-
-
-#' List Available DoReMiTra Datasets
-#' Displays a summary of available datasets with key metadata fields.
-#' @param show_all_fields Logical. if TRUE, it returns all the metadata information
+#' List all available DoReMiTra datasets with associated key metadata information
+#'
+#' Returns a metadata dataframe of all datasets available in the DoReMiTra collection,
+#' including details such as title, organism, radiation type, experimental setting,
+#' and accession numbers. Can optionally display extended metadata fields.
+#'
+#' @param show_all_fields Logical. If TRUE, it returns all the metadata information
 #' @returns A data.frame with metadata for each dataset
 #' @export
 #'

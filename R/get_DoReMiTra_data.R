@@ -1,8 +1,8 @@
-# fetching selected dataset
 
-# here we can add the argument to assign the gene symbol to the rownames
-
-#' Title
+#' Fetch a selected dataset from the DoReMiTra collection
+#'
+#' This function fetches a `SummarizedExperiment` object from ExperimentHub
+#' corresponding to a dataset in the DoReMiTra package.
 #'
 #' @param dataset_name Character. The exact name of the dataset (e.g. "SE_Amundson_2008_ExVivo_GSE8917_GPL1708").
 #' @param gene_symbol Logical. default is FALSE. If TRUE, gene symbol will be assigned to rownames.
