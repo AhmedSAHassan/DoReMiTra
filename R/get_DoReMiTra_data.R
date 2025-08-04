@@ -5,6 +5,8 @@
 #' Title
 #'
 #' @param dataset_name Character. The exact name of the dataset (e.g. "SE_Amundson_2008_ExVivo_GSE8917_GPL1708").
+#' @param gene_symbol Logical. default is FALSE. If TRUE, gene symbol will be assigned to rownames.
+#' If some gene symbols were found to be duplicated, gene symbol and the corresponding probe id will be appended together.
 
 #'
 #' @returns A `SummarizedExperiment` object fetched from ExperimentHub.
@@ -18,7 +20,7 @@
 #' @examples
 #' get_DoReMiTra_data("SE_Amundson_2008_ExVivo_GSE8917_GPL1708")
 #'
-get_DoReMiTra_data <- function(dataset_name) {
+get_DoReMiTra_data <- function(dataset_name, gene_symbol = FALSE) {
   if (missing(dataset_name) || !is.character(dataset_name)) {
     stop("Please provide a valid dataset name as a character string.")
   }
@@ -38,6 +40,33 @@ get_DoReMiTra_data <- function(dataset_name) {
 
   out_se <- query_results[[match_idx]]
 
+  # Add gene symbol if TRUE
+
+  if (gene_symbol) {
+    rd <- rowData(out_se)
+    if (!"SYMBOL" %in% colnames(rd)) {
+      warning("SYMBOL column not found in rowData, gene_symbol argument ignored.")
+    } else {
+      symbols <- as.character(rd$SYMBOL)
+      probes <- rownames(out_se)
+      # Find duplicated symbols
+      symbol_table <- table(symbols)
+      duplicated_symbols <- names(symbol_table[symbol_table > 1])
+
+      new_rownames <- probes
+      # Unique and non-NA symbols get just the symbol
+      unique_and_not_na <- !(symbols %in% duplicated_symbols) & !is.na(symbols) & symbols != ""
+      new_rownames[unique_and_not_na] <- symbols[unique_and_not_na]
+      # Duplicated symbols get SYMBOL-probeid
+      duplicated <- (symbols %in% duplicated_symbols) & !is.na(symbols) & symbols != ""
+      new_rownames[duplicated] <- paste0(symbols[duplicated], "-", probes[duplicated])
+      # NA or empty symbols keep probe id (already default)
+
+      rownames(out_se) <- new_rownames
+    }
+  }
+
+
   metadata(out_se)[["DoReMiTra"]] <- list(
     Author = strsplit(dataset_name, "_")[[1]][2],
     Organism = dataset_info$Organism,
@@ -52,12 +81,4 @@ get_DoReMiTra_data <- function(dataset_name) {
 
   return(out_se)
 }
-
-
-
-
-
-
-# here we can add the argument to assign the gene symbol to the rownames
-
 
