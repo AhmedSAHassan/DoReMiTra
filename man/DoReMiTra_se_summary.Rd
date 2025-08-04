@@ -2,7 +2,7 @@
 % Please edit documentation in R/DoReMiTra_se_summary.R
 \name{DoReMiTra_se_summary}
 \alias{DoReMiTra_se_summary}
-\title{Summarize Metadata for a DoReMiTra Dataset}
+\title{Summarize the metadata of a SummarizedExperiment object from the DoReMiTra collection}
 \usage{
 DoReMiTra_se_summary(se)
 }
@@ -13,7 +13,9 @@ DoReMiTra_se_summary(se)
 A character string containing a essential information about the dataset metadata
 }
 \description{
-Summarize Metadata for a DoReMiTra Dataset
+#' Provides a concise overview of a \code{SummarizedExperiment} object from the DoReMiTra collection.
+Displays information such as the number of samples, metadata content, and
+key experimental conditions like radiation type, organism, and platform.
 }
 \examples{
 se <- get_DoReMiTra_data("SE_Ghandhi_2018_InVivo_GSE84898_GPL13497")
