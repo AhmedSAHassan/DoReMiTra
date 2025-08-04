@@ -28,7 +28,7 @@ DoReMiTra_se_summary <- function(se) {
 
   author <- meta$Author
   n_samples <- ncol(se)
-  platform <- se$Platform
+  platform <- unique(se$Platform)
   species <- meta$Organism
   radiation <- meta$Radiation
   setting <- meta$Setting
