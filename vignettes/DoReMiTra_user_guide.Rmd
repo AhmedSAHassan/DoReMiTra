@@ -1,6 +1,8 @@
 ---
 title: "DoReMiTra"
-output: BiocStyle::html_document
+output: 
+  BiocStyle::html_document:
+    number_sections: true
 vignette: >
   %\VignetteIndexEntry{DoReMiTra User Guide}
   %\VignetteEngine{knitr::rmarkdown}
@@ -42,7 +44,7 @@ This vignette guides you through:
 # List All Available Datasets
 
 ```{r list-datasets}
-datasets <- list_datasets()
+datasets <- list_DoReMiTra_datasets()
 DT::datatable(datasets)
 ```
 
@@ -52,7 +54,7 @@ You can use the function load_doremitra_datasets() to download all available DoR
 
 ```{r load-datasets, eval= FALSE}
 
-load_doremitra_datasets()
+fetch_all_DoReMiTra()
 
 # Now you can access any loaded dataset by its name, for example:
 SE_Salah_2025_ExVivo
@@ -63,7 +65,7 @@ SE_Salah_2025_ExVivo
 You can filter datasets based on radiation type, organism, and experimental setting.
 
 ```{r search-datasets}
-search_datasets(radiation_type = "x-ray", organism = "Homo sapiens", exp_setting = "ExVivo")
+search_DoReMiTra_datasets(radiation_type = "x-ray", organism = "Homo sapiens", exp_setting = "ExVivo")
 ```
 
 # Load a Dataset
@@ -72,7 +74,7 @@ To access an individual dataset, use its exact name as provided by `list_dataset
 
 ```{r load-dataset}
 dataset_name <- "SE_Amundson_2008_ExVivo_GSE8917_GPL1708"
-se <- get_radiation_data(dataset_name)
+se <- get_DoReMiTra_data(dataset_name)
 se
 ```
 
@@ -86,28 +88,28 @@ head(rowData(se)|> as.data.frame()) # gene info
 head(colData(se) |> as.data.frame()) # sample info
 ```
 
-# 5. Summarize a Dataset
+# Summarize a Dataset
 
 You can get a quick metadata summary of a dataset using `se_summary()`:
 
 ```{r summarize}
-se_summary("SE_Amundson_2008_ExVivo_GSE8917_GPL1708")
+DoReMiTra_se_summary(se)
 ```
 
-# 6. Compare Metadata Across Multiple Datasets
+# Compare Metadata Across Multiple Datasets
 
 This is useful for checking compatibility before combined analysis:
 
 ```{r compare}
-se1 <- get_radiation_data("SE_Amundson_2008_ExVivo_GSE8917_GPL1708")
-se2 <- get_radiation_data("SE_Paul_2013_ExVivo_GSE44201_GPL6480")
-compare_datasets(Amundson = se1, Paul = se2) |> DT::datatable()
+se1 <- get_DoReMiTra_data("SE_Amundson_2008_ExVivo_GSE8917_GPL1708")
+se2 <- get_DoReMiTra_data("SE_Paul_2013_ExVivo_GSE44201_GPL6480")
+compare_DoReMiTra_datasets(Amundson = se1, Paul = se2) |> DT::datatable()
 ```
 
 # Troubleshooting and Tips
 
-* Always use exact dataset names from `list_datasets()` when calling `get_radiation_data()` or `se_summary()`.
-* Use `search_datasets()` to dynamically find datasets of interest based on key metadata fields.
+* Always use exact dataset names from `list_DoReMiTra_datasets()` when calling `get_DoReMiTra_data()`.
+* Use `search_DoReMiTra_datasets()` to dynamically find datasets of interest based on key metadata fields.
 * If you get a missing dataset error, check for typos or mismatched casing.
 
 # Citation
