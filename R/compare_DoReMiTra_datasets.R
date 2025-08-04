@@ -6,16 +6,19 @@
 #'
 
 #' @param fields a character vector of the main metadata info
+#' @param ... names of the se objects to be compared
 #'
 #' @returns a dataframe comparing the metadata of the selected datasets
 #'
 #' @export
 #'
+#' @importFrom SummarizedExperiment colData
 #' @examples
-#' get_radiation_data()
-#' compare_datasets()
+#' se1 <- get_DoReMiTra_data("SE_Paul_2010_InVivo_GSE23393_GPL6480")
+#' se2 <- get_DoReMiTra_data("SE_Amundson_2011_InVivo_GSE20162_GPL6480")
+#' compare_DoReMiTra_datasets(se1, se2)
 
-compare_datasets <- function(..., fields = c("Radiation_type", "Dose", "Sex", "Time_point", "Organism")) {
+compare_DoReMiTra_datasets <- function(..., fields = c("Radiation_type", "Dose", "Sex", "Time_point", "Organism")) {
   se_list <- list(...)
 
   se_names <- names(se_list)

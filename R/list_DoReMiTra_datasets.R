@@ -1,0 +1,42 @@
+
+# generate a dataframe for the metadata of all the datasets
+
+
+#' List Available DoReMiTra Datasets
+#' Displays a summary of available datasets with key metadata fields.
+#' @param show_all_fields Logical. if TRUE, it returns all the metadata information
+#' @returns A data.frame with metadata for each dataset
+#' @export
+#'
+#' @importFrom utils read.csv
+#' @importFrom ExperimentHub ExperimentHub
+#' @importFrom AnnotationHub query
+#'
+#' @examples
+#' list_DoReMiTra_datasets()
+#'
+#'
+
+list_DoReMiTra_datasets <- function(show_all_fields = FALSE) {
+
+  meta <- read.csv(system.file("extdata", "metadata-DoReMiTra.csv", package = "DoReMiTra"))
+
+  if (show_all_fields) {
+    meta_df <- as.data.frame(meta)
+    return (meta_df)
+  } else {
+
+    out_df <- data.frame(
+      Dataset = meta$Title,
+      RadiationType = meta$Radiation_type,
+      Organism = meta$Species,
+      ExpSetting = meta$Exp_setting,
+      Accession = meta$Accession,
+      stringsAsFactors = FALSE
+    )
+
+    return(out_df)
+  }
+
+}
+
