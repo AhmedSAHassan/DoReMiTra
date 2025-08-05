@@ -1,4 +1,4 @@
-#' `DoReMiTra:` radiation DOse REsponse Measure In TRAnscriptomics
+#' `DoReMiTra:` radiation DOse REsponse Measured In TRAnscriptomics
 #'
 #' `DoReMiTra` is a Bioconductor package that provides curated and harmonized radiation transcriptomic datasets
 #' from publicly available radiation studies. It enables easy access to
