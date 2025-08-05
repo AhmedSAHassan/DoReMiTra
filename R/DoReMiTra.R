@@ -1,13 +1,3 @@
-library(shiny)
-library(bs4Dash)
-library(shinyWidgets)
-library(ComplexHeatmap)
-library(matrixStats)
-library(ggplot2)
-library(SummarizedExperiment)
-library(RColorBrewer)
-library(ggrepel)
-library(DESeq2)
 
 # apply VST if RNA-seq data is detected
 get_expr_matrix <- function(se) {
