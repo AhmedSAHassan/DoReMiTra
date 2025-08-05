@@ -2,6 +2,7 @@
 % Please edit documentation in R/DoReMiTra-pkg.R
 \docType{package}
 \name{DoReMiTra-pkg}
+\alias{DoReMiTra}
 \alias{DoReMiTra-package}
 \alias{DoReMiTra-pkg}
 \title{\verb{DoReMiTra:} radiation DOse REsponse Measured In TRAnscriptomics}
