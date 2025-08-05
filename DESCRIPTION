@@ -27,7 +27,11 @@ Imports:
     ggrepel,
     matrixStats,
     RColorBrewer,
-    S4Vectors
+    S4Vectors,
+    bs4Dash,
+    shinyWidgets,
+    DESeq2,
+    shiny
 Suggests: 
     testthat (>= 3.0.0),
     knitr,
