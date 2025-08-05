@@ -70,7 +70,8 @@ search_DoReMiTra_datasets(radiation_type = "x-ray", organism = "Homo sapiens", e
 
 # Load a Dataset
 
-To access an individual dataset, use its exact name as provided by `list_datasets()`:
+To access an individual dataset, use its exact name as provided by `list_datasets()`
+This function contains "gene_symbol" argument that is set to TRUE by default, which assigns the gene symbol from the rowData to the rownames of the SE object. if a gene symbol was found to be duplicated, the gene symbol and its corresponding probe id will be appended and assigned to the rownames. if a gene symbol is messing- NA- the probe id will be used instead. otherwise, if the gene_symbol is set to FALSE, probe ids will be used as rownames
 
 ```{r load-dataset}
 dataset_name <- "SE_Amundson_2008_ExVivo_GSE8917_GPL1708"
