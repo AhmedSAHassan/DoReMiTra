@@ -16,6 +16,8 @@
 #' @importFrom AnnotationHub query
 #' @importFrom S4Vectors metadata<-
 #' @importFrom S4Vectors metadata
+#' @importFrom SummarizedExperiment rowData
+
 #'
 #' @examples
 #' get_DoReMiTra_data("SE_Amundson_2008_ExVivo_GSE8917_GPL1708")
