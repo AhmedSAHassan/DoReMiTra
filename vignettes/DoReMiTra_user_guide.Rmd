@@ -65,7 +65,9 @@ all_SEs[[SE_Salah_2025_ExVivo]]
 You can filter datasets based on radiation type, organism, and experimental setting.
 
 ```{r search-datasets}
-search_DoReMiTra_datasets(radiation_type = "x-ray", organism = "Homo sapiens", exp_setting = "ExVivo")
+search_DoReMiTra_datasets(radiation_type = "x-ray", 
+                          organism = "Homo sapiens", 
+                          exp_setting = "ExVivo")
 ```
 
 # Load a Dataset
