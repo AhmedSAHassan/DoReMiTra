@@ -10,9 +10,9 @@ compare_DoReMiTra_datasets(
 )
 }
 \arguments{
-\item{fields}{a character vector of the main metadata info}
+\item{se_list}{names of the se objects to be compared}
 
-\item{...}{names of the se objects to be compared}
+\item{fields}{a character vector of the main metadata info}
 }
 \value{
 a dataframe comparing the metadata of the selected datasets
@@ -24,6 +24,7 @@ including radiation type, dose, time point, etc.
 \examples{
 se1 <- get_DoReMiTra_data("SE_Paul_2010_InVivo_GSE23393_GPL6480")
 se2 <- get_DoReMiTra_data("SE_Amundson_2011_InVivo_GSE20162_GPL6480")
-compare_DoReMiTra_datasets(se1, se2)
+se_list<- list(Amundson = se1, Paul= se2)
+compare_DoReMiTra_datasets(se_list = se_list)
 
 }
