@@ -52,9 +52,9 @@ DT::datatable(datasets)
 
 You can use the function load_doremitra_datasets() to download all available DoReMiTra datasets from ExperimentHub and assign each as a SummarizedExperiment object in your global environment with its dataset name
 
-```{r load-datasets, eval= FALSE}
+```{r load-all-datasets, eval= FALSE}
 
-all_SEs<- fetch_all_DoReMiTra()
+all_SEs<- get_all_DoReMiTra()
 
 # Now you can access any loaded dataset by its name, for example:
 all_SEs[[SE_Salah_2025_ExVivo]]
@@ -96,7 +96,7 @@ head(colData(se) |> as.data.frame()) # sample info
 You can get a quick metadata summary of a dataset using `se_summary()`:
 
 ```{r summarize}
-DoReMiTra_se_summary(se)
+summarize_DoReMiTra_se(se)
 ```
 
 # Compare Metadata Across Multiple Datasets
