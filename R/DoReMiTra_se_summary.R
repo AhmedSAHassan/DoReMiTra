@@ -16,9 +16,9 @@
 
 #' @examples
 #' se <- get_DoReMiTra_data("SE_Ghandhi_2018_InVivo_GSE84898_GPL13497")
-#' DoReMiTra_se_summary(se)
+#' summarize_DoReMiTra_se(se)
 
-DoReMiTra_se_summary <- function(se) {
+summarize_DoReMiTra_se <- function(se) {
   # Check that se is a SummarizedExperiment
   if (!inherits(se, "SummarizedExperiment")) {
     stop("Input must be a SummarizedExperiment object.", call. = FALSE)
