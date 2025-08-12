@@ -15,7 +15,7 @@
 #' @examples
 #' get_all_DoReMiTra()
 #'
-get_all_DoReMiTra <- function(verbose = TRUE) {
+get_all_DoReMiTra_datasets <- function(verbose = TRUE) {
   # Retrieve all dataset names from metadata
   dataset_names <- list_DoReMiTra_datasets()$Dataset
 
