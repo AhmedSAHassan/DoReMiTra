@@ -106,7 +106,8 @@ This is useful for checking compatibility before combined analysis:
 ```{r compare}
 se1 <- get_DoReMiTra_data("SE_Amundson_2008_ExVivo_GSE8917_GPL1708")
 se2 <- get_DoReMiTra_data("SE_Paul_2013_ExVivo_GSE44201_GPL6480")
-compare_DoReMiTra_datasets(Amundson = se1, Paul = se2) |> DT::datatable()
+se_list<- list(Amundson = se1, Paul= se2)
+compare_DoReMiTra_datasets(se_list = se_list) |> DT::datatable()
 ```
 
 # Troubleshooting and Tips
