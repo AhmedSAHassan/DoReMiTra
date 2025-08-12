@@ -13,7 +13,7 @@
 #' @export
 #'
 #' @examples
-#' get_all_DoReMiTra()
+#' get_all_DoReMiTra_datasets()
 #'
 get_all_DoReMiTra_datasets <- function(verbose = TRUE) {
   # Retrieve all dataset names from metadata

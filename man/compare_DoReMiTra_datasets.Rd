@@ -5,14 +5,14 @@
 \title{Compare two or more dataset from the DoReMiTra collection}
 \usage{
 compare_DoReMiTra_datasets(
-  ...,
+  se_list,
   fields = c("Radiation_type", "Dose", "Sex", "Time_point", "Organism")
 )
 }
 \arguments{
-\item{...}{names of the se objects to be compared}
-
 \item{fields}{a character vector of the main metadata info}
+
+\item{...}{names of the se objects to be compared}
 }
 \value{
 a dataframe comparing the metadata of the selected datasets
