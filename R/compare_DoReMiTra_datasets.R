@@ -19,15 +19,31 @@
 #' compare_DoReMiTra_datasets(se1, se2)
 #'
 
-compare_DoReMiTra_datasets <- function(..., fields = c("Radiation_type", "Dose", "Sex", "Time_point", "Organism")) {
-  se_list <- list(...)
+compare_DoReMiTra_datasets <- function(se_list, fields = c("Radiation_type", "Dose", "Sex", "Time_point", "Organism")) {
+  # Check input is a list
 
-  se_names <- names(se_list)
-  if (is.null(se_names)) {
-    se_names <- sapply(substitute(list(...))[-1], deparse)
-    names(se_list) <- se_names
+  if (!is.list(se_list)) {
+    stop("You should provide a list of SummarizedExperiment objects.", call. = FALSE)
   }
 
+  # Check at least 2 SE objects
+
+  if (length(se_list) < 2) {
+    stop("The list should contain at least 2 SummarizedExperiment objects.", call. = FALSE)
+  }
+
+  # Check all elements are SummarizedExperiment objects
+
+  if (!all(vapply(se_list, function(x) inherits(x, "SummarizedExperiment"), logical(1)))) {
+    stop("The list does not contain only SummarizedExperiment objects.", call. = FALSE)
+  }
+
+  # Assign names if missing
+  if (is.null(names(se_list))) {
+    names(se_list) <- paste0("Dataset_", seq_along(se_list))
+  }
+
+  # Process each SE object
   results <- lapply(se_list, function(se) {
     coldata <- as.data.frame(colData(se))
     field_values <- sapply(fields, function(field) {
@@ -46,7 +62,5 @@ compare_DoReMiTra_datasets <- function(..., fields = c("Radiation_type", "Dose",
   # Combine into a data.frame
   df <- as.data.frame(do.call(cbind, results))
   rownames(df) <- c(fields, "Sample_number")
-  colnames(df) <- se_names
   return(df)
 }
-
