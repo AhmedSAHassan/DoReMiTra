@@ -19,6 +19,6 @@ useful for batch processing or exploring all curated radiation response datasets
 at once.
 }
 \examples{
-get_all_DoReMiTra()
+get_all_DoReMiTra_datasets()
 
 }
