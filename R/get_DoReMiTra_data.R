@@ -46,28 +46,20 @@ get_DoReMiTra_data <- function(dataset_name, gene_symbol = FALSE) {
 
   if (gene_symbol) {
     rd <- rowData(out_se)
+
     if (!"SYMBOL" %in% colnames(rd)) {
       warning("SYMBOL column not found in rowData, gene_symbol argument ignored.")
     } else {
+      # Ensure character type for SYMBOL
       symbols <- as.character(rd$SYMBOL)
       probes <- rownames(out_se)
-      # Find duplicated symbols
-      symbol_table <- table(symbols)
-      duplicated_symbols <- names(symbol_table[symbol_table > 1])
 
-      new_rownames <- probes
-      # Unique and non-NA symbols get just the symbol
-      unique_and_not_na <- !(symbols %in% duplicated_symbols) & !is.na(symbols) & symbols != ""
-      new_rownames[unique_and_not_na] <- symbols[unique_and_not_na]
-      # Duplicated symbols get SYMBOL-probeid
-      duplicated <- (symbols %in% duplicated_symbols) & !is.na(symbols) & symbols != ""
-      new_rownames[duplicated] <- paste0(symbols[duplicated], "-", probes[duplicated])
-      # NA or empty symbols keep probe id (already default)
+      # Use scater::uniquifyFeatureNames to make them unique
+      new_rownames <- scater::uniquifyFeatureNames(ID = probes, names = symbols)
 
       rownames(out_se) <- new_rownames
     }
   }
-
 
   metadata(out_se)[["DoReMiTra"]] <- list(
     Author = strsplit(dataset_name, "_")[[1]][2],
