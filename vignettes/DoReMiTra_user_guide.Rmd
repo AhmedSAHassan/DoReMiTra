@@ -77,7 +77,7 @@ This function contains "gene_symbol" argument that is set to TRUE by default, wh
 
 ```{r load-dataset}
 dataset_name <- "SE_Amundson_2008_ExVivo_GSE8917_GPL1708"
-se <- get_DoReMiTra_data(dataset_name)
+se <- get_DoReMiTra_data(dataset_name, gene_symbol = TRUE)
 se
 ```
 
