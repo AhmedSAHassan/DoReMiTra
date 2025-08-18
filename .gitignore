@@ -4,8 +4,11 @@
 .httr-oauth
 .DS_Store
 .quarto
-fetch&generate_Neutron_SE.RDS
-fetch&generate_Gamma_SE.RDS
-fetch&generate_Xray_SE.RDS
+fetch&generate_Neutron_SE.Rmd
+fetch&generate_Gamma_SE.Rmd
+fetch&generate_Xray_SE.Rmd
+Make_data.html
+make-data-DoReMiTra.html
+fetch_and_generate_all_datasets.html
+vignettes/DoReMiTra_user_guide.html
 
-vignettes/DoReMiTra_users_guide.Rmd
