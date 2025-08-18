@@ -3,10 +3,14 @@ title: "DoReMiTra"
 output: 
   BiocStyle::html_document:
     number_sections: true
+    toc: true
+    toc_float: true
 vignette: >
   %\VignetteIndexEntry{DoReMiTra User Guide}
+  %\VignettePackage{DoReMiTra}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
+bibliography: DoReMiTra.bib
 ---
 
 ```{r setup, include=FALSE}
@@ -24,13 +28,13 @@ library(DoReMiTra)
 # Introduction
 
 `DoReMiTra` provides a curated resource of radiation transcriptomic datasets with harmonized metadata for cross-study comparison such as:
-  
-Radiation_type
-Dose
-Time_point
-Sex
-Organism
-Exp_setting
+
+* `Radiation_type`, either Xray, gamma ray, neutron
+* `Dose`, which is commonly measured in Gy
+* `Time_point`, normally indicating the time post radiation exposure
+* `Sex` of the donors/samples collected
+* `Organism`, which at the current state of things is Homo sapiens and Mus musculus
+* `Exp_setting` exvivo invivo
 
 The package delivers data as `SummarizedExperiment` objects directly accessible via `ExperimentHub`, enabling easy subsetting, filtering, and comparative analyses.
 
@@ -45,16 +49,17 @@ This vignette guides you through:
 
 ```{r list-datasets}
 datasets <- list_DoReMiTra_datasets()
-DT::datatable(datasets)
+knitr::kable(datasets)
 ```
 
 # Load All Datasets
 
-You can use the function load_doremitra_datasets() to download all available DoReMiTra datasets from ExperimentHub and assign each as a SummarizedExperiment object in your global environment with its dataset name
+You can use the function `get_all_DoReMiTra_datasets()` to download all available DoReMiTra datasets from ExperimentHub.
+In this example, we fetched all the DoReMiTra datasets which is outputted as a named list from which you can easily access any SE object like [@Salah2025] dataset simply by subsetting.
 
 ```{r load-all-datasets, eval= FALSE}
 
-all_SEs<- get_all_DoReMiTra_datasets()
+all_SEs <- get_all_DoReMiTra_datasets()
 
 # Now you can access any loaded dataset by its name, for example:
 all_SEs[["SE_Salah_2025_ExVivo"]]
@@ -62,7 +67,9 @@ all_SEs[["SE_Salah_2025_ExVivo"]]
 
 # Search for Specific Datasets
 
-You can filter datasets based on radiation type, organism, and experimental setting.
+With the `search_DoReMiTra_datasets()` function, you can filter datasets based on radiation type, organism, and experimental setting.
+
+For example, in the following chunk we search for datasets where human samples have been exposed to X-rays in an *ex vivo* setting.
 
 ```{r search-datasets}
 search_DoReMiTra_datasets(radiation_type = "x-ray", 
@@ -72,10 +79,14 @@ search_DoReMiTra_datasets(radiation_type = "x-ray",
 
 # Load a Dataset
 
-To access an individual dataset, use its exact name as provided by `list_datasets()`
-This function contains "gene_symbol" argument that is set to TRUE by default, which assigns the gene symbol from the rowData to the rownames of the SE object. if a gene symbol was found to be duplicated, the gene symbol and its corresponding probe id will be appended and assigned to the rownames. if a gene symbol is messing- NA- the probe id will be used instead. otherwise, if the gene_symbol is set to FALSE, probe ids will be used as rownames
+To access an individual dataset, use its exact name as provided by `list_DoReMiTra_datasets()`.
+This function contains "gene_symbol" argument that is set to TRUE by default, which assigns the gene symbol from the `rowData` to the `rownames` of the SE object. if a gene symbol was found to be duplicated, the gene symbol and its corresponding probe id will be appended and assigned to the rownames. if a gene symbol is messing- NA- the probe id will be used instead. otherwise, if the gene_symbol is set to FALSE, probe ids will be used as rownames
 
 ```{r load-dataset}
+search_DoReMiTra_datasets(radiation_type = "gamma ray", 
+                          organism = "Homo sapiens", 
+                          exp_setting = "ExVivo")
+
 dataset_name <- "SE_Amundson_2008_ExVivo_GSE8917_GPL1708"
 se <- get_DoReMiTra_data(dataset_name, gene_symbol = TRUE)
 se
@@ -83,17 +94,17 @@ se
 
 # Exploring a Dataset
 
-Each dataset is a SummarizedExperiment object with gene-level expression values, sample-level metadata (colData) and gene annotations (rowData):
+Each dataset is a SummarizedExperiment object with gene-level expression values, sample-level metadata (`colData`) and gene annotations (`rowData`):
 
 ```{r explore-dataset}
 assay(se)[1:5, 1:5] # expression matrix
-head(rowData(se)|> as.data.frame()) # gene info
-head(colData(se) |> as.data.frame()) # sample info
+head(rowData(se)) # gene info
+head(colData(se)) # sample info
 ```
 
 # Summarize a Dataset
 
-You can get a quick metadata summary of a dataset using `se_summary()`:
+You can get a quick metadata summary of a dataset using `summarize_DoReMiTra_se()`which will output key information like the author of the study, number of the samples, organism, experiment setting, and radiation type and dose, and a link directing you to the the study
 
 ```{r summarize}
 summarize_DoReMiTra_se(se)
@@ -101,13 +112,20 @@ summarize_DoReMiTra_se(se)
 
 # Compare Metadata Across Multiple Datasets
 
-This is useful for checking compatibility before combined analysis:
+This is useful for checking compatibility before combined analysis - for example, we first searched for studies that involved gamma ray irradiation of homo sapiens samples. from the number of studies that are shown, we want to compare between [@Park2017] and [@Paul2008]
 
 ```{r compare}
-se1 <- get_DoReMiTra_data("SE_Amundson_2008_ExVivo_GSE8917_GPL1708")
+search_DoReMiTra_datasets(radiation_type = "gamma ray", 
+                          organism = "Homo sapiens", 
+                          exp_setting = "ExVivo")
+
+se1 <- get_DoReMiTra_data("SE_Park_2017_ExVivo_GSE102971_GPL10332_HomoSapiens")
 se2 <- get_DoReMiTra_data("SE_Paul_2013_ExVivo_GSE44201_GPL6480")
-se_list<- list(Amundson = se1, Paul= se2)
-compare_DoReMiTra_datasets(se_list = se_list) |> DT::datatable()
+se_list<- list(
+  Park = se1, 
+  Paul = se2
+)
+compare_DoReMiTra_datasets(se_list = se_list)
 ```
 
 # Troubleshooting and Tips
@@ -118,10 +136,12 @@ compare_DoReMiTra_datasets(se_list = se_list) |> DT::datatable()
 
 # Citation
 
-To cite the datasets or studies, please refer to the original GEO accession IDs (e.g., GSE124612). More details are included in the metadata.
+To cite the datasets or studies, please refer to the original GEO accession IDs (e.g., GSE124612). More details are included in the metadata, which you can easily access via `summarize_DoReMiTra_se()`.
 
-# Session Info
+# Session Info {-}
 
 ```{r session}
 sessionInfo()
 ```
+
+# References {-}
