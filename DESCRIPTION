@@ -25,7 +25,8 @@ Imports:
     AnnotationHub,
     utils,
     glue,
-    S4Vectors
+    S4Vectors,
+    scater
 Suggests: 
     testthat (>= 3.0.0),
     knitr,
@@ -35,4 +36,4 @@ Config/testthat/edition: 3
 URL: https://github.com/AhmedSAHassan/DoReMiTra
 BugReports: https://github.com/AhmedSAHassan/DoReMiTra/issues
 VignetteBuilder: knitr
-biocViews: ExperimentData, RNASeqData, ExperimentHub, ExpressionData, GEO
+biocViews: ExperimentData, RNASeqData, ExperimentHub, ExpressionData, GEO, PackageTypeData
