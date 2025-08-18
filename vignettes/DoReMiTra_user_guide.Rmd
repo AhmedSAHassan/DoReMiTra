@@ -54,7 +54,7 @@ You can use the function load_doremitra_datasets() to download all available DoR
 
 ```{r load-all-datasets, eval= FALSE}
 
-all_SEs<- get_all_DoReMiTra()
+all_SEs<- get_all_DoReMiTra_datasets()
 
 # Now you can access any loaded dataset by its name, for example:
 all_SEs[[SE_Salah_2025_ExVivo]]
