@@ -8,15 +8,18 @@
 #' @param organism Character string (optional). Filter by organism (e.g., "Homo sapiens").
 #' @param exp_setting Character string (optional). Filter by experimental setting (e.g., "in vivo", "ex vivo").
 #' @returns
-#' a list of the name of the se objects matching the inclusion criteria. If none match, returns an empty vector with a message.
+#' a vector with the names of the se objects matching the inclusion criteria. If none match, returns an empty vector with a message.
 #' @export
 #'
 #' @examples
 #' search_DoReMiTra_datasets()
 #'
 search_DoReMiTra_datasets <- function(radiation_type = NULL,
-                            organism = NULL,
-                            exp_setting = NULL) {
+                                      organism = NULL,
+                                      exp_setting = NULL) {
+
+  # radiation_type <- match.arg()
+
   all_data <- list_DoReMiTra_datasets()
 
   # Custom messages for missing arguments
@@ -57,16 +60,14 @@ search_DoReMiTra_datasets <- function(radiation_type = NULL,
 
   dataset_names <- unique(filtered_data$Dataset)
 
-  dataset_list <- as.list(dataset_names)
-
   # Print message for user
-  message("\nMatching datasets found: ", length(dataset_list))
+  message("\nMatching datasets found: ", length(dataset_names))
   message("To retrieve one or more of these datasets, you can use:\n")
   for (i in seq_len(min(2, length(dataset_names)))) {
     message("se_name", i, " <- get_DoReMiTra_data(\"", dataset_names[i], "\")")
   }
   message("\nFor more details, please refer to `?get_DoReMiTra_data`")
 
-  return(dataset_list)
+  return(dataset_names)
 
   }
