@@ -18,7 +18,7 @@ search_DoReMiTra_datasets(
 \item{exp_setting}{Character string (optional). Filter by experimental setting (e.g., "in vivo", "ex vivo").}
 }
 \value{
-a list of the name of the se objects matching the inclusion criteria. If none match, returns an empty vector with a message.
+a vector with the names of the se objects matching the inclusion criteria. If none match, returns an empty vector with a message.
 }
 \description{
 Filters the available DoReMiTra datasets using metadata fields such as
