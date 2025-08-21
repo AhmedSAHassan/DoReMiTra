@@ -2,6 +2,10 @@
 
 <img src="man/figures/logo.png" align="right" width="120"/>
 
+<!-- badges: start -->
+  [![R-CMD-check](https://github.com/AhmedSAHassan/DoReMiTra/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/AhmedSAHassan/DoReMiTra/actions/workflows/R-CMD-check.yaml)
+  <!-- badges: end -->
+
 **DoReMiTra:** A curated data package for radiation DOse REsponse Measured In TRAnscriptomics
 
 It is an R data package providing access to curated transcriptomic datasets related to **blood radiation**, with a focus on **neutron, x-ray, and gamma ray** studies. It is designed to facilitate radiation biology research and support data exploration and reproducibility in radiation transcriptomics.
