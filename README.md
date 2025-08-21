@@ -37,3 +37,7 @@ The package includes preprocessed and annotated datasets from public repositorie
 ✅ Experimental setting (InVivo, ExVivo)
 
 ✅ Sex (Male, Female)
+
+## Code of Conduct
+  
+Please note that the DoReMiTra project is released with a [Contributor Code of Conduct](https://contributor-covenant.org/version/2/1/CODE_OF_CONDUCT.html). By contributing to this project, you agree to abide by its terms.
