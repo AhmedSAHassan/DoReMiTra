@@ -24,7 +24,7 @@
 #'
 get_DoReMiTra_data <- function(dataset_name, gene_symbol = FALSE) {
   if (missing(dataset_name) || !is.character(dataset_name)) {
-    stop("Please provide a valid dataset name as a character string.")
+    stop("Please provide a valid dataset name as a character string. This can be obtained from list_DoReMiTra_datasets()")
   }
 
   eh <- ExperimentHub::ExperimentHub()
