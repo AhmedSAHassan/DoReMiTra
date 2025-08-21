@@ -20,7 +20,7 @@ RoxygenNote: 7.3.2
 Depends:
     R (>= 4.5.0)
 Imports: 
-    ExperimentHub (>= 2.99.5),
+    ExperimentHub,
     SummarizedExperiment,
     AnnotationHub,
     utils,
