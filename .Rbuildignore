@@ -1,3 +1,7 @@
 ^DoReMiTra\.Rproj$
+^.*\.Rproj$
 ^\.Rproj\.user$
 ^LICENSE\.md$
+^DoReMiTra/SE$
+^CODE_OF_CONDUCT\.md$
+^\.github$

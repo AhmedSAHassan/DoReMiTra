@@ -45,6 +45,25 @@ This vignette guides you through:
 * Filtering datasets
 * Comparing metadata across datasets
 
+# Getting started {#gettingstarted}
+
+To install this package, start R and enter:
+
+```{r install, eval = FALSE}
+if (!requireNamespace("BiocManager", quietly = TRUE)) {
+  install.packages("BiocManager")
+}
+
+BiocManager::install("DoReMiTra")
+```
+
+Once installed, the package can be loaded and attached to your current workspace
+as follows:
+
+```{r loadlib}
+library("DoReMiTra")
+```
+
 # List All Available Datasets
 
 ```{r list-datasets}
@@ -134,7 +153,7 @@ compare_DoReMiTra_datasets(se_list = se_list)
 * Use `search_DoReMiTra_datasets()` to dynamically find datasets of interest based on key metadata fields.
 * If you get a missing dataset error, check for typos or mismatched casing.
 
-# Citation
+# How to cite data included in DoReMiTra
 
 To cite the datasets or studies, please refer to the original GEO accession IDs (e.g., GSE124612). More details are included in the metadata, which you can easily access via `summarize_DoReMiTra_se()`.
 
