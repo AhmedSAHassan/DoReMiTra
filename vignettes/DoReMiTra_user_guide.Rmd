@@ -153,7 +153,7 @@ compare_DoReMiTra_datasets(se_list = se_list)
 * Use `search_DoReMiTra_datasets()` to dynamically find datasets of interest based on key metadata fields.
 * If you get a missing dataset error, check for typos or mismatched casing.
 
-# Citation
+# How to cite data included in DoReMiTra
 
 To cite the datasets or studies, please refer to the original GEO accession IDs (e.g., GSE124612). More details are included in the metadata, which you can easily access via `summarize_DoReMiTra_se()`.
 
