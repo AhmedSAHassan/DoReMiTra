@@ -1,6 +1,6 @@
 Package: DoReMiTra
 Title: Orchestrating Blood Radiation Transcriptomic Data
-Version: 0.9.0
+Version: 0.99.0
 Authors@R: c(person("Ahmed", "Salah", role = c("aut", "cre"),
                     email = "ahhassan@uni-mainz.de", 
                     comment = c(ORCID = "0000-0001-7003-4466")),
@@ -8,19 +8,20 @@ Authors@R: c(person("Ahmed", "Salah", role = c("aut", "cre"),
                     email = "marinif@uni-mainz.de", 
                     comment = c(ORCID = "0000-0003-3252-7758"))
            )
-Description: It is an R data package providing access to curated transcriptomic datasets
-    related to blood radiation, with a focus on neutron, x-ray, and gamma ray studies.
-    It is designed to facilitate radiation biology research and support data exploration
-    and reproducibility in radiation transcriptomics. All datasets are provided as
-    SummarizedExperiment objects, allowing seamless integration with the Bioconductor ecosystem.
+Description: DoReMiTra is an R data package providing access to curated 
+    transcriptomic datasets related to blood radiation, with a focus on neutron,
+    x-ray, and gamma ray studies. It is designed to facilitate radiation biology 
+    research and support data exploration and reproducibility in radiation 
+    transcriptomics. All datasets are provided as SummarizedExperiment objects, 
+    allowing seamless integration with the Bioconductor ecosystem.
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.2
 Depends:
-    R (>= 4.5.1)
+    R (>= 4.5.0)
 Imports: 
-    ExperimentHub (>= 2.99.5),
+    ExperimentHub,
     SummarizedExperiment,
     AnnotationHub,
     utils,
@@ -31,6 +32,7 @@ Suggests:
     testthat (>= 3.0.0),
     knitr,
     rmarkdown,
+    BiocStyle,
     DT
 Config/testthat/edition: 3
 URL: https://github.com/AhmedSAHassan/DoReMiTra
