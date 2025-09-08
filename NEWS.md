@@ -1,5 +1,9 @@
 # DoReMiTra 0.99.0
 
+* removed .Rproj file from the ones tracked 
+
+# DoReMiTra 0.99.0
+
 * Ready for the submission to Bioconductor!
 
 # DoReMiTra 0.9.0
