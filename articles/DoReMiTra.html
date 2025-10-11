@@ -428,37 +428,6 @@ setting.</p>
 human samples have been exposed to X-rays in an <em>ex vivo</em>
 setting.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/search_DoReMiTra_datasets.html">search_DoReMiTra_datasets</a></span><span class="op">(</span>radiation_type <span class="op">=</span> <span class="st">"x-ray"</span>, </span>
-<span>                          organism <span class="op">=</span> <span class="st">"Homo sapiens"</span>, </span>
-<span>                          exp_setting <span class="op">=</span> <span class="st">"ExVivo"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Filtering for radiation type: x-ray</span></span>
-<span><span class="co">#&gt; Filtering for organism: Homo sapiens</span></span>
-<span><span class="co">#&gt; Filtering for experimental setting: ExVivo</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Matching datasets found: 4</span></span>
-<span><span class="co">#&gt; To retrieve one or more of these datasets, you can use:</span></span>
-<span><span class="co">#&gt; se_name1 &lt;- get_DoReMiTra_data("SE_Broustas_2017_ExVivo_GSE90909_GPL13497")</span></span>
-<span><span class="co">#&gt; se_name2 &lt;- get_DoReMiTra_data("SE_Ghandhi_2015_ExVivo_GSE65292_GPL13497")</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; For more details, please refer to `?get_DoReMiTra_data`</span></span>
-<span><span class="co">#&gt; [1] "SE_Broustas_2017_ExVivo_GSE90909_GPL13497"</span></span>
-<span><span class="co">#&gt; [2] "SE_Ghandhi_2015_ExVivo_GSE65292_GPL13497" </span></span>
-<span><span class="co">#&gt; [3] "SE_Flores_2009_ExVivo_GSE15341_GPL8332"   </span></span>
-<span><span class="co">#&gt; [4] "SE_Salah_2025_ExVivo"</span></span></code></pre></div>
-</div>
-<div class="section level2">
-<h2 id="load-a-dataset">Load a Dataset<a class="anchor" aria-label="anchor" href="#load-a-dataset"></a>
-</h2>
-<p>To access an individual dataset, use its exact name as provided by
-<code><a href="../reference/list_DoReMiTra_datasets.html">list_DoReMiTra_datasets()</a></code>. This function contains
-“gene_symbol” argument that is set to TRUE by default, which assigns the
-gene symbol from the <code>rowData</code> to the <code>rownames</code>
-of the SE object. if a gene symbol was found to be duplicated, the gene
-symbol and its corresponding probe id will be appended and assigned to
-the rownames. if a gene symbol is messing- NA- the probe id will be used
-instead. otherwise, if the gene_symbol is set to FALSE, probe ids will
-be used as rownames</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/search_DoReMiTra_datasets.html">search_DoReMiTra_datasets</a></span><span class="op">(</span>radiation_type <span class="op">=</span> <span class="st">"gamma ray"</span>, </span>
 <span>                          organism <span class="op">=</span> <span class="st">"Homo sapiens"</span>, </span>
 <span>                          exp_setting <span class="op">=</span> <span class="st">"ExVivo"</span><span class="op">)</span></span>
@@ -485,22 +454,53 @@ be used as rownames</p>
 <span><span class="co">#&gt; [11] "SE_Manikandan_2014_ExVivo_GSE36355_GPL6883"        </span></span>
 <span><span class="co">#&gt; [12] "SE_Lee_2013_ExVivo_GSE44245_GPL570"                </span></span>
 <span><span class="co">#&gt; [13] "SE_Rouchka_2015_ExVivo_GSE64375_GPL6244"           </span></span>
-<span><span class="co">#&gt; [14] "SE_Ankermit_2015_ExVivo_GSE55953_GPL14550"</span></span>
+<span><span class="co">#&gt; [14] "SE_Ankermit_2015_ExVivo_GSE55953_GPL14550"</span></span></code></pre></div>
+</div>
+<div class="section level2">
+<h2 id="load-a-dataset">Load a Dataset<a class="anchor" aria-label="anchor" href="#load-a-dataset"></a>
+</h2>
+<p>To access an individual dataset, use its exact name as provided by
+<code><a href="../reference/list_DoReMiTra_datasets.html">list_DoReMiTra_datasets()</a></code>. This function contains
+“gene_symbol” argument that is set to TRUE by default, which assigns the
+gene symbol from the <code>rowData</code> to the <code>rownames</code>
+of the SE object. if a gene symbol was found to be duplicated, the gene
+symbol and its corresponding probe id will be appended and assigned to
+the rownames. if a gene symbol is messing- NA- the probe id will be used
+instead. otherwise, if the gene_symbol is set to FALSE, probe ids will
+be used as rownames</p>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/search_DoReMiTra_datasets.html">search_DoReMiTra_datasets</a></span><span class="op">(</span>radiation_type <span class="op">=</span> <span class="st">"X-ray"</span>, </span>
+<span>                          organism <span class="op">=</span> <span class="st">"Homo sapiens"</span>, </span>
+<span>                          exp_setting <span class="op">=</span> <span class="st">"ExVivo"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Filtering for radiation type: X-ray</span></span>
+<span><span class="co">#&gt; Filtering for organism: Homo sapiens</span></span>
+<span><span class="co">#&gt; Filtering for experimental setting: ExVivo</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Matching datasets found: 4</span></span>
+<span><span class="co">#&gt; To retrieve one or more of these datasets, you can use:</span></span>
+<span><span class="co">#&gt; se_name1 &lt;- get_DoReMiTra_data("SE_Broustas_2017_ExVivo_GSE90909_GPL13497")</span></span>
+<span><span class="co">#&gt; se_name2 &lt;- get_DoReMiTra_data("SE_Ghandhi_2015_ExVivo_GSE65292_GPL13497")</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; For more details, please refer to `?get_DoReMiTra_data`</span></span>
+<span><span class="co">#&gt; [1] "SE_Broustas_2017_ExVivo_GSE90909_GPL13497"</span></span>
+<span><span class="co">#&gt; [2] "SE_Ghandhi_2015_ExVivo_GSE65292_GPL13497" </span></span>
+<span><span class="co">#&gt; [3] "SE_Flores_2009_ExVivo_GSE15341_GPL8332"   </span></span>
+<span><span class="co">#&gt; [4] "SE_Salah_2025_ExVivo"</span></span>
 <span></span>
-<span><span class="va">dataset_name</span> <span class="op">&lt;-</span> <span class="st">"SE_Amundson_2008_ExVivo_GSE8917_GPL1708"</span></span>
+<span><span class="va">dataset_name</span> <span class="op">&lt;-</span> <span class="st">"SE_Broustas_2017_ExVivo_GSE90909_GPL13497"</span></span>
 <span><span class="va">se</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_DoReMiTra_data.html">get_DoReMiTra_data</a></span><span class="op">(</span><span class="va">dataset_name</span>, gene_symbol <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="co">#&gt; see ?DoReMiTra and browseVignettes('DoReMiTra') for documentation</span></span>
 <span><span class="co">#&gt; loading from cache</span></span>
 <span><span class="va">se</span></span>
 <span><span class="co">#&gt; class: SummarizedExperiment </span></span>
-<span><span class="co">#&gt; dim: 43931 50 </span></span>
+<span><span class="co">#&gt; dim: 12289 92 </span></span>
 <span><span class="co">#&gt; metadata(1): DoReMiTra</span></span>
 <span><span class="co">#&gt; assays(1): exprs</span></span>
-<span><span class="co">#&gt; rownames(43931): _BrightCorner _NegativeControl ... _BrightCorner</span></span>
-<span><span class="co">#&gt;   _BrightCorner</span></span>
-<span><span class="co">#&gt; rowData names(21): ID COL ... SEQUENCE SYMBOL</span></span>
-<span><span class="co">#&gt; colnames(50): GSM225984 GSM225985 ... GSM226032 GSM226033</span></span>
-<span><span class="co">#&gt; colData names(47): title geo_accession ... TaxonomyId Exp_setting</span></span></code></pre></div>
+<span><span class="co">#&gt; rownames(12289): _(+)E1A_r60_1 _(+)E1A_r60_3 ... _ETG10_234183</span></span>
+<span><span class="co">#&gt;   _GE_BrightCorner</span></span>
+<span><span class="co">#&gt; rowData names(18): ID SPOT_ID ... SEQUENCE SYMBOL</span></span>
+<span><span class="co">#&gt; colnames(92): GSM2417353 GSM2417354 ... GSM2417443 GSM2417444</span></span>
+<span><span class="co">#&gt; colData names(44): title geo_accession ... TaxonomyId Exp_setting</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="exploring-a-dataset">Exploring a Dataset<a class="anchor" aria-label="anchor" href="#exploring-a-dataset"></a>
@@ -510,176 +510,152 @@ expression values, sample-level metadata (<code>colData</code>) and gene
 annotations (<code>rowData</code>):</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">assay</span><span class="op">(</span><span class="va">se</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">5</span><span class="op">]</span> <span class="co"># expression matrix</span></span>
-<span><span class="co">#&gt;                     GSM225984 GSM225985 GSM225986 GSM225987 GSM225988</span></span>
-<span><span class="co">#&gt; _BrightCorner        3.528946        NA        NA  3.114885  4.563237</span></span>
-<span><span class="co">#&gt; _NegativeControl           NA        NA        NA        NA  4.184000</span></span>
-<span><span class="co">#&gt; L3MBTL2_A_23_P80353  5.440936  5.246361  4.779094  4.880002  7.167404</span></span>
-<span><span class="co">#&gt; APBA2_A_23_P158231   6.520162  5.183167  6.142370  5.837566  6.806196</span></span>
-<span><span class="co">#&gt; MAP3K6_A_32_P223017  5.254923  4.714014  4.810526  4.954699  6.469644</span></span>
+<span><span class="co">#&gt;                  GSM2417353 GSM2417354 GSM2417355 GSM2417356 GSM2417357</span></span>
+<span><span class="co">#&gt; _(+)E1A_r60_1     18.115025  17.673410  17.577608  18.373386  17.952204</span></span>
+<span><span class="co">#&gt; _(+)E1A_r60_3      3.947578   2.215706   2.473996   2.886919   2.374902</span></span>
+<span><span class="co">#&gt; _(+)E1A_r60_a104   5.122130   4.716759   3.974693   3.266030   3.144284</span></span>
+<span><span class="co">#&gt; _(+)E1A_r60_a107   4.961576   4.226226   4.386784   4.988791   4.612860</span></span>
+<span><span class="co">#&gt; _(+)E1A_r60_a135   7.657646   7.323098   7.118343   7.914989   7.519629</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu">rowData</span><span class="op">(</span><span class="va">se</span><span class="op">)</span><span class="op">)</span> <span class="co"># gene info</span></span>
-<span><span class="co">#&gt; DataFrame with 6 rows and 21 columns</span></span>
-<span><span class="co">#&gt;                            ID       COL       ROW            NAME</span></span>
-<span><span class="co">#&gt;                     &lt;integer&gt; &lt;integer&gt; &lt;integer&gt;     &lt;character&gt;</span></span>
-<span><span class="co">#&gt; _BrightCorner               1       103       430    BrightCorner</span></span>
-<span><span class="co">#&gt; _NegativeControl            2       103       428 NegativeControl</span></span>
-<span><span class="co">#&gt; L3MBTL2_A_23_P80353         3       103       426    NM_001003689</span></span>
-<span><span class="co">#&gt; APBA2_A_23_P158231          4       103       424       NM_005503</span></span>
-<span><span class="co">#&gt; MAP3K6_A_32_P223017         5       103       422       NM_004672</span></span>
-<span><span class="co">#&gt; ZNF121_A_24_P935782         6       103       420    NM_001008727</span></span>
-<span><span class="co">#&gt;                             SPOT_ID CONTROL_TYPE       REFSEQ       GB_ACC</span></span>
-<span><span class="co">#&gt;                         &lt;character&gt;  &lt;character&gt;  &lt;character&gt;  &lt;character&gt;</span></span>
-<span><span class="co">#&gt; _BrightCorner          BrightCorner          pos                          </span></span>
-<span><span class="co">#&gt; _NegativeControl    NegativeControl          neg                          </span></span>
-<span><span class="co">#&gt; L3MBTL2_A_23_P80353     A_23_P80353        FALSE NM_001003689 NM_001003689</span></span>
-<span><span class="co">#&gt; APBA2_A_23_P158231     A_23_P158231        FALSE    NM_005503    NM_005503</span></span>
-<span><span class="co">#&gt; MAP3K6_A_32_P223017    A_32_P223017        FALSE    NM_004672    NM_004672</span></span>
-<span><span class="co">#&gt; ZNF121_A_24_P935782    A_24_P935782        FALSE NM_001008727 NM_001008727</span></span>
-<span><span class="co">#&gt;                          GENE GENE_SYMBOL              GENE_NAME  UNIGENE_ID</span></span>
-<span><span class="co">#&gt;                     &lt;integer&gt; &lt;character&gt;            &lt;character&gt; &lt;character&gt;</span></span>
-<span><span class="co">#&gt; _BrightCorner              NA                                               </span></span>
-<span><span class="co">#&gt; _NegativeControl           NA                                               </span></span>
-<span><span class="co">#&gt; L3MBTL2_A_23_P80353     83746     L3MBTL2 l(3)mbt-like 2 (Dros..   Hs.517641</span></span>
-<span><span class="co">#&gt; APBA2_A_23_P158231        321       APBA2 amyloid beta (A4) pr..   Hs.525718</span></span>
-<span><span class="co">#&gt; MAP3K6_A_32_P223017      9064      MAP3K6 mitogen-activated pr..   Hs.194694</span></span>
-<span><span class="co">#&gt; ZNF121_A_24_P935782      7675      ZNF121 zinc finger protein ..   Hs.501537</span></span>
-<span><span class="co">#&gt;                          ENSEMBL_ID     TIGR_ID       ACCESSION_STRING</span></span>
-<span><span class="co">#&gt;                         &lt;character&gt; &lt;character&gt;            &lt;character&gt;</span></span>
-<span><span class="co">#&gt; _BrightCorner                                                         </span></span>
-<span><span class="co">#&gt; _NegativeControl                                                      </span></span>
-<span><span class="co">#&gt; L3MBTL2_A_23_P80353 ENST00000216237  THC2264916 ref|NM_001003689|ref..</span></span>
-<span><span class="co">#&gt; APBA2_A_23_P158231  ENST00000219865  THC2241506 ref|NM_005503|gb|BC0..</span></span>
-<span><span class="co">#&gt; MAP3K6_A_32_P223017 ENST00000357582  THC2236536 ref|NM_004672|gb|AB2..</span></span>
-<span><span class="co">#&gt; ZNF121_A_24_P935782 ENST00000320451  THC2427892 ref|NM_001008727|ens..</span></span>
-<span><span class="co">#&gt;                       CHROMOSOMAL_LOCATION    CYTOBAND            DESCRIPTION</span></span>
-<span><span class="co">#&gt;                                &lt;character&gt; &lt;character&gt;            &lt;character&gt;</span></span>
-<span><span class="co">#&gt; _BrightCorner                                                                </span></span>
-<span><span class="co">#&gt; _NegativeControl                                                             </span></span>
-<span><span class="co">#&gt; L3MBTL2_A_23_P80353 chr22:39950687-39950..  hs|22q13.2 Homo sapiens l(3)mbt..</span></span>
-<span><span class="co">#&gt; APBA2_A_23_P158231  chr15:27193462-27196..  hs|15q13.1 Homo sapiens amyloid..</span></span>
-<span><span class="co">#&gt; MAP3K6_A_32_P223017 chr1:27366686-27366347  hs|1p36.11 Homo sapiens mitogen..</span></span>
-<span><span class="co">#&gt; ZNF121_A_24_P935782  chr19:9538344-9538285  hs|19p13.2 Homo sapiens zinc fi..</span></span>
-<span><span class="co">#&gt;                                      GO_ID               SEQUENCE      SYMBOL</span></span>
-<span><span class="co">#&gt;                                &lt;character&gt;            &lt;character&gt; &lt;character&gt;</span></span>
-<span><span class="co">#&gt; _BrightCorner                                                                </span></span>
-<span><span class="co">#&gt; _NegativeControl                                                             </span></span>
-<span><span class="co">#&gt; L3MBTL2_A_23_P80353 GO:0003714(transcrip.. CCCGACAAGGCTTCAAGTCC..     L3MBTL2</span></span>
-<span><span class="co">#&gt; APBA2_A_23_P158231  GO:0005515(protein b.. CCACAGCCCACGAGAAGATA..       APBA2</span></span>
-<span><span class="co">#&gt; MAP3K6_A_32_P223017 GO:0000166(nucleotid.. GAATGTGGATTCAGGCACCA..      MAP3K6</span></span>
-<span><span class="co">#&gt; ZNF121_A_24_P935782 GO:0003677(DNA bindi.. TGTGGAAAATTCTTTAGATA..      ZNF121</span></span>
+<span><span class="co">#&gt; DataFrame with 6 rows and 18 columns</span></span>
+<span><span class="co">#&gt;                               ID         SPOT_ID CONTROL_TYPE      REFSEQ</span></span>
+<span><span class="co">#&gt;                      &lt;character&gt;     &lt;character&gt;  &lt;character&gt; &lt;character&gt;</span></span>
+<span><span class="co">#&gt; _(+)E1A_r60_1       (+)E1A_r60_1    (+)E1A_r60_1          pos            </span></span>
+<span><span class="co">#&gt; _(+)E1A_r60_3       (+)E1A_r60_3    (+)E1A_r60_3          pos            </span></span>
+<span><span class="co">#&gt; _(+)E1A_r60_a104 (+)E1A_r60_a104 (+)E1A_r60_a104          pos            </span></span>
+<span><span class="co">#&gt; _(+)E1A_r60_a107 (+)E1A_r60_a107 (+)E1A_r60_a107          pos            </span></span>
+<span><span class="co">#&gt; _(+)E1A_r60_a135 (+)E1A_r60_a135 (+)E1A_r60_a135          pos            </span></span>
+<span><span class="co">#&gt; _(+)E1A_r60_a20   (+)E1A_r60_a20  (+)E1A_r60_a20          pos            </span></span>
+<span><span class="co">#&gt;                       GB_ACC      GENE GENE_SYMBOL   GENE_NAME  UNIGENE_ID</span></span>
+<span><span class="co">#&gt;                  &lt;character&gt; &lt;integer&gt; &lt;character&gt; &lt;character&gt; &lt;character&gt;</span></span>
+<span><span class="co">#&gt; _(+)E1A_r60_1                       NA                                    </span></span>
+<span><span class="co">#&gt; _(+)E1A_r60_3                       NA                                    </span></span>
+<span><span class="co">#&gt; _(+)E1A_r60_a104                    NA                                    </span></span>
+<span><span class="co">#&gt; _(+)E1A_r60_a107                    NA                                    </span></span>
+<span><span class="co">#&gt; _(+)E1A_r60_a135                    NA                                    </span></span>
+<span><span class="co">#&gt; _(+)E1A_r60_a20                     NA                                    </span></span>
+<span><span class="co">#&gt;                   ENSEMBL_ID   TIGR_ID ACCESSION_STRING CHROMOSOMAL_LOCATION</span></span>
+<span><span class="co">#&gt;                  &lt;character&gt; &lt;logical&gt;      &lt;character&gt;          &lt;character&gt;</span></span>
+<span><span class="co">#&gt; _(+)E1A_r60_1                       NA                                      </span></span>
+<span><span class="co">#&gt; _(+)E1A_r60_3                       NA                                      </span></span>
+<span><span class="co">#&gt; _(+)E1A_r60_a104                    NA                                      </span></span>
+<span><span class="co">#&gt; _(+)E1A_r60_a107                    NA                                      </span></span>
+<span><span class="co">#&gt; _(+)E1A_r60_a135                    NA                                      </span></span>
+<span><span class="co">#&gt; _(+)E1A_r60_a20                     NA                                      </span></span>
+<span><span class="co">#&gt;                     CYTOBAND DESCRIPTION       GO_ID    SEQUENCE      SYMBOL</span></span>
+<span><span class="co">#&gt;                  &lt;character&gt; &lt;character&gt; &lt;character&gt; &lt;character&gt; &lt;character&gt;</span></span>
+<span><span class="co">#&gt; _(+)E1A_r60_1                                                               </span></span>
+<span><span class="co">#&gt; _(+)E1A_r60_3                                                               </span></span>
+<span><span class="co">#&gt; _(+)E1A_r60_a104                                                            </span></span>
+<span><span class="co">#&gt; _(+)E1A_r60_a107                                                            </span></span>
+<span><span class="co">#&gt; _(+)E1A_r60_a135                                                            </span></span>
+<span><span class="co">#&gt; _(+)E1A_r60_a20</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu">colData</span><span class="op">(</span><span class="va">se</span><span class="op">)</span><span class="op">)</span> <span class="co"># sample info</span></span>
-<span><span class="co">#&gt; DataFrame with 6 rows and 47 columns</span></span>
-<span><span class="co">#&gt;                            title geo_accession                status</span></span>
-<span><span class="co">#&gt;                      &lt;character&gt;   &lt;character&gt;           &lt;character&gt;</span></span>
-<span><span class="co">#&gt; GSM225984 ExVivoBlood_6hr_0Gy_..     GSM225984 Public on Jul 01 2008</span></span>
-<span><span class="co">#&gt; GSM225985 ExVivoBlood_6hr_0.5G..     GSM225985 Public on Jul 01 2008</span></span>
-<span><span class="co">#&gt; GSM225986 ExVivoBlood_6hr_2Gy_..     GSM225986 Public on Jul 01 2008</span></span>
-<span><span class="co">#&gt; GSM225987 ExVivoBlood_6hr_5Gy_..     GSM225987 Public on Jul 01 2008</span></span>
-<span><span class="co">#&gt; GSM225988 ExVivoBlood_6hr_8Gy_..     GSM225988 Public on Jul 01 2008</span></span>
-<span><span class="co">#&gt; GSM225989 ExVivoBlood_6hr_0Gy_..     GSM225989 Public on Jul 01 2008</span></span>
-<span><span class="co">#&gt;           submission_date last_update_date        type channel_count</span></span>
-<span><span class="co">#&gt;               &lt;character&gt;      &lt;character&gt; &lt;character&gt;   &lt;character&gt;</span></span>
-<span><span class="co">#&gt; GSM225984     Aug 30 2007      Feb 08 2013         RNA             1</span></span>
-<span><span class="co">#&gt; GSM225985     Aug 30 2007      Feb 08 2013         RNA             1</span></span>
-<span><span class="co">#&gt; GSM225986     Aug 30 2007      Feb 08 2013         RNA             1</span></span>
-<span><span class="co">#&gt; GSM225987     Aug 30 2007      Feb 08 2013         RNA             1</span></span>
-<span><span class="co">#&gt; GSM225988     Aug 30 2007      Feb 08 2013         RNA             1</span></span>
-<span><span class="co">#&gt; GSM225989     Aug 30 2007      Feb 08 2013         RNA             1</span></span>
-<span><span class="co">#&gt;                source_name_ch1 organism_ch1 characteristics_ch1</span></span>
-<span><span class="co">#&gt;                    &lt;character&gt;  &lt;character&gt;         &lt;character&gt;</span></span>
-<span><span class="co">#&gt; GSM225984 Peripheral_Blood_6hr Homo sapiens        Gender: male</span></span>
-<span><span class="co">#&gt; GSM225985 Peripheral_Blood_6hr Homo sapiens        Gender: male</span></span>
-<span><span class="co">#&gt; GSM225986 Peripheral_Blood_6hr Homo sapiens        Gender: male</span></span>
-<span><span class="co">#&gt; GSM225987 Peripheral_Blood_6hr Homo sapiens        Gender: male</span></span>
-<span><span class="co">#&gt; GSM225988 Peripheral_Blood_6hr Homo sapiens        Gender: male</span></span>
-<span><span class="co">#&gt; GSM225989 Peripheral_Blood_6hr Homo sapiens      Gender: female</span></span>
-<span><span class="co">#&gt;           characteristics_ch1.1 treatment_protocol_ch1    growth_protocol_ch1</span></span>
-<span><span class="co">#&gt;                     &lt;character&gt;            &lt;character&gt;            &lt;character&gt;</span></span>
-<span><span class="co">#&gt; GSM225984         Age: 39 years 3 ml aliquots of blo.. Freshly drawn periph..</span></span>
-<span><span class="co">#&gt; GSM225985         Age: 39 years 3 ml aliquots of blo.. Freshly drawn periph..</span></span>
-<span><span class="co">#&gt; GSM225986         Age: 39 years 3 ml aliquots of blo.. Freshly drawn periph..</span></span>
-<span><span class="co">#&gt; GSM225987         Age: 39 years 3 ml aliquots of blo.. Freshly drawn periph..</span></span>
-<span><span class="co">#&gt; GSM225988         Age: 39 years 3 ml aliquots of blo.. Freshly drawn periph..</span></span>
-<span><span class="co">#&gt; GSM225989         Age: 20 years 3 ml aliquots of blo.. Freshly drawn periph..</span></span>
-<span><span class="co">#&gt;           molecule_ch1   extract_protocol_ch1   label_ch1</span></span>
-<span><span class="co">#&gt;            &lt;character&gt;            &lt;character&gt; &lt;character&gt;</span></span>
-<span><span class="co">#&gt; GSM225984    total RNA RNA was prepared usi..   Cyanine-3</span></span>
-<span><span class="co">#&gt; GSM225985    total RNA RNA was prepared usi..   Cyanine-3</span></span>
-<span><span class="co">#&gt; GSM225986    total RNA RNA was prepared usi..   Cyanine-3</span></span>
-<span><span class="co">#&gt; GSM225987    total RNA RNA was prepared usi..   Cyanine-3</span></span>
-<span><span class="co">#&gt; GSM225988    total RNA RNA was prepared usi..   Cyanine-3</span></span>
-<span><span class="co">#&gt; GSM225989    total RNA RNA was prepared usi..   Cyanine-3</span></span>
-<span><span class="co">#&gt;               label_protocol_ch1   taxid_ch1           hyb_protocol</span></span>
-<span><span class="co">#&gt;                      &lt;character&gt; &lt;character&gt;            &lt;character&gt;</span></span>
-<span><span class="co">#&gt; GSM225984 Cyanine-3 (Cy3) labe..        9606 1.5 ug of Cy3-labell..</span></span>
-<span><span class="co">#&gt; GSM225985 Cyanine-3 (Cy3) labe..        9606 1.5 ug of Cy3-labell..</span></span>
-<span><span class="co">#&gt; GSM225986 Cyanine-3 (Cy3) labe..        9606 1.5 ug of Cy3-labell..</span></span>
-<span><span class="co">#&gt; GSM225987 Cyanine-3 (Cy3) labe..        9606 1.5 ug of Cy3-labell..</span></span>
-<span><span class="co">#&gt; GSM225988 Cyanine-3 (Cy3) labe..        9606 1.5 ug of Cy3-labell..</span></span>
-<span><span class="co">#&gt; GSM225989 Cyanine-3 (Cy3) labe..        9606 1.5 ug of Cy3-labell..</span></span>
-<span><span class="co">#&gt;                    scan_protocol            description        data_processing</span></span>
-<span><span class="co">#&gt;                      &lt;character&gt;            &lt;character&gt;            &lt;character&gt;</span></span>
-<span><span class="co">#&gt; GSM225984 Slides were scanned .. Gene expression afte.. The scanned images w..</span></span>
-<span><span class="co">#&gt; GSM225985 Slides were scanned .. Gene expression afte.. The scanned images w..</span></span>
-<span><span class="co">#&gt; GSM225986 Slides were scanned .. Gene expression afte.. The scanned images w..</span></span>
-<span><span class="co">#&gt; GSM225987 Slides were scanned .. Gene expression afte.. The scanned images w..</span></span>
-<span><span class="co">#&gt; GSM225988 Slides were scanned .. Gene expression afte.. The scanned images w..</span></span>
-<span><span class="co">#&gt; GSM225989 Slides were scanned .. Gene expression afte.. The scanned images w..</span></span>
-<span><span class="co">#&gt;           platform_id    contact_name          contact_email</span></span>
-<span><span class="co">#&gt;           &lt;character&gt;     &lt;character&gt;            &lt;character&gt;</span></span>
-<span><span class="co">#&gt; GSM225984     GPL1708 Sally,,Amundson saa2108@cumc.columbi..</span></span>
-<span><span class="co">#&gt; GSM225985     GPL1708 Sally,,Amundson saa2108@cumc.columbi..</span></span>
-<span><span class="co">#&gt; GSM225986     GPL1708 Sally,,Amundson saa2108@cumc.columbi..</span></span>
-<span><span class="co">#&gt; GSM225987     GPL1708 Sally,,Amundson saa2108@cumc.columbi..</span></span>
-<span><span class="co">#&gt; GSM225988     GPL1708 Sally,,Amundson saa2108@cumc.columbi..</span></span>
-<span><span class="co">#&gt; GSM225989     GPL1708 Sally,,Amundson saa2108@cumc.columbi..</span></span>
-<span><span class="co">#&gt;               contact_department   contact_institute contact_address</span></span>
-<span><span class="co">#&gt;                      &lt;character&gt;         &lt;character&gt;     &lt;character&gt;</span></span>
-<span><span class="co">#&gt; GSM225984 Center for Radiologi.. Columbia University 630 W. 168th St</span></span>
-<span><span class="co">#&gt; GSM225985 Center for Radiologi.. Columbia University 630 W. 168th St</span></span>
-<span><span class="co">#&gt; GSM225986 Center for Radiologi.. Columbia University 630 W. 168th St</span></span>
-<span><span class="co">#&gt; GSM225987 Center for Radiologi.. Columbia University 630 W. 168th St</span></span>
-<span><span class="co">#&gt; GSM225988 Center for Radiologi.. Columbia University 630 W. 168th St</span></span>
-<span><span class="co">#&gt; GSM225989 Center for Radiologi.. Columbia University 630 W. 168th St</span></span>
-<span><span class="co">#&gt;           contact_city contact_state contact_zip.postal_code contact_country</span></span>
-<span><span class="co">#&gt;            &lt;character&gt;   &lt;character&gt;             &lt;character&gt;     &lt;character&gt;</span></span>
-<span><span class="co">#&gt; GSM225984     New York            NY                   10032             USA</span></span>
-<span><span class="co">#&gt; GSM225985     New York            NY                   10032             USA</span></span>
-<span><span class="co">#&gt; GSM225986     New York            NY                   10032             USA</span></span>
-<span><span class="co">#&gt; GSM225987     New York            NY                   10032             USA</span></span>
-<span><span class="co">#&gt; GSM225988     New York            NY                   10032             USA</span></span>
-<span><span class="co">#&gt; GSM225989     New York            NY                   10032             USA</span></span>
-<span><span class="co">#&gt;               supplementary_file data_row_count               relation</span></span>
-<span><span class="co">#&gt;                      &lt;character&gt;    &lt;character&gt;            &lt;character&gt;</span></span>
-<span><span class="co">#&gt; GSM225984 ftp://ftp.ncbi.nlm.n..          43931 Reanalyzed by: GSM10..</span></span>
-<span><span class="co">#&gt; GSM225985 ftp://ftp.ncbi.nlm.n..          43931 Reanalyzed by: GSM10..</span></span>
-<span><span class="co">#&gt; GSM225986 ftp://ftp.ncbi.nlm.n..          43931 Reanalyzed by: GSM10..</span></span>
-<span><span class="co">#&gt; GSM225987 ftp://ftp.ncbi.nlm.n..          43931 Reanalyzed by: GSM10..</span></span>
-<span><span class="co">#&gt; GSM225988 ftp://ftp.ncbi.nlm.n..          43931 Reanalyzed by: GSM10..</span></span>
-<span><span class="co">#&gt; GSM225989 ftp://ftp.ncbi.nlm.n..          43931 Reanalyzed by: GSM10..</span></span>
-<span><span class="co">#&gt;               Age.ch1  Gender.ch1        Dose  Time_point         Sex</span></span>
-<span><span class="co">#&gt;           &lt;character&gt; &lt;character&gt; &lt;character&gt; &lt;character&gt; &lt;character&gt;</span></span>
-<span><span class="co">#&gt; GSM225984    39 years        male         0Gy         6hr        male</span></span>
-<span><span class="co">#&gt; GSM225985    39 years        male       0.5Gy         6hr        male</span></span>
-<span><span class="co">#&gt; GSM225986    39 years        male         2Gy         6hr        male</span></span>
-<span><span class="co">#&gt; GSM225987    39 years        male         5Gy         6hr        male</span></span>
-<span><span class="co">#&gt; GSM225988    39 years        male         8Gy         6hr        male</span></span>
-<span><span class="co">#&gt; GSM225989    20 years      female         0Gy         6hr      female</span></span>
-<span><span class="co">#&gt;           Radiation_type   Sample_id     Organism    Platform         Age</span></span>
-<span><span class="co">#&gt;              &lt;character&gt; &lt;character&gt;  &lt;character&gt; &lt;character&gt; &lt;character&gt;</span></span>
-<span><span class="co">#&gt; GSM225984      gamma ray   GSM225984 Homo sapiens  Microarray    39 years</span></span>
-<span><span class="co">#&gt; GSM225985      gamma ray   GSM225985 Homo sapiens  Microarray    39 years</span></span>
-<span><span class="co">#&gt; GSM225986      gamma ray   GSM225986 Homo sapiens  Microarray    39 years</span></span>
-<span><span class="co">#&gt; GSM225987      gamma ray   GSM225987 Homo sapiens  Microarray    39 years</span></span>
-<span><span class="co">#&gt; GSM225988      gamma ray   GSM225988 Homo sapiens  Microarray    39 years</span></span>
-<span><span class="co">#&gt; GSM225989      gamma ray   GSM225989 Homo sapiens  Microarray    20 years</span></span>
-<span><span class="co">#&gt;            TaxonomyId Exp_setting</span></span>
-<span><span class="co">#&gt;           &lt;character&gt; &lt;character&gt;</span></span>
-<span><span class="co">#&gt; GSM225984        9606      ExVivo</span></span>
-<span><span class="co">#&gt; GSM225985        9606      ExVivo</span></span>
-<span><span class="co">#&gt; GSM225986        9606      ExVivo</span></span>
-<span><span class="co">#&gt; GSM225987        9606      ExVivo</span></span>
-<span><span class="co">#&gt; GSM225988        9606      ExVivo</span></span>
-<span><span class="co">#&gt; GSM225989        9606      ExVivo</span></span></code></pre></div>
+<span><span class="co">#&gt; DataFrame with 6 rows and 44 columns</span></span>
+<span><span class="co">#&gt;                             title geo_accession                status</span></span>
+<span><span class="co">#&gt;                       &lt;character&gt;   &lt;character&gt;           &lt;character&gt;</span></span>
+<span><span class="co">#&gt; GSM2417353 blood 0.25Gy Neutron..    GSM2417353 Public on Feb 22 2017</span></span>
+<span><span class="co">#&gt; GSM2417354 blood 0.5Gy Neutron ..    GSM2417354 Public on Feb 22 2017</span></span>
+<span><span class="co">#&gt; GSM2417355 blood 1Gy Neutron rep1    GSM2417355 Public on Feb 22 2017</span></span>
+<span><span class="co">#&gt; GSM2417356   blood 1Gy X-ray rep1    GSM2417356 Public on Feb 22 2017</span></span>
+<span><span class="co">#&gt; GSM2417357   blood 2Gy X-ray rep1    GSM2417357 Public on Feb 22 2017</span></span>
+<span><span class="co">#&gt; GSM2417358   blood 4Gy X-ray rep1    GSM2417358 Public on Feb 22 2017</span></span>
+<span><span class="co">#&gt;            submission_date last_update_date        type channel_count</span></span>
+<span><span class="co">#&gt;                &lt;character&gt;      &lt;character&gt; &lt;character&gt;   &lt;character&gt;</span></span>
+<span><span class="co">#&gt; GSM2417353     Dec 05 2016      Feb 24 2017         RNA             1</span></span>
+<span><span class="co">#&gt; GSM2417354     Dec 05 2016      Feb 24 2017         RNA             1</span></span>
+<span><span class="co">#&gt; GSM2417355     Dec 05 2016      Feb 24 2017         RNA             1</span></span>
+<span><span class="co">#&gt; GSM2417356     Dec 05 2016      Feb 24 2017         RNA             1</span></span>
+<span><span class="co">#&gt; GSM2417357     Dec 05 2016      Feb 24 2017         RNA             1</span></span>
+<span><span class="co">#&gt; GSM2417358     Dec 05 2016      Feb 24 2017         RNA             1</span></span>
+<span><span class="co">#&gt;                 source_name_ch1 organism_ch1 characteristics_ch1</span></span>
+<span><span class="co">#&gt;                     &lt;character&gt;  &lt;character&gt;         &lt;character&gt;</span></span>
+<span><span class="co">#&gt; GSM2417353 blood 0.25Gy Neutron Homo sapiens      donor: Donor 1</span></span>
+<span><span class="co">#&gt; GSM2417354  blood 0.5Gy Neutron Homo sapiens      donor: Donor 1</span></span>
+<span><span class="co">#&gt; GSM2417355    blood 1Gy Neutron Homo sapiens      donor: Donor 1</span></span>
+<span><span class="co">#&gt; GSM2417356      blood 1Gy X-ray Homo sapiens      donor: Donor 1</span></span>
+<span><span class="co">#&gt; GSM2417357      blood 2Gy X-ray Homo sapiens      donor: Donor 1</span></span>
+<span><span class="co">#&gt; GSM2417358      blood 4Gy X-ray Homo sapiens      donor: Donor 1</span></span>
+<span><span class="co">#&gt;             characteristics_ch1.1 treatment_protocol_ch1    growth_protocol_ch1</span></span>
+<span><span class="co">#&gt;                       &lt;character&gt;            &lt;character&gt;            &lt;character&gt;</span></span>
+<span><span class="co">#&gt; GSM2417353 tissue: peripheral b.. Peripheral blood fro.. After irradiation, b..</span></span>
+<span><span class="co">#&gt; GSM2417354 tissue: peripheral b.. Peripheral blood fro.. After irradiation, b..</span></span>
+<span><span class="co">#&gt; GSM2417355 tissue: peripheral b.. Peripheral blood fro.. After irradiation, b..</span></span>
+<span><span class="co">#&gt; GSM2417356 tissue: peripheral b.. Peripheral blood fro.. After irradiation, b..</span></span>
+<span><span class="co">#&gt; GSM2417357 tissue: peripheral b.. Peripheral blood fro.. After irradiation, b..</span></span>
+<span><span class="co">#&gt; GSM2417358 tissue: peripheral b.. Peripheral blood fro.. After irradiation, b..</span></span>
+<span><span class="co">#&gt;            molecule_ch1   extract_protocol_ch1   label_ch1</span></span>
+<span><span class="co">#&gt;             &lt;character&gt;            &lt;character&gt; &lt;character&gt;</span></span>
+<span><span class="co">#&gt; GSM2417353    total RNA The RNA was prepared..         Cy3</span></span>
+<span><span class="co">#&gt; GSM2417354    total RNA The RNA was prepared..         Cy3</span></span>
+<span><span class="co">#&gt; GSM2417355    total RNA The RNA was prepared..         Cy3</span></span>
+<span><span class="co">#&gt; GSM2417356    total RNA The RNA was prepared..         Cy3</span></span>
+<span><span class="co">#&gt; GSM2417357    total RNA The RNA was prepared..         Cy3</span></span>
+<span><span class="co">#&gt; GSM2417358    total RNA The RNA was prepared..         Cy3</span></span>
+<span><span class="co">#&gt;                label_protocol_ch1   taxid_ch1           hyb_protocol</span></span>
+<span><span class="co">#&gt;                       &lt;character&gt; &lt;character&gt;            &lt;character&gt;</span></span>
+<span><span class="co">#&gt; GSM2417353 Cyanine-3 (Cy3) labe..        9606 1.65 ug of Cy3-label..</span></span>
+<span><span class="co">#&gt; GSM2417354 Cyanine-3 (Cy3) labe..        9606 1.65 ug of Cy3-label..</span></span>
+<span><span class="co">#&gt; GSM2417355 Cyanine-3 (Cy3) labe..        9606 1.65 ug of Cy3-label..</span></span>
+<span><span class="co">#&gt; GSM2417356 Cyanine-3 (Cy3) labe..        9606 1.65 ug of Cy3-label..</span></span>
+<span><span class="co">#&gt; GSM2417357 Cyanine-3 (Cy3) labe..        9606 1.65 ug of Cy3-label..</span></span>
+<span><span class="co">#&gt; GSM2417358 Cyanine-3 (Cy3) labe..        9606 1.65 ug of Cy3-label..</span></span>
+<span><span class="co">#&gt;                     scan_protocol        data_processing platform_id</span></span>
+<span><span class="co">#&gt;                       &lt;character&gt;            &lt;character&gt; &lt;character&gt;</span></span>
+<span><span class="co">#&gt; GSM2417353 Slides were scanned .. The scanned images w..    GPL13497</span></span>
+<span><span class="co">#&gt; GSM2417354 Slides were scanned .. The scanned images w..    GPL13497</span></span>
+<span><span class="co">#&gt; GSM2417355 Slides were scanned .. The scanned images w..    GPL13497</span></span>
+<span><span class="co">#&gt; GSM2417356 Slides were scanned .. The scanned images w..    GPL13497</span></span>
+<span><span class="co">#&gt; GSM2417357 Slides were scanned .. The scanned images w..    GPL13497</span></span>
+<span><span class="co">#&gt; GSM2417358 Slides were scanned .. The scanned images w..    GPL13497</span></span>
+<span><span class="co">#&gt;               contact_name          contact_email     contact_department</span></span>
+<span><span class="co">#&gt;                &lt;character&gt;            &lt;character&gt;            &lt;character&gt;</span></span>
+<span><span class="co">#&gt; GSM2417353 Sally,,Amundson saa2108@cumc.columbi.. Center for Radiologi..</span></span>
+<span><span class="co">#&gt; GSM2417354 Sally,,Amundson saa2108@cumc.columbi.. Center for Radiologi..</span></span>
+<span><span class="co">#&gt; GSM2417355 Sally,,Amundson saa2108@cumc.columbi.. Center for Radiologi..</span></span>
+<span><span class="co">#&gt; GSM2417356 Sally,,Amundson saa2108@cumc.columbi.. Center for Radiologi..</span></span>
+<span><span class="co">#&gt; GSM2417357 Sally,,Amundson saa2108@cumc.columbi.. Center for Radiologi..</span></span>
+<span><span class="co">#&gt; GSM2417358 Sally,,Amundson saa2108@cumc.columbi.. Center for Radiologi..</span></span>
+<span><span class="co">#&gt;              contact_institute contact_address contact_city contact_state</span></span>
+<span><span class="co">#&gt;                    &lt;character&gt;     &lt;character&gt;  &lt;character&gt;   &lt;character&gt;</span></span>
+<span><span class="co">#&gt; GSM2417353 Columbia University 630 W. 168th St     New York            NY</span></span>
+<span><span class="co">#&gt; GSM2417354 Columbia University 630 W. 168th St     New York            NY</span></span>
+<span><span class="co">#&gt; GSM2417355 Columbia University 630 W. 168th St     New York            NY</span></span>
+<span><span class="co">#&gt; GSM2417356 Columbia University 630 W. 168th St     New York            NY</span></span>
+<span><span class="co">#&gt; GSM2417357 Columbia University 630 W. 168th St     New York            NY</span></span>
+<span><span class="co">#&gt; GSM2417358 Columbia University 630 W. 168th St     New York            NY</span></span>
+<span><span class="co">#&gt;            contact_zip.postal_code contact_country     supplementary_file</span></span>
+<span><span class="co">#&gt;                        &lt;character&gt;     &lt;character&gt;            &lt;character&gt;</span></span>
+<span><span class="co">#&gt; GSM2417353                   10032             USA ftp://ftp.ncbi.nlm.n..</span></span>
+<span><span class="co">#&gt; GSM2417354                   10032             USA ftp://ftp.ncbi.nlm.n..</span></span>
+<span><span class="co">#&gt; GSM2417355                   10032             USA ftp://ftp.ncbi.nlm.n..</span></span>
+<span><span class="co">#&gt; GSM2417356                   10032             USA ftp://ftp.ncbi.nlm.n..</span></span>
+<span><span class="co">#&gt; GSM2417357                   10032             USA ftp://ftp.ncbi.nlm.n..</span></span>
+<span><span class="co">#&gt; GSM2417358                   10032             USA ftp://ftp.ncbi.nlm.n..</span></span>
+<span><span class="co">#&gt;            data_row_count   donor.ch1       tissue.ch1        Dose  Time_point</span></span>
+<span><span class="co">#&gt;               &lt;character&gt; &lt;character&gt;      &lt;character&gt; &lt;character&gt; &lt;character&gt;</span></span>
+<span><span class="co">#&gt; GSM2417353          12289     Donor 1 peripheral blood      0.25Gy         24h</span></span>
+<span><span class="co">#&gt; GSM2417354          12289     Donor 1 peripheral blood       0.5Gy         24h</span></span>
+<span><span class="co">#&gt; GSM2417355          12289     Donor 1 peripheral blood         1Gy         24h</span></span>
+<span><span class="co">#&gt; GSM2417356          12289     Donor 1 peripheral blood         1Gy         24h</span></span>
+<span><span class="co">#&gt; GSM2417357          12289     Donor 1 peripheral blood         2Gy         24h</span></span>
+<span><span class="co">#&gt; GSM2417358          12289     Donor 1 peripheral blood         4Gy         24h</span></span>
+<span><span class="co">#&gt;                    Sex Radiation_type   Sample_id     Organism    Platform</span></span>
+<span><span class="co">#&gt;            &lt;character&gt;    &lt;character&gt; &lt;character&gt;  &lt;character&gt; &lt;character&gt;</span></span>
+<span><span class="co">#&gt; GSM2417353          NA        Neutron  GSM2417353 Homo sapiens  Microarray</span></span>
+<span><span class="co">#&gt; GSM2417354          NA        Neutron  GSM2417354 Homo sapiens  Microarray</span></span>
+<span><span class="co">#&gt; GSM2417355          NA        Neutron  GSM2417355 Homo sapiens  Microarray</span></span>
+<span><span class="co">#&gt; GSM2417356          NA          X-ray  GSM2417356 Homo sapiens  Microarray</span></span>
+<span><span class="co">#&gt; GSM2417357          NA          X-ray  GSM2417357 Homo sapiens  Microarray</span></span>
+<span><span class="co">#&gt; GSM2417358          NA          X-ray  GSM2417358 Homo sapiens  Microarray</span></span>
+<span><span class="co">#&gt;             TaxonomyId Exp_setting</span></span>
+<span><span class="co">#&gt;            &lt;character&gt; &lt;character&gt;</span></span>
+<span><span class="co">#&gt; GSM2417353        9606      ExVivo</span></span>
+<span><span class="co">#&gt; GSM2417354        9606      ExVivo</span></span>
+<span><span class="co">#&gt; GSM2417355        9606      ExVivo</span></span>
+<span><span class="co">#&gt; GSM2417356        9606      ExVivo</span></span>
+<span><span class="co">#&gt; GSM2417357        9606      ExVivo</span></span>
+<span><span class="co">#&gt; GSM2417358        9606      ExVivo</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="summarize-a-dataset">Summarize a Dataset<a class="anchor" aria-label="anchor" href="#summarize-a-dataset"></a>
@@ -691,15 +667,15 @@ experiment setting, and radiation type and dose, and a link directing
 you to the the study</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/summarize_DoReMiTra_se.html">summarize_DoReMiTra_se</a></span><span class="op">(</span><span class="va">se</span><span class="op">)</span></span>
-<span><span class="co">#&gt; This dataset is generated by: Amundson</span></span>
+<span><span class="co">#&gt; This dataset is generated by: Broustas</span></span>
 <span><span class="co">#&gt;     Platform: Microarray</span></span>
 <span><span class="co">#&gt;     Organism(s): Homo sapiens</span></span>
-<span><span class="co">#&gt;     Radiation Type: gamma ray</span></span>
+<span><span class="co">#&gt;     Radiation Type: Neutron; X-ray</span></span>
 <span><span class="co">#&gt;     Experiment Setting: ExVivo</span></span>
-<span><span class="co">#&gt;     Number of Samples: 50</span></span>
-<span><span class="co">#&gt;     Accession: GSE8917</span></span>
+<span><span class="co">#&gt;     Number of Samples: 92</span></span>
+<span><span class="co">#&gt;     Accession: GSE90909</span></span>
 <span><span class="co">#&gt;     For more information about this study, please check: </span></span>
-<span><span class="co">#&gt; https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE8917</span></span></code></pre></div>
+<span><span class="co">#&gt; https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE90909</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="compare-metadata-across-multiple-datasets">Compare Metadata Across Multiple Datasets<a class="anchor" aria-label="anchor" href="#compare-metadata-across-multiple-datasets"></a>
