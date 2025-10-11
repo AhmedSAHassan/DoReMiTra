@@ -47,14 +47,14 @@ compare_DoReMiTra_datasets <- function(se_list, fields = c("Radiation_type", "Do
   # Process each SE object
   results <- lapply(se_list, function(se) {
     coldata <- as.data.frame(colData(se))
-    field_values <- sapply(fields, function(field) {
+    field_values <- vapply(fields, function(field) {
       if (field %in% colnames(coldata)) {
         vals <- unique(as.character(coldata[[field]]))
         paste(sort(vals), collapse = ", ")
       } else {
         NA_character_
       }
-    })
+    }, character(1))
 
     # Add number of samples
     c(field_values, Sample_number = as.character(ncol(se)))
