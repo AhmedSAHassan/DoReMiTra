@@ -20,7 +20,7 @@ search_DoReMiTra_datasets <- function(radiation_type = NULL,
 
   # radiation_type <- match.arg(radiation_type, c("X-ray", "gamma ray", "Neutron"))
   # organism <- match.arg(organism, c("Homo sapiens", "Mus musculus", "Macaca mulatta"))
-  # exp_setting <- match.arg(exp_setting, c("InVivo, "ExVivo"))
+  # exp_setting <- match.arg(exp_setting, c("InVivo", "ExVivo"))
 
   all_data <- list_DoReMiTra_datasets()
 
