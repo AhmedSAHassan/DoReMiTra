@@ -6,7 +6,7 @@ output:
     toc: true
     toc_float: true
 vignette: >
-  %\VignetteIndexEntry{DoReMiTra User Guide}
+  %\VignetteIndexEntry{DoReMiTra}
   %\VignettePackage{DoReMiTra}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
@@ -91,7 +91,7 @@ With the `search_DoReMiTra_datasets()` function, you can filter datasets based o
 For example, in the following chunk we search for datasets where human samples have been exposed to X-rays in an *ex vivo* setting.
 
 ```{r search-datasets}
-search_DoReMiTra_datasets(radiation_type = "x-ray", 
+search_DoReMiTra_datasets(radiation_type = "gamma ray", 
                           organism = "Homo sapiens", 
                           exp_setting = "ExVivo")
 ```
