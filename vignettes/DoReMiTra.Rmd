@@ -88,7 +88,7 @@ all_SEs[["SE_Salah_2025_ExVivo"]]
 
 With the `search_DoReMiTra_datasets()` function, you can filter datasets based on radiation type, organism, and experimental setting.
 
-For example, in the following chunk we search for datasets where human samples have been exposed to X-rays in an *ex vivo* setting.
+For example, in the following chunk we search for datasets where human samples have been exposed to gamma ray in an *ex vivo* setting.
 
 ```{r search-datasets}
 search_DoReMiTra_datasets(radiation_type = "gamma ray", 
