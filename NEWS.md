@@ -1,4 +1,10 @@
-# DoReMiTra 0.99.0
+# DoReMiTra 0.99.2
+
+* renamed the vignette file
+* replacing sapply with vapply
+* using message() instead of print() in summarize_DoReMiTra_se
+
+# DoReMiTra 0.99.1
 
 * removed .Rproj file from the ones tracked 
 
