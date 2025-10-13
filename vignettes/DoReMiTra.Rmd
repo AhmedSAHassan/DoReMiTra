@@ -6,7 +6,7 @@ output:
     toc: true
     toc_float: true
 vignette: >
-  %\VignetteIndexEntry{DoReMiTra}
+  %\VignetteIndexEntry{The DoReMiTra User's Guide}
   %\VignettePackage{DoReMiTra}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
