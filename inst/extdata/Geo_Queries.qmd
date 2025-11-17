@@ -1,7 +1,7 @@
 ---
 title: "GEO Queries for DoReMiTra Collection"
 author: "Ahmed Salah"
-date: "`r Sys.Date()`"
+date: "`r BiocStyle::doc_date()`"
 format: html
 ---
 
