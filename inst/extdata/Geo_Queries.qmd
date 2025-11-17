@@ -1,0 +1,43 @@
+---
+title: "GEO Queries for DoReMiTra Collection"
+author: "Ahmed Salah"
+date: "`r Sys.Date()`"
+format: html
+---
+
+# Introduction
+
+This document summarizes the **GEO queries** used to collect datasets for the **DoReMiTra** collection.\
+We focus on **RNA datasets** from **Homo sapiens** and **Mus musculus**, obtained via **high-throughput sequencing** or **microarray**, specifically from **blood samples** exposed to different types of radiation.
+
+------------------------------------------------------------------------
+
+## X-ray Datasets
+
+> **Note:** This query retrieves X-ray exposure datasets from humans and mice.
+
+(("Homo sapiens"\[Organism\] OR "Mus musculus"\[Organism\]) AND ("expression profiling by high throughput sequencing"\[DataSet Type\] OR "expression profiling by array"\[DataSet Type\]) AND rna\[Sample Type\] AND ("x ray" OR "x-ray" OR "x rays") AND "blood")
+
+##  γ-ray Datasets
+
+> **Note:** This query retrieves γ-ray (gamma-ray) exposure datasets.
+
+```         
+(("Homo sapiens"[Organism] OR "Mus musculus"[Organism]) 
+ AND ("expression profiling by high throughput sequencing"[DataSet Type] OR "expression profiling by array"[DataSet Type]) 
+ AND rna[Sample Type] 
+ AND ("gamma ray" OR "gamma rays" OR "γ ray" OR "γ rays" OR "γ-ray" OR "γ-rays") 
+ AND "blood")
+```
+
+## Neutron Datasets
+
+> **Note:** This query retrieves neutron exposure datasets.
+
+```         
+(("Homo sapiens"[Organism] OR "Mus musculus"[Organism]) 
+ AND ("expression profiling by high throughput sequencing"[DataSet Type] OR "expression profiling by array"[DataSet Type]) 
+ AND rna[Sample Type] 
+ AND "neutron" 
+ AND "blood")
+```
