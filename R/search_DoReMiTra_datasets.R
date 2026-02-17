@@ -7,6 +7,7 @@
 #' @param radiation_type Character string (optional). Filter datasets by radiation type (e.g., "x-ray", "neutron").
 #' @param organism Character string (optional). Filter by organism (e.g., "Homo sapiens").
 #' @param exp_setting Character string (optional). Filter by experimental setting (e.g., "in vivo", "ex vivo").
+#' @param accession Character string (optional). Filter by the accession number
 #' @returns
 #' a vector with the names of the se objects matching the inclusion criteria. If none match, returns an empty vector with a message.
 #' @export
@@ -16,7 +17,8 @@
 #'
 search_DoReMiTra_datasets <- function(radiation_type = NULL,
                                       organism = NULL,
-                                      exp_setting = NULL) {
+                                      exp_setting = NULL,
+                                      accession = NULL) {
 
   # radiation_type <- match.arg(radiation_type, c("X-ray", "gamma ray", "Neutron"))
   # organism <- match.arg(organism, c("Homo sapiens", "Mus musculus", "Macaca mulatta"))
@@ -53,6 +55,11 @@ search_DoReMiTra_datasets <- function(radiation_type = NULL,
   }
   if (!is.null(exp_setting)) {
     filtered_data <- filtered_data[grepl(exp_setting, filtered_data$ExpSetting, ignore.case = TRUE), ]
+  }
+
+  if (!is.null(accession)) {
+    filtered_data <- filtered_data[
+      grepl(accession, filtered_data$Accession, ignore.case = TRUE), ]
   }
 
   if (nrow(filtered_data) == 0) {
