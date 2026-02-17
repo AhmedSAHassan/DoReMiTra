@@ -33,6 +33,7 @@ list_DoReMiTra_datasets <- function(show_all_fields = FALSE) {
       Organism = meta$Species,
       ExpSetting = meta$Exp_setting,
       Accession = meta$Accession,
+      Tissue = meta$Tissue,
       stringsAsFactors = FALSE
     )
 
