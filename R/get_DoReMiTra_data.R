@@ -73,6 +73,8 @@ get_DoReMiTra_data <- function(dataset_name, gene_symbol = FALSE) {
     Accession = dataset_info$Accession
   )
 
+  colData(out_se)$Tissue <- metadata(out_se)[["DoReMiTra"]]$Tissue
+
 
   return(out_se)
 }
