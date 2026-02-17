@@ -90,7 +90,7 @@ process_geo_dataset <- function(
     cd$Sample_id <- NA_character_
     cd$Organism <- NA_character_
     cd$Platform <- "Microarray"
-    cd$Tissue <- "Blood"
+#    cd$Tissue <- "Blood"
 
     # Rebuild SE
     if (!all(colnames(counts) == rownames(cd))) stop("❌ colnames(counts) ≠ rownames(colData)")
@@ -2058,7 +2058,7 @@ SE_Salah_2025_ExVivo$Platform <- rep("RNAseq", 30)
 
 # Tissue/
 
-SE_Salah_2025_ExVivo$Tissue <- rep("Blood", 30)
+#SE_Salah_2025_ExVivo$Tissue <- rep("Blood", 30)
 
 # remove unnecessary columns in the coldata
 colData(SE_Salah_2025_ExVivo) <- colData(SE_Salah_2025_ExVivo)[,- c(1,2,3,4,10,11,12)]
