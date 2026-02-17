@@ -33,7 +33,7 @@ summarize_DoReMiTra_se <- function(se) {
   }
 
   # Define expected fields
-  expected_fields <- c("Author", "Organism", "Radiation", "Setting", "Accession", "Link")
+  expected_fields <- c("Author", "Organism", "Radiation", "Setting", "Accession", "Link", "Tissue")
 
   # Check for missing fields
   missing_fields <- setdiff(expected_fields, names(meta))
@@ -53,6 +53,7 @@ summarize_DoReMiTra_se <- function(se) {
   species <- meta$Organism
   radiation <- meta$Radiation
   setting <- meta$Setting
+  tissue <- meta$Tissue
   accession <- meta$Accession
   link <- meta$Link
 
@@ -63,6 +64,7 @@ summarize_DoReMiTra_se <- function(se) {
     Radiation Type: {radiation}
     Experiment Setting: {setting}
     Number of Samples: {n_samples}
+    Tissue: {tissue}
     Accession: {accession}
     For more information about this study, please check: \n{link}"
   ))
