@@ -20,7 +20,7 @@
 #'compare_DoReMiTra_datasets(se_list = se_list)
 #'
 
-compare_DoReMiTra_datasets <- function(se_list, fields = c("Radiation_type", "Dose", "Sex", "Time_point", "Organism")) {
+compare_DoReMiTra_datasets <- function(se_list, fields = c("Radiation_type", "Dose", "Sex", "Time_point", "Organism", "Tissue")) {
   # Check input is a list
 
   if (!is.list(se_list)) {
