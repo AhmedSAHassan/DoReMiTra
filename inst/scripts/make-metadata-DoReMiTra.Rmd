@@ -45,11 +45,6 @@ generate_experimenthub_metadata <- function(
       NA
     }
     
-    tissue <- if ("Tissue" %in% colnames(col_data)) {
-      paste(unique(as.character(col_data$Tissue)), collapse = "; ")
-    } else {
-      NA
-    }
     
     exp_setting <- if ("Exp_setting" %in% colnames(col_data)) {
       paste(unique(as.character(col_data$Exp_setting)), collapse = "; ")
@@ -74,7 +69,6 @@ generate_experimenthub_metadata <- function(
       SourceVersion = as.character(source_version),
       Species = species,
       TaxonomyId = taxonomy_id,
-      Tissue = tissue,
       Genome = NA,
       Coordinate_1_based = TRUE,
       DataProvider = "GEO",
@@ -110,6 +104,7 @@ metadata$DataProvider[36] <- "GitHub"
 metadata$SourceUrl[36] <- "https://github.com/AhmedSAHassan/Phybion_ShortReads_Analysis"
 
 metadata$Radiation_type[19:21] <- "Neutron; X-ray"
+metadata$Tissue <- rep("Blood", 36)
 
 # add more information related to Zenodo 
 
