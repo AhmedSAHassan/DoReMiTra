@@ -65,6 +65,7 @@ get_DoReMiTra_data <- function(dataset_name, gene_symbol = FALSE) {
     Author = strsplit(dataset_name, "_")[[1]][2],
     Organism = dataset_info$Organism,
     Radiation = dataset_info$Radiation_type,
+    Tissue = dataset_info$Tissue,
     nr_samples = ncol(out_se),
     Platform = unique(out_se$Platform),
     Setting = dataset_info$Exp_setting,
