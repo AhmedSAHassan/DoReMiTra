@@ -6,8 +6,7 @@
 #'
 #' @return Invisibly returns a named list of metadata fields and their values.
 #' @export
-#'
-#' #' @examples
+#' @examples
 #' list_DoReMiTra_metadata_fields()
 #'
 list_DoReMiTra_metadata_fields <- function() {

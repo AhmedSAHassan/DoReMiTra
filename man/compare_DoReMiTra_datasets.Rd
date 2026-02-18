@@ -6,7 +6,7 @@
 \usage{
 compare_DoReMiTra_datasets(
   se_list,
-  fields = c("Radiation_type", "Dose", "Sex", "Time_point", "Organism")
+  fields = c("Radiation_type", "Dose", "Sex", "Time_point", "Organism", "Tissue")
 )
 }
 \arguments{

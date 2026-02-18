@@ -7,7 +7,8 @@
 search_DoReMiTra_datasets(
   radiation_type = NULL,
   organism = NULL,
-  exp_setting = NULL
+  exp_setting = NULL,
+  accession = NULL
 )
 }
 \arguments{
@@ -16,6 +17,8 @@ search_DoReMiTra_datasets(
 \item{organism}{Character string (optional). Filter by organism (e.g., "Homo sapiens").}
 
 \item{exp_setting}{Character string (optional). Filter by experimental setting (e.g., "in vivo", "ex vivo").}
+
+\item{accession}{Character string (optional). Filter by the accession number}
 }
 \value{
 a vector with the names of the se objects matching the inclusion criteria. If none match, returns an empty vector with a message.
