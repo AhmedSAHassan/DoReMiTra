@@ -14,7 +14,7 @@ A data.frame with metadata for each dataset
 }
 \description{
 Returns a metadata dataframe of all datasets available in the DoReMiTra collection,
-including details such as title, organism, radiation type, experimental setting,
+including details such as title, organism, radiation type, experimental setting, author,
 and accession numbers. Can optionally display extended metadata fields.
 }
 \examples{
