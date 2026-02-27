@@ -20,11 +20,11 @@ list_DoReMiTra_metadata_fields <- function() {
     sort(unique(as.character(x)))
   })
 
-  cat("Available metadata fields:\n")
+  message("Available metadata fields:\n")
 
   for (field in names(metadata_values)) {
     values <- paste(metadata_values[[field]], collapse = ", ")
-    cat(paste0("- ", field, ": ", values, "\n"))
+    message(paste0("- ", field, ": ", values, "\n"))
   }
 
 #  invisible(metadata_values)
