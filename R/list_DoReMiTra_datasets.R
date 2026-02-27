@@ -22,6 +22,9 @@ list_DoReMiTra_datasets <- function(show_all_fields = FALSE) {
 
   meta <- read.csv(system.file("extdata", "metadata-DoReMiTra.csv", package = "DoReMiTra"))
 
+  # extracting author name
+  author_vec <- sapply(strsplit(meta$Title, "_"), `[`, 2)
+
   if (show_all_fields) {
     meta_df <- as.data.frame(meta)
     return (meta_df)
@@ -34,6 +37,7 @@ list_DoReMiTra_datasets <- function(show_all_fields = FALSE) {
       ExpSetting = meta$Exp_setting,
       Accession = meta$Accession,
       Tissue = meta$Tissue,
+      Author = author_vec,
       stringsAsFactors = FALSE
     )
 
