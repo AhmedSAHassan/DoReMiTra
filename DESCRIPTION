@@ -1,6 +1,6 @@
 Package: DoReMiTra
 Title: Orchestrating Blood Radiation Transcriptomic Data
-Version: 1.1.0
+Version: 1.1.1
 Authors@R: c(person("Ahmed", "Salah", role = c("aut", "cre"),
                     email = "ahhassan@uni-mainz.de", 
                     comment = c(ORCID = "0000-0001-7003-4466")),
