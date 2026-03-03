@@ -44,7 +44,8 @@ generate_experimenthub_metadata <- function(
     } else {
       NA
     }
-
+    
+    
     exp_setting <- if ("Exp_setting" %in% colnames(col_data)) {
       paste(unique(as.character(col_data$Exp_setting)), collapse = "; ")
     } else if (grepl("_vitro_", se_name)) {
@@ -103,6 +104,7 @@ metadata$DataProvider[36] <- "GitHub"
 metadata$SourceUrl[36] <- "https://github.com/AhmedSAHassan/Phybion_ShortReads_Analysis"
 
 metadata$Radiation_type[19:21] <- "Neutron; X-ray"
+metadata$Tissue <- rep("Blood", 36)
 
 # add more information related to Zenodo 
 

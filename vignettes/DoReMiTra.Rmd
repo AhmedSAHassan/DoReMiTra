@@ -35,6 +35,7 @@ library(DoReMiTra)
 * `Sex` of the donors/samples collected
 * `Organism`, which at the current state of things is Homo sapiens and Mus musculus
 * `Exp_setting` exvivo invivo
+* `Tissue`, which at the current state includes only blood
 
 The package delivers data as `SummarizedExperiment` objects directly accessible via `ExperimentHub`, enabling easy subsetting, filtering, and comparative analyses.
 
@@ -84,9 +85,19 @@ all_SEs <- get_all_DoReMiTra_datasets()
 all_SEs[["SE_Salah_2025_ExVivo"]]
 ```
 
+# list medatada information
+
+`list_DoReMiTra_metadata_feilds()` function displays the available metadata fields across all DoReMiTra datasets along with the unique values observed for each field.It facilitates intuitive dataset discovery and filtering.
+
+```{r explore-medatada-info}
+
+list_DoReMiTra_metadata_fields()
+
+```
+
 # Search for Specific Datasets
 
-With the `search_DoReMiTra_datasets()` function, you can filter datasets based on radiation type, organism, and experimental setting.
+With the `search_DoReMiTra_datasets()` function, you can filter datasets based on radiation type, organism, author name, and experimental setting.
 
 For example, in the following chunk we search for datasets where human samples have been exposed to gamma ray in an *ex vivo* setting.
 
