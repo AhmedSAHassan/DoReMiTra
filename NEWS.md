@@ -1,3 +1,9 @@
+# DoReMiTra 1.2.0
+
+* adding a new function to list metadata values
+* filtering by author name
+* adding Tissue field in the metadata
+
 # DoReMiTra 0.99.2
 
 * renamed the vignette file
