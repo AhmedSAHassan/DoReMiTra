@@ -85,7 +85,7 @@ all_SEs <- get_all_DoReMiTra_datasets()
 all_SEs[["SE_Salah_2025_ExVivo"]]
 ```
 
-# list medatada information
+# List medatada information
 
 `list_DoReMiTra_metadata_feilds()` function displays the available metadata fields across all DoReMiTra datasets along with the unique values observed for each field.It facilitates intuitive dataset discovery and filtering.
 
