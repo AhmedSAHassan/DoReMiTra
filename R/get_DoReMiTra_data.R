@@ -16,7 +16,7 @@
 #' @importFrom AnnotationHub query
 #' @importFrom S4Vectors metadata<-
 #' @importFrom S4Vectors metadata
-#' @importFrom SummarizedExperiment rowData
+#' @importFrom SummarizedExperiment rowData colData<-
 
 #'
 #' @examples
