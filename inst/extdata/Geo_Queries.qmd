@@ -16,7 +16,9 @@ We focus on **RNA datasets** from **Homo sapiens** and **Mus musculus**, obtaine
 
 > **Note:** This query retrieves X-ray exposure datasets from humans and mice.
 
+```
 (("Homo sapiens"\[Organism\] OR "Mus musculus"\[Organism\]) AND ("expression profiling by high throughput sequencing"\[DataSet Type\] OR "expression profiling by array"\[DataSet Type\]) AND rna\[Sample Type\] AND ("x ray" OR "x-ray" OR "x rays") AND "blood")
+```
 
 ##  γ-ray Datasets
 
