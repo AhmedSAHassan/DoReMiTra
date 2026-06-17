@@ -117,7 +117,7 @@ search_DoReMiTra_datasets(radiation_type = "X-ray",
                           organism = "Homo sapiens", 
                           exp_setting = "ExVivo")
 
-dataset_name <- "SE_Broustas_2017_ExVivo_GSE90909_GPL13497"
+dataset_name <- "SE_Amundson_2008_ExVivo_GSE8917_GPL1708"
 se <- get_DoReMiTra_data(dataset_name, gene_symbol = TRUE)
 se
 ```
