@@ -1251,9 +1251,13 @@ rowData(all_se_list$SE_Broustas_2017_ExVivo_GSE90909_GPL13497)$SYMBOL <- rowData
 
 # dose
 all_se_list$SE_Broustas_2017_ExVivo_GSE90909_GPL13497$Dose <- ifelse(
-  str_detect(all_se_list$SE_Broustas_2017_ExVivo_GSE90909_GPL13497$title, regex("control", ignore_case = TRUE)),
-  "0Gy",
-  str_extract(all_se_list$SE_Broustas_2017_ExVivo_GSE90909_GPL13497$title, "\\d+(\\.\\d+)?Gy")
+    str_detect(all_se_list$SE_Broustas_2017_ExVivo_GSE90909_GPL13497$title, regex("control", ignore_case = TRUE)),
+    "0Gy",
+    str_replace_all(
+        str_extract(all_se_list$SE_Broustas_2017_ExVivo_GSE90909_GPL13497$title, "\\d+(\\.\\d+)?\\s*Gy"),
+        "\\s+",
+        ""
+    )
 )
 
 # time
